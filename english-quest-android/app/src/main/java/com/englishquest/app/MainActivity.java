@@ -25,10 +25,12 @@ import android.speech.tts.UtteranceProgressListener;
 import android.speech.tts.Voice;
 import android.view.View;
 import android.webkit.JavascriptInterface;
+import android.webkit.RenderProcessGoneDetail;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -62,6 +64,10 @@ public final class MainActivity extends Activity {
     private static final long MIN_EXTRACTED_MODEL_BYTES = 60_000_000L;
     private static final int VOSK_SAMPLE_RATE = 16_000;
     private static final int VOSK_AUDIO_BUFFER_SAMPLES = 3_200;
+    private static final int MAX_RENDERER_RESTARTS = 2;
+    // Static on purpose: it must survive Activity.recreate() so a WebView renderer that keeps
+    // dying cannot restart the UI in a loop. Reset whenever a page finishes loading normally.
+    private static int rendererRestartCount = 0;
     private WebView webView;
     private WebViewAssetLoader assetLoader;
     private TextToSpeech textToSpeech;
@@ -148,6 +154,32 @@ public final class MainActivity extends Activity {
                 super.onPageFinished(view, url);
                 installNativeNavigationAndLinkHandlers(view);
                 if (ttsReady) notifyWebTtsReady();
+                rendererRestartCount = 0;
+            }
+
+            @Override
+            public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
+                // The system kills the WebView renderer under memory pressure. Without this
+                // override the whole app process is taken down with it, which looks like a crash
+                // and loses the screen the learner was on. Rebuild the UI instead, with a restart
+                // budget so a persistently failing renderer ends in a clean finish() rather than
+                // an endless reload loop. Progress itself is safe: it lives in the profile stored
+                // through localStorage / SharedPreferences, not in the renderer.
+                if (view != null && view == webView) {
+                    try { view.destroy(); } catch (RuntimeException ignored) { }
+                    webView = null;
+                }
+                rendererRestartCount++;
+                runOnUiThread(() -> {
+                    if (rendererRestartCount <= MAX_RENDERER_RESTARTS) {
+                        Toast.makeText(this, "Tampilan belajar dimuat ulang setelah gangguan sistem.", Toast.LENGTH_LONG).show();
+                        recreate();
+                    } else {
+                        Toast.makeText(this, "Aplikasi perlu dibuka ulang. Progres belajar tetap tersimpan.", Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                });
+                return true;
             }
         });
 

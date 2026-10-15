@@ -35,6 +35,15 @@
     catch (_) { return false; }
   }
 
+  const DEFAULT_TIMEOUT_MS = 15000;
+  function requestTimeoutMs() {
+    try {
+      const configured = Number(window.EQ_REQUEST_TIMEOUT_MS);
+      if (Number.isFinite(configured) && configured > 0) return configured;
+    } catch (_) {}
+    return DEFAULT_TIMEOUT_MS;
+  }
+
   async function request(path, options = {}, authenticated = true) {
     const base = apiBase();
     if (!base) return { ok: false, code: 'API_NOT_CONFIGURED', message: 'Server akun belum dikonfigurasi. Akses demo dan Premium perlu diverifikasi secara online.' };
@@ -42,9 +51,19 @@
     if (options.body !== undefined) headers['Content-Type'] = 'application/json';
     const token = getSession();
     if (authenticated && token) headers.Authorization = `Bearer ${token}`;
+    // A server that accepts the connection but never answers must not freeze the app: without an
+    // abort the awaiting UI (for example "Memeriksa akun…") would wait forever. Old WebViews
+    // without AbortController keep the previous behaviour instead of failing.
+    let timer = null;
+    let controller = null;
+    if (typeof AbortController === 'function') {
+      controller = new AbortController();
+      timer = setTimeout(() => { try { controller.abort(); } catch (_) {} }, requestTimeoutMs());
+    }
     try {
       const response = await fetch(`${base}/api${path}`, {
-        ...options, headers, credentials: 'omit', cache: 'no-store', redirect: 'error'
+        ...options, headers, credentials: 'omit', cache: 'no-store', redirect: 'error',
+        ...(controller ? { signal: controller.signal } : {})
       });
       let payload;
       try { payload = await response.json(); } catch (_) { payload = null; }
@@ -54,7 +73,12 @@
       if (response.status === 401 && authenticated) setSession('');
       return { ...payload, ok: Boolean(payload.ok && response.ok), status: response.status };
     } catch (_) {
+      if (controller && controller.signal.aborted) {
+        return { ok: false, code: 'NETWORK_TIMEOUT', message: 'Server tidak merespons dalam batas waktu. Periksa koneksi internet, lalu coba lagi.' };
+      }
       return { ok: false, code: 'NETWORK_ERROR', message: 'Tidak dapat terhubung ke server. Periksa internet, lalu coba lagi.' };
+    } finally {
+      if (timer !== null) clearTimeout(timer);
     }
   }
 

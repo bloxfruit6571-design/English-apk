@@ -35,6 +35,10 @@ DB_DEFAULT = Path(__file__).resolve().parent / "data" / "english-quest.sqlite3"
 PBKDF2_ROUNDS = 310_000
 SESSION_DAYS = 30
 DEMO_LIMIT = 10
+# Housekeeping windows: only rows that can no longer influence an access decision are pruned.
+SESSION_RETENTION_DAYS = 7
+# Longest rate-limit window in use is 24h (guest demo sessions); keep two days of history.
+RATE_LIMIT_RETENTION_SECONDS = 2 * 86_400
 DEMO_QUESTION_IDS = frozenset(
     [f"easy-greetings-q{i}" for i in range(1, 6)]
     + [f"easy-alphabet-spelling-q{i}" for i in range(1, 6)]
@@ -199,6 +203,25 @@ class Store:
             raise ApiError(429, "RATE_LIMITED", f"Terlalu banyak percobaan. Coba lagi dalam sekitar {retry} detik.")
         db.execute("UPDATE rate_limits SET requests=requests+1 WHERE bucket=?", (bucket,))
 
+    def _rate_limit_standalone(self, scope: str, identity: str, maximum: int, window_seconds: int) -> None:
+        """Apply a rate limit in its own committed transaction.
+
+        Security-relevant counters must survive a rolled-back business transaction. Failed logins,
+        rejected registrations and refused token claims raise ApiError, and the caller's
+        ``except Exception: db.rollback()`` would otherwise discard an increment made inside the
+        same transaction — leaving every failing attempt uncounted (unlimited brute force). The
+        counter therefore lives in a separate connection and is committed before the caller opens
+        its own BEGIN IMMEDIATE, so the two write transactions never overlap.
+        """
+        with self.connection() as db:
+            db.execute("BEGIN IMMEDIATE")
+            try:
+                self._rate_limit(db, scope, identity, maximum, window_seconds)
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+
     def _create_session(self, db: sqlite3.Connection, user_id: str) -> tuple[str, str]:
         raw = secrets.token_urlsafe(32)
         created = utc_now()
@@ -213,10 +236,12 @@ class Store:
         if len(password) < 12 or len(password) > 256:
             raise ApiError(400, "WEAK_PASSWORD", "Kata sandi harus 12–256 karakter.")
         now = iso()
+        # Counted in its own committed transaction so a rejected registration still consumes an
+        # attempt; see _rate_limit_standalone for why this cannot live inside the transaction below.
+        self._rate_limit_standalone("register", ip, 5, 900)
         with self.connection() as db:
             db.execute("BEGIN IMMEDIATE")
             try:
-                self._rate_limit(db, "register", ip, 5, 900)
                 if db.execute("SELECT 1 FROM users WHERE email=?", (email,)).fetchone():
                     raise ApiError(409, "ACCOUNT_EXISTS", "Akun dengan email tersebut sudah ada. Silakan masuk.")
                 salt, pwd_hash = hash_password(password)
@@ -243,10 +268,10 @@ class Store:
         # than spending PBKDF2 time on an unguessable credential that is never disclosed.
         salt = base64.urlsafe_b64encode(secrets.token_bytes(16)).decode("ascii")
         password_hash = base64.urlsafe_b64encode(secrets.token_bytes(32)).decode("ascii")
+        self._rate_limit_standalone("anonymous-demo-start", ip, 20, 86_400)
         with self.connection() as db:
             db.execute("BEGIN IMMEDIATE")
             try:
-                self._rate_limit(db, "anonymous-demo-start", ip, 20, 86_400)
                 db.execute("INSERT INTO users(user_id,email,password_salt,password_hash,role,anonymous,created_at) VALUES(?,?,?,?, 'user',1,?)", (user_id,email,salt,password_hash,now))
                 session, expiry = self._create_session(db, user_id)
                 db.commit()
@@ -259,10 +284,12 @@ class Store:
         email = normalize_email(email)
         if len(password) > 256:
             raise ApiError(401, "INVALID_CREDENTIALS", "Email atau kata sandi salah.")
+        # Failed logins raise ApiError, which rolls the transaction below back. Counting the
+        # attempt in a committed transaction first is what makes this limit actually hold.
+        self._rate_limit_standalone("login", ip, 12, 900)
         with self.connection() as db:
             db.execute("BEGIN IMMEDIATE")
             try:
-                self._rate_limit(db, "login", ip, 12, 900)
                 row = db.execute("SELECT user_id,password_salt,password_hash FROM users WHERE email=?", (email,)).fetchone()
                 # Do PBKDF2 even for an unknown email, reducing account-enumeration timing signals.
                 if row is None:
@@ -297,6 +324,20 @@ class Store:
     def _expire_tokens(self, db: sqlite3.Connection) -> None:
         now = iso()
         db.execute("UPDATE premium_tokens SET status='expired' WHERE status IN ('available','claimed') AND expires_at IS NOT NULL AND expires_at<=?", (now,))
+        self._prune_stale_rows(db)
+
+    def _prune_stale_rows(self, db: sqlite3.Connection) -> None:
+        """Delete housekeeping rows that can no longer affect any access decision.
+
+        ``sessions`` and ``rate_limits`` are append-only while the service runs, so on a
+        long-lived deployment both tables grow without bound. Only dead rows are removed:
+        sessions that expired or were revoked more than SESSION_RETENTION_DAYS ago, and
+        rate-limit windows older than the longest window in use. Removing an expired or revoked
+        session does not change any outcome — both already authenticate as a 401.
+        """
+        session_cutoff = iso(utc_now() - timedelta(days=SESSION_RETENTION_DAYS))
+        db.execute("DELETE FROM sessions WHERE COALESCE(revoked_at, expires_at) <= ?", (session_cutoff,))
+        db.execute("DELETE FROM rate_limits WHERE window_start <= ?", (int(time.time()) - RATE_LIMIT_RETENTION_SECONDS,))
 
     def account_status(self, user: sqlite3.Row) -> dict[str, Any]:
         with self.connection() as db:
@@ -335,10 +376,10 @@ class Store:
         ids = list(dict.fromkeys(str(item) for item in question_ids))
         if any(item not in DEMO_QUESTION_IDS for item in ids):
             raise ApiError(403, "QUESTION_NOT_IN_DEMO", "Daftar memuat soal di luar paket demo.")
+        self._rate_limit_standalone("demo-sync", user["user_id"] + ":" + ip, 12, 600)
         with self.connection() as db:
             db.execute("BEGIN IMMEDIATE")
             try:
-                self._rate_limit(db, "demo-sync", user["user_id"] + ":" + ip, 12, 600)
                 count = db.execute("SELECT COUNT(*) AS n FROM demo_answers WHERE user_id=?", (user["user_id"],)).fetchone()["n"]
                 imported = 0
                 for question_id in ids:
@@ -369,10 +410,10 @@ class Store:
             raise ApiError(400, "INVALID_ANSWER", "Jawaban tidak valid. Lengkapi jawaban sebelum dikirim.")
         canonical = " ".join(unicodedata.normalize("NFKC", raw_answer).casefold().split())
         answer_digest = hmac.new(self.pepper, ("demo-answer:" + qid + ":" + canonical).encode("utf-8"), hashlib.sha256).hexdigest()
+        self._rate_limit_standalone("demo", user["user_id"] + ":" + ip, 40, 600)
         with self.connection() as db:
             db.execute("BEGIN IMMEDIATE")
             try:
-                self._rate_limit(db, "demo", user["user_id"] + ":" + ip, 40, 600)
                 self._expire_tokens(db)
                 premium = db.execute("SELECT 1 FROM premium_tokens WHERE claimed_by_user_id=? AND status='claimed' LIMIT 1", (user["user_id"],)).fetchone()
                 used_row = db.execute("SELECT question_id,answer_hash FROM demo_answers WHERE user_id=? AND question_id=?", (user["user_id"], qid)).fetchone()
@@ -404,10 +445,10 @@ class Store:
         if not TOKEN_RE.fullmatch(normalized):
             raise ApiError(400, "INVALID_TOKEN", "Format token tidak valid.")
         digest = self.token_hash(normalized)
+        self._rate_limit_standalone("activate", user["user_id"] + ":" + ip, 8, 900)
         with self.connection() as db:
             db.execute("BEGIN IMMEDIATE")
             try:
-                self._rate_limit(db, "activate", user["user_id"] + ":" + ip, 8, 900)
                 self._expire_tokens(db)
                 row = db.execute("SELECT token_id,status,claimed_by_user_id,expires_at FROM premium_tokens WHERE token_hash=?", (digest,)).fetchone()
                 if row is None:
@@ -513,6 +554,10 @@ class Store:
 class Handler(http.server.SimpleHTTPRequestHandler):
     server_version = "EnglishQuestAPI/1.0"
     sys_version = ""
+    # Idle timeout per socket operation. Without it a client that opens a connection and then
+    # stalls (slowloris-style) holds a worker thread forever; the per-operation timeout means a
+    # slow but progressing transfer is unaffected while a stalled peer is dropped.
+    timeout = 60
     PUBLIC_FILES = frozenset({
         "index.html", "styles.css", "app.js", "access-client.js", "library-data.js",
         "mission-data.js", "mission-data-extras.js", "sw.js", "manifest.webmanifest",
@@ -570,6 +615,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             raise ApiError(400, "INVALID_LENGTH", "Permintaan tidak valid.")
         if size < 0 or size > MAX_BODY:
             raise ApiError(413, "BODY_TOO_LARGE", "Permintaan terlalu besar.")
+        if size > 0:
+            # State-changing endpoints accept JSON only. A cross-site HTML form can post
+            # text/plain or form-encoded bodies without a CORS preflight, so rejecting any
+            # non-JSON content type keeps those blind posts from reaching the handlers.
+            media_type = (self.headers.get("Content-Type") or "").split(";")[0].strip().lower()
+            if media_type != "application/json":
+                raise ApiError(415, "UNSUPPORTED_MEDIA_TYPE", "Gunakan Content-Type application/json.")
         raw = self.rfile.read(size)
         try:
             parsed = json.loads(raw.decode("utf-8"))
@@ -611,11 +663,44 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Access-Control-Max-Age", "600")
         self.end_headers()
 
+    def _public_file(self, path: str) -> Path | None:
+        """Resolve a request path to an allowlisted file inside the project root, else None."""
+        if path in ("/", "/index.html"):
+            relative = "index.html"
+        elif path in ("/admin", "/admin/"):
+            relative = "backend/admin.html"
+        else:
+            relative = urllib.parse.unquote(path.lstrip("/"))
+        if relative not in self.PUBLIC_FILES and relative != "backend/admin.html":
+            return None
+        target = (ROOT / relative).resolve()
+        try:
+            target.relative_to(ROOT.resolve())
+        except ValueError:
+            return None
+        return target if target.is_file() else None
+
+    def _send_public_file(self, path: str, send_body: bool = True) -> None:
+        target = self._public_file(path)
+        if target is None:
+            self.send_error(404, "Not found")
+            return
+        try:
+            content_type = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
+            data = target.read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", content_type + ("; charset=utf-8" if content_type.startswith("text/") or content_type in ("application/javascript", "application/manifest+json") else ""))
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            if send_body:
+                self.wfile.write(data)
+        except OSError:
+            self.send_error(500, "Unable to serve file")
+
     def do_HEAD(self) -> None:
-        # Never let SimpleHTTPRequestHandler's inherited file serving bypass the GET allowlist.
-        self.send_response(404)
-        self.send_header("Content-Length", "0")
-        self.end_headers()
+        # HEAD answers for exactly the same allowlist as GET, with headers only. The inherited
+        # SimpleHTTPRequestHandler file serving (which would bypass the allowlist) stays off.
+        self._send_public_file(urllib.parse.urlsplit(self.path).path, send_body=False)
 
     def do_GET(self) -> None:
         path = urllib.parse.urlsplit(self.path).path
@@ -639,34 +724,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             except Exception:
                 self._send_json(500, {"ok": False, "code": "SERVER_ERROR", "message": "Layanan mengalami masalah. Coba lagi nanti."})
             return
-        if path in ("/", "/index.html"):
-            relative = "index.html"
-        elif path in ("/admin", "/admin/"):
-            relative = "backend/admin.html"
-        else:
-            relative = urllib.parse.unquote(path.lstrip("/"))
-        if relative not in self.PUBLIC_FILES and relative != "backend/admin.html":
-            self.send_error(404, "Not found")
-            return
-        target = (ROOT / relative).resolve()
-        try:
-            target.relative_to(ROOT.resolve())
-        except ValueError:
-            self.send_error(404, "Not found")
-            return
-        if not target.is_file():
-            self.send_error(404, "Not found")
-            return
-        try:
-            content_type = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
-            data = target.read_bytes()
-            self.send_response(200)
-            self.send_header("Content-Type", content_type + ("; charset=utf-8" if content_type.startswith("text/") or content_type in ("application/javascript", "application/manifest+json") else ""))
-            self.send_header("Content-Length", str(len(data)))
-            self.end_headers()
-            self.wfile.write(data)
-        except OSError:
-            self.send_error(500, "Unable to serve file")
+        self._send_public_file(path)
 
     def do_POST(self) -> None:
         path = urllib.parse.urlsplit(self.path).path

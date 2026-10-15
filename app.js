@@ -232,7 +232,7 @@ function setLocalDemoAccess(message,status,page='home'){
 }
 function isRecoverableServerFailure(result){
   const code=String(result?.code||'');
-  return ['API_NOT_CONFIGURED','NETWORK_ERROR','INVALID_SERVER_RESPONSE','SERVER_ERROR','HTTPS_REQUIRED','SESSION_STORAGE_FAILED','NOT_FOUND','SYNC_UNAVAILABLE'].includes(code)||Number(result?.status)>=500;
+  return ['API_NOT_CONFIGURED','NETWORK_ERROR','NETWORK_TIMEOUT','INVALID_SERVER_RESPONSE','SERVER_ERROR','HTTPS_REQUIRED','SESSION_STORAGE_FAILED','NOT_FOUND','SYNC_UNAVAILABLE'].includes(code)||Number(result?.status)>=500;
 }
 async function refreshBackendStatus(renderWhenReady=false){
   if(!AccessApi||!AccessApi.isConfigured?.()){
