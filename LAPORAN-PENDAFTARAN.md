@@ -122,6 +122,8 @@ Dua build dari source yang sama (version code **13**, `1.7.1-debug`, package `co
 
 Keduanya **BUILD SUCCESSFUL** dan diverifikasi isinya: `assets/app.js` memuat `PASSWORD_MIN_LENGTH=6` dan `toggle-password-visibility`, `assets/index.html` membaca `isHttpDevAllowed`, service worker `v19`, dan dex memuat `getApiBaseUrl`, `isHttpDevAllowed`, `EQ_API_BASE_URL`, serta `EQ_ALLOW_HTTP_DEV`. Model Vosk diverifikasi SHA-256 saat build (`30f26242…42498`, 41.205.931 B) dan ikut terbundel.
 
+Build ulang dari source yang sudah dipulihkan menghasilkan APK **byte-identik** dengan build A (SHA-256 sama, `67b47072…0dfe`), jadi perbaikan benar-benar ada di dalam source dan dapat dihasilkan ulang.
+
 **Artefak yang disimpan:** build **B** disalin ke `/home/user/artefak-apk/English-Quest-1.7.1-register-test-localtest-debug.apk` beserta `.sha256`. APK lama `English-Quest-1.7.1-demo5-premium-debug.apk` (sha256 `f3605181…7f1f0`) dihapus setelah digantikan build ini, mengikuti kebijakan repository yang sudah ada (APK dapat dihasilkan ulang dari source).
 
 Cara menguji pendaftaran di HP dengan build B:
@@ -160,13 +162,26 @@ adb reverse tcp:8088 tcp:8088
 
 ---
 
-## 9. Status repository dan langkah GitHub
+## 9. Status repository dan GitHub
 
-- Riwayat git lokal dipulihkan dari `/home/user/english-quest-audit-baseline-1.7.1.bundle` (berisi `main` + branch audit hingga `c2aac64`) dan digabung dengan salinan publik `github.com/bloxfruit6571-design/English-apk`, lalu hasil kerja sekarang di-commit pada branch `audit-baseline-1.7.1`. Branch `main` tidak disentuh.
-- **Push ke GitHub belum bisa dijalankan dari sandbox ini**: tidak ada `~/.git-credentials`, tidak ada `gh` CLI, tidak ada token di environment, dan konektor GitHub Arena tidak tersedia. Push memerlukan kredensial Anda (token akses dengan scope repo), atau Anda dapat menarik dari repo lokal ini lalu push sendiri.
-- Tidak ada branch/commit yang dipaksakan ke `main`, dan tidak ada deployment yang dijalankan.
+- **Branch sudah terkirim ke GitHub (15 Oktober 2026):** `refs/heads/audit-baseline-1.7.1` → commit `1486d0d3fff682b4bfbd262d0d3f52fa17889f08` pada `github.com/bloxfruit6571-design/English-apk`. Branch `main` **tidak disentuh** (tetap `d05e4e6`), sesuai aturan tidak mengubah `main` secara langsung.
+- **Pull request** bisa dibuat di: <https://github.com/bloxfruit6571-design/English-apk/pull/new/audit-baseline-1.7.1> — sengaja tidak dibuatkan otomatis supaya Anda menentukan judul/deskripsi dan meninjau isinya lebih dulu.
+- Riwayat pada branch: `6bd40a4` → `e691326` → `36bff74` → `c2aac64` (pembayaran Premium) → **`1486d0d`** (perbaikan pendaftaran; sekaligus membawa perbaikan CTA hasil misi demo yang sebelumnya belum sempat di-commit).
+- **Token akses yang Anda kirim hanya dipakai untuk operasi push ini.** Token tidak ditulis ke `.git/config`, tidak ke `~/.git-credentials`, dan tidak muncul di keluaran perintah (helper kredensial membaca dari berkas sementara di `/tmp` yang kemudian dihapus). **Cabut/rotasi token itu sekarang** karena sudah dikirim dalam bentuk teks di percakapan.
+- **Catatan penting tentang lingkungan ini:** direktori `.git` **tidak ikut tersimpan** antar sesi (snapshot workspace membuangnya, kemungkinan karena batas ukuran ±128 MB). Karena itu tersedia dua jaring pengaman kecil di workspace:
+  1. `english-quest-pendaftaran.bundle` — riwayat branch audit (di atas `d05e4e6`);
+  2. `patch-english-quest/0005-*.patch` — diff commit `1486d0d`.
+  
+  Cara memulihkan repo lengkap kapan pun:
 
----
+  ```sh
+  git clone https://github.com/bloxfruit6571-design/English-apk.git
+  cd English-apk
+  git fetch /path/ke/english-quest-pendaftaran.bundle 'refs/heads/*:refs/heads/*'
+  git checkout audit-baseline-1.7.1
+  ```
+
+  Pada sesi ini, membandingkan seluruh berkas workspace dengan isi commit `1486d0d` menunjukkan **0 perbedaan** (83 berkas diperiksa), jadi apa yang ada di workspace = apa yang ada di GitHub.
 
 ## 10. Pembersihan file sampah
 
@@ -174,7 +189,7 @@ Yang dihapus dan alasannya (tidak ada berkas source, laporan, atau APK deliverab
 
 | Item | Alasan |
 |---|---|
-| `english-quest-android/app/build/` (~291 MB) | Keluaran Gradle yang selalu dapat dihasilkan ulang (`gradlew`); model Vosk diunduh kembali saat build dan diverifikasi SHA-256 |
+| `english-quest-android/app/build/` (~291 MB, dua kali) | Keluaran Gradle yang selalu dapat dihasilkan ulang (`gradlew`); model Vosk diunduh kembali saat build dan diverifikasi SHA-256 |
 | `english-quest-android/.gradle/` (504 KB) | Cache Gradle lokal |
 | `__pycache__/`, `.pytest_cache/` | Cache tes Python (sudah masuk `.gitignore`) |
 | APK uji lama `English-Quest-1.7.1-demo5-premium-debug.apk` + `.sha256` (83 MB) | Digantikan build yang lebih baru (berisi perbaikan pendaftaran); dapat dihasilkan kembali dari source |
