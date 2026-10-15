@@ -23,7 +23,7 @@
 | Sesi & rate-limit table | tumbuh tanpa batas | dipangkas otomatis (sesi mati >7 hari, bucket >2 hari) |
 | WebView renderer mati | aplikasi ikut mati | UI dibangun ulang (maks 2×), lalu `finish()` dengan pesan |
 | Test | 16 backend + 10 grup klien | 30 backend + 10 + 8 grup klien + parity aset |
-| Build Android | belum pernah dijalankan di sini | **masih belum** (lihat §5) |
+| Build Android | belum pernah dijalankan | ✅ **BUILD SUCCESSFUL** — APK 84.916.010 byte, terverifikasi (lihat §5) |
 
 ---
 
@@ -129,8 +129,8 @@ Tidak ada file yang dihapus. Tidak ada perubahan pada: identitas aplikasi, `appl
 | Client failure paths (baru) | `node tests/client_failure_paths.test.js` | ✅ 8/8 grup |
 | Parity aset (baru) | `node tests/asset_parity.test.js` | ✅ 17 file identik, cache v16 |
 | Sintaks | `node --check` (9 file) + `python3 -m py_compile` (3 file) | ✅ semua lolos |
-| Build Android | `./gradlew :app:assembleDebug` | ⛔ **TIDAK DIJALANKAN** (§5) |
-| Uji perangkat | mikrofon, Vosk, TTS, renderer restart | ⛔ **BELUM DIUJI** (tidak ada perangkat/emulator) |
+| Build Android | `bash ./gradlew --no-daemon :app:assembleDebug` | ✅ **BUILD SUCCESSFUL** (43 dtk, JDK 17 + SDK 35) — APK terverifikasi (§5) |
+| Uji perangkat | instalasi, mikrofon, Vosk, TTS, renderer restart | ⛔ **BELUM DIUJI** (tidak ada perangkat/emulator) |
 
 **Bukti sebelum vs sesudah (probe yang sama, handler asli):**
 
@@ -148,12 +148,45 @@ Tidak ada test lama yang diubah agar lulus. Semua tes lama dijalankan ulang sete
 
 ## 5. Hasil build
 
-**Build Android tidak dijalankan, dan APK tidak dibangun ulang.**
+**BUILD SUCCESSFUL — APK berhasil dibangun ulang dan diverifikasi.**
 
-- Lingkungan ini hanya memiliki **OpenJDK 11** (AGP 8.7.3 memerlukan **JDK 17+**) dan **tidak ada Android SDK** (`ANDROID_HOME` kosong, `gradle`/`adb` tidak tersedia). Karena itu `./gradlew :app:assembleDebug` tidak bisa dijalankan.
-- Sebagai ganti (bukan pengganti build): `MainActivity.java` **lolos pemeriksaan parse** `javac` — satu-satunya error adalah `package android.* does not exist` / `cannot find symbol` yang memang timbul tanpa SDK, **tidak ada satu pun error sintaks**. Ini **bukan** bukti kode dapat dikompilasi.
-- **APK di repo tidak diubah:** `English-Quest-1.7.1-debug.apk`, 85.079.299 byte, SHA-256 `05e06641…bbd86` (hash masih sama seperti yang diklaim README).
-- **Konsekuensi yang harus disadari:** source sekarang **lebih baru daripada APK**. Klaim README "17 aset cocok byte-for-byte" masih benar untuk APK yang ada, tetapi **APK itu belum memuat perbaikan ini**. Perbaikan sisi Android (`onRenderProcessGone`) dan aset web perlu di-build ulang untuk masuk ke APK.
+Toolchain yang saya pasang untuk pengujian (di `/var/tmp/eq`, di luar repositori agar tidak mengotori project):
+
+| Komponen | Versi |
+|---|---|
+| JDK | Temurin **17.0.20.1** (sesuai persyaratan AGP 8.7.3) |
+| Gradle | 8.9 (via wrapper project) |
+| Android SDK Platform | **android-35** |
+| Build-Tools | **35.0.0** + platform-tools |
+| Perintah | `bash ./gradlew --no-daemon :app:assembleDebug` → **BUILD SUCCESSFUL in 43s** (35 task) |
+
+**Artefak:** `english-quest-android/app/build/outputs/apk/debug/app-debug.apk`
+
+| Properti | Nilai |
+|---|---|
+| Ukuran | 84.916.010 byte |
+| SHA-256 | `ce4fc3ed7e22bbb1b20a39729db50e69b069d5862afa4b41b9d2f43d0a36a933` |
+| Package / versi | `com.englishquest.app.debug` · versionCode 13 · `1.7.1-debug` |
+| minSdk / targetSdk | 23 / 35 |
+| Penandatanganan | sertifikat **Android Debug** (`CN=Android Debug`) — APK debug, bukan rilis |
+
+**Verifikasi isi APK hasil build:**
+
+- **17/17 aset web identik byte-for-byte** dengan source yang sudah diperbaiki.
+- Perbaikan **benar-benar ada di dalam APK**: `access-client.js` memuat `AbortController`, `DEFAULT_TIMEOUT_MS = 15000`, dan `NETWORK_TIMEOUT`; `sw.js` memakai `english-quest-shell-**v16**`; `classes*.dex` memuat `onRenderProcessGone` serta teks Toast yang baru → perubahan `MainActivity.java` ikut terkompilasi.
+- Model Vosk di dalam APK: 41.205.931 byte, SHA-256 `30f26242…42498` — **cocok dengan pin di `build.gradle`**.
+- Native libs lengkap untuk 4 ABI (arm64-v8a, armeabi-v7a, x86, x86_64).
+
+**Catatan penting — kompilasi menemukan bug di kode saya sendiri.** Build pertama gagal dengan 2 error nyata: `Toast.makeText(this, …)` di dalam anonymous `WebViewClient` — `this` menunjuk ke client, bukan Activity. Sudah diperbaiki menjadi `MainActivity.this`, lalu build ulang sukses. Ini contoh mengapa klaim "berhasil build" tanpa benar-benar menjalankan build tidak dapat dipercaya.
+
+**APK di repo tidak diubah:** `English-Quest-1.7.1-debug.apk` (85.079.299 byte, SHA-256 `05e06641…bbd86`) **masih APK lama**. Mengganti artefak rilis yang sudah didokumentasikan README memerlukan persetujuan Anda (§8).
+
+**Keterbatasan yang jujur:**
+
+- APK baru berada di direktori `build/`, yang **tidak ikut tersimpan** dalam snapshot workspace ini. Untuk menyimpannya permanen silakan pilih di §8. Perintah build ulang ada di Lampiran.
+- Toolchain (`/var/tmp/eq`) juga tidak permanen dan perlu dipasang ulang bila lingkungan di-reset.
+- Sesuai keputusan Anda, `versionCode`/`versionName` **belum dinaikkan** (tetap 13 / `1.7.1-debug`).
+- Yang **BELUM DIUJI**: pemasangan di perangkat/emulator, mikrofon, Vosk, TTS, dan pemulihan renderer. Tidak ada perangkat di lingkungan ini.
 
 ---
 
@@ -201,8 +234,17 @@ Perbaikan di atas **tidak menyentuh** database pengguna, skema, sistem autentika
 2. **Push commit ke GitHub?** Perbaikan saat ini **hanya lokal** di branch `audit-baseline-1.7.1` dan belum di-push. Mengunggah ke layanan eksternal butuh izin Anda.
 3. **Naikkan versi aplikasi** (`versionCode` 13 → 14, `versionName` 1.7.2) bila akan dirilis? Ini mengubah identitas rilis → butuh persetujuan.
 4. **Deploy backend produksi** (domain, HTTPS, hosting, pepper) — butuh keputusan dan kredensial dari Anda; saya tidak akan melakukannya sendiri.
-5. **Memperkuat demo lokal** agar lebih tahan manipulasi (mis. pengikatan per perangkat)? Ini mengubah perilaku fitur → butuh persetujuan, dan tidak bisa menjamin pencegahan total selama perangkat dikuasai pengguna.
-6. **Signing rilis** (keystore): pembuatan/penyimpanan kunci rilis harus Anda lakukan; jangan pernah menaruh kunci di repo.
+1. **APK baru berada di direktori `build/`** yang tidak tersimpan permanen di snapshot workspace ini (lihat §5) — beri tahu saya bila ingin saya tempatkan di lokasi yang tersimpan, atau menggantikan APK di repo (memerlukan persetujuan karena artefak rilis & hash di README ikut berubah).
+2. **Push ke GitHub belum bisa saya lakukan**: lingkungan ini tidak memiliki kredensial git sama sekali (`git push --dry-run` → `could not read Username for 'https://github.com'`). Opsi: (a) Anda memberi token akses dengan cakupan minimum (sebaiknya di-cabut setelah push), (b) Anda push sendiri dari salinan workspace ini ke branch `audit-baseline-1.7.1`, atau (c) saya siapkan file patch (`.patch`) yang bisa Anda terapkan. **Tidak ada kode, data, atau rahasia yang saya unggah ke layanan eksternal tanpa persetujuan.**
+
+Berikutnya, keputusan lama yang masih terbuka:
+
+3. **Menghapus atau mengganti database pengguna** — tidak diperlukan; saya tidak melakukannya.
+4. **Mengubah skema database** — tidak dilakukan. Pruning (§3) hanya menghapus baris sesi/bucket yang sudah mati, tanpa mengubah skema.
+5. **Rilis & distribusi**: bila APK baru hendak diedarkan, apakah `versionCode` 13 → 14 dan `versionName` 1.7.1 → 1.7.2 (butuh persetujuan, karena mengubah identitas rilis)?
+6. **Deploy backend produksi** (domain, HTTPS, hosting, pepper) — saya tidak akan melakukannya tanpa keputusan dan kredensial dari Anda.
+7. **Signing rilis**: APK saat ini masih ditandatangani debug key. Pembuatan keystore rilis harus Anda lakukan; jangan pernah menaruh kunci di repo.
+8. **Memperkuat demo lokal** agar lebih tahan manipulasi (pengikatan per perangkat) — mengubah perilaku fitur, butuh persetujuan; tidak bisa menjamin pencegahan total.
 
 ---
 
@@ -232,3 +274,11 @@ PYTHONPATH=. python3 /home/user/evidence/probe_failures.py   # bandingkan dengan
 ```
 
 Perbedaan branch: `git diff d05e4e6 6bd40a4` (8 file diubah, 3 file tes baru, 0 file dihapus).
+
+# Build ulang APK (toolchain harus tersedia lagi; tidak ikut tersimpan)
+export JAVA_HOME=/var/tmp/eq/jdk17
+export ANDROID_HOME=/var/tmp/eq/android
+export GRADLE_USER_HOME=/var/tmp/eq/gradle-home
+cd english-quest-android && bash ./gradlew --no-daemon :app:assembleDebug
+# -> app/build/outputs/apk/debug/app-debug.apk
+

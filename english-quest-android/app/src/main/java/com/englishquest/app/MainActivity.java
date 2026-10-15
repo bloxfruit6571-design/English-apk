@@ -171,11 +171,13 @@ public final class MainActivity extends Activity {
                 }
                 rendererRestartCount++;
                 runOnUiThread(() -> {
+                    // MainActivity.this is required here: inside the anonymous WebViewClient,
+                    // `this` would be the client, not the Activity that Toast needs.
                     if (rendererRestartCount <= MAX_RENDERER_RESTARTS) {
-                        Toast.makeText(this, "Tampilan belajar dimuat ulang setelah gangguan sistem.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, "Tampilan belajar dimuat ulang setelah gangguan sistem.", Toast.LENGTH_LONG).show();
                         recreate();
                     } else {
-                        Toast.makeText(this, "Aplikasi perlu dibuka ulang. Progres belajar tetap tersimpan.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, "Aplikasi perlu dibuka ulang. Progres belajar tetap tersimpan.", Toast.LENGTH_LONG).show();
                         finish();
                     }
                 });
