@@ -58,6 +58,12 @@ DEMO_QUESTION_IDS = frozenset(
 EMAIL_RE = re.compile(r"^[^\s@]{1,64}@[^\s@.]{1,128}(?:\.[^\s@.]{1,63})+$")
 TOKEN_RE = re.compile(r"^EQP-[A-F0-9]{48}$")
 MAX_BODY = 32 * 1024
+# User-facing registration policy. Kept next to EMAIL_RE so the mirror in app.js
+# (PASSWORD_MIN_LENGTH) and this rule cannot drift apart; the server always re-checks.
+PASSWORD_MIN_LENGTH = 6
+PASSWORD_MAX_LENGTH = 256
+# Administrator accounts are provisioned offline and keep the stricter legacy policy.
+ADMIN_PASSWORD_MIN_LENGTH = 12
 
 
 def utc_now() -> datetime:
@@ -278,8 +284,8 @@ class Store:
         email = normalize_email(email)
         if not EMAIL_RE.fullmatch(email):
             raise ApiError(400, "INVALID_EMAIL", "Masukkan alamat email yang valid.")
-        if len(password) < 12 or len(password) > 256:
-            raise ApiError(400, "WEAK_PASSWORD", "Kata sandi harus 12–256 karakter.")
+        if len(password) < PASSWORD_MIN_LENGTH or len(password) > PASSWORD_MAX_LENGTH:
+            raise ApiError(400, "WEAK_PASSWORD", f"Kata sandi harus {PASSWORD_MIN_LENGTH}–{PASSWORD_MAX_LENGTH} karakter.")
         now = iso()
         # Counted in its own committed transaction so a rejected registration still consumes an
         # attempt; see _rate_limit_standalone for why this cannot live inside the transaction below.
@@ -1160,8 +1166,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 def create_admin(email: str, password: str, store: Store) -> str:
     email = normalize_email(email)
-    if not EMAIL_RE.fullmatch(email) or len(password) < 12:
-        raise ValueError("Email invalid atau kata sandi admin kurang dari 12 karakter.")
+    if not EMAIL_RE.fullmatch(email) or len(password) < ADMIN_PASSWORD_MIN_LENGTH:
+        raise ValueError(f"Email invalid atau kata sandi admin kurang dari {ADMIN_PASSWORD_MIN_LENGTH} karakter.")
     salt, digest = hash_password(password)
     user_id = str(uuid.uuid4())
     with store.connection() as db:

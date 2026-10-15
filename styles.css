@@ -233,3 +233,6 @@ body{
 .dark .server-status-notice.is-offline{background:#403723;border-color:#63512c;color:#f1d99a}
 .dark .access-status-card.is-local-demo{background:linear-gradient(115deg,#3a3324,#30284a);border-color:#5b5035}
 @media(max-width:560px){.server-status-notice{font-size:.74rem;padding:11px 12px}.access-welcome-actions{display:grid;grid-template-columns:1fr}.access-welcome-actions .btn{width:100%}}
+/* Password row: input plus the show/hide control (app.js: togglePasswordVisibility). */
+.access-password-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;font-weight:400}
+.access-password-row .access-password-toggle{white-space:nowrap;min-height:49px;margin-top:0;font-size:.76rem;font-weight:850}

@@ -5,6 +5,13 @@ plugins {
 // Only a public HTTPS origin is configured at build time; never put credentials or secrets here.
 def eqApiBaseUrl = (project.findProperty('EQ_API_BASE_URL') ?: System.getenv('EQ_API_BASE_URL') ?: '').toString()
 def eqApiBaseUrlEscaped = eqApiBaseUrl.replace('\\', '\\\\').replace('"', '\\"')
+// Testing-only switch that lets a *debug* build talk to a local server over plain HTTP when that
+// server is reachable at a loopback address on the phone (e.g. http://127.0.0.1:8088 after running
+// `adb reverse tcp:8088 tcp:8088`). The web client only accepts plain HTTP for loopback hosts, so
+// LAN IPs are intentionally not supported. Release builds ignore this flag entirely (see
+// MainActivity.httpDevAllowed) and it must never be set for a build handed to users.
+def eqAllowHttpDev = (project.findProperty('EQ_ALLOW_HTTP_DEV') ?: System.getenv('EQ_ALLOW_HTTP_DEV') ?: '').toString()
+def eqAllowHttpDevEscaped = eqAllowHttpDev.replace('\\', '\\\\').replace('"', '\\"')
 
 android {
     buildFeatures { buildConfig true }
@@ -18,6 +25,7 @@ android {
         versionCode 13
         versionName '1.7.1'
         buildConfigField 'String', 'EQ_API_BASE_URL', "\"${eqApiBaseUrlEscaped}\""
+        buildConfigField 'String', 'EQ_ALLOW_HTTP_DEV', "\"${eqAllowHttpDevEscaped}\""
     }
 
     androidResources {

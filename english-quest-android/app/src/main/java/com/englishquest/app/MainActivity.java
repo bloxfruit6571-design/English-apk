@@ -1112,7 +1112,46 @@ public final class MainActivity extends Activity {
         }
     }
 
+    /**
+     * The account API origin this APK was built with (BuildConfig.EQ_API_BASE_URL), or an empty
+     * string when the build intentionally has no server. It is a public HTTPS origin, never a
+     * secret: credentials and tokens live in the server and are fetched with the user's session.
+     */
+    private String apiBaseUrl() {
+        String configured = BuildConfig.EQ_API_BASE_URL;
+        return configured == null ? "" : configured.trim();
+    }
+
+    /**
+     * Local testing escape hatch: a debug build may be compiled with -PEQ_ALLOW_HTTP_DEV=1 so the
+     * phone can reach a development server over plain HTTP on a LAN address. Release builds always
+     * return false, so a build handed to users can never be downgraded to plain HTTP.
+     */
+    private boolean httpDevAllowed() {
+        return BuildConfig.DEBUG && "1".equals(BuildConfig.EQ_ALLOW_HTTP_DEV);
+    }
+
     private final class ExternalLinkBridge {
+        /**
+         * Hands the build-time API origin to the web layer.
+         *
+         * The web client asks the native bridge for this URL and falls back to the page origin
+         * when it is missing. The page origin inside the app is the WebView asset origin
+         * (https://appassets.androidplatform.net), which the client deliberately refuses to use as
+         * an API base — so before this method existed the app could never reach the account API
+         * and registration stayed permanently unavailable, no matter what the APK was built with.
+         */
+        @JavascriptInterface
+        public String getApiBaseUrl() {
+            return MainActivity.this.apiBaseUrl();
+        }
+
+        /** Whether plain-HTTP development addresses are allowed (debug builds only). */
+        @JavascriptInterface
+        public boolean isHttpDevAllowed() {
+            return MainActivity.this.httpDevAllowed();
+        }
+
         @JavascriptInterface
         public void openExternal(String rawUrl) {
             MainActivity.this.openExternal(rawUrl);

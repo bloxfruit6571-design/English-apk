@@ -301,6 +301,29 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
     assert.match(hosted.root.innerHTML, /https:\/\/provider\.example\.invalid\/checkout\/abc/, 'the server-provided checkout URL is surfaced');
     assert.doesNotMatch(hosted.root.innerHTML, /dashboard\.dana\.id|dana\.id\/api/, 'no provider endpoint is hard-coded in the client');
 
+    // A server that has no payment provider configured refuses, and the client only reports it:
+    // no order is invented, no token appears, no money can move.
+    const refused = makeHarness({ api: makeApi({
+      createPaymentOrder: async () => ({ ok: false, status: 503, code: 'PAYMENTS_NOT_CONFIGURED',
+        message: 'Pembayaran otomatis belum diaktifkan pada server ini.' })
+    }) }); await tick();
+    refused.qa.setVerifiedAccount(baseAccount());
+    refused.qa.state.page = 'premium-access'; refused.qa.render();
+    await refused.qa.startPremiumPayment();
+    assert.equal(refused.qa.state.paymentOrder, null, 'a refused purchase leaves no local order behind');
+    assert.match(refused.root.innerHTML, /Pembayaran otomatis belum diaktifkan/, 'the server refusal is shown verbatim');
+    assert.ok(!refused.qa.state.accessTokenInput, 'no token is produced from a refused purchase');
+
+    // The shipped APK has no API origin configured (EQ_API_BASE_URL empty), so this is the
+    // default device state: nothing on the Premium page can start a payment.
+    const unconfigured = makeHarness({ api: makeApi({
+      isConfigured: () => false, health: async () => ({ ok: false, code: 'API_NOT_CONFIGURED' })
+    }) }); await tick();
+    unconfigured.qa.state.page = 'premium-access'; unconfigured.qa.render();
+    assert.match(unconfigured.root.innerHTML, /Hubungkan akun email/, 'without a server the page asks for an account first');
+    assert.doesNotMatch(unconfigured.root.innerHTML, /Bayar Rp5.000 \(DANA\)/, 'no purchase button exists without a configured server');
+    assert.doesNotMatch(unconfigured.root.innerHTML, /payment-start/, 'no purchase action is reachable at all');
+
     // A guest demo session has no email account to bind Premium to, so buying is walked to login first.
     const guestBuyer = makeHarness({ api: payApi }); await tick();
     guestBuyer.qa.setVerifiedAccount(baseAccount({ anonymous: true }));

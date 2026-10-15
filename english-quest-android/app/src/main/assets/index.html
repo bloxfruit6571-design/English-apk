@@ -12,7 +12,18 @@
 </head>
 <body>
   <div id="app"></div>
-  <script>window.EQ_ALLOW_HTTP_DEV = location.protocol === 'http:' && ['localhost','127.0.0.1','::1'].includes(location.hostname);</script>
+  <script>
+    // Plain-HTTP servers are only ever allowed for loopback development. Inside the Android app the
+    // page origin is the WebView asset origin (https), so the native bridge is asked instead: it
+    // reports true only for debug builds compiled with -PEQ_ALLOW_HTTP_DEV=1.
+    window.EQ_ALLOW_HTTP_DEV = (location.protocol === 'http:' && ['localhost', '127.0.0.1', '::1'].includes(location.hostname))
+      || (function () {
+        try {
+          const bridge = window.EnglishQuestAndroid;
+          return !!(bridge && typeof bridge.isHttpDevAllowed === 'function' && bridge.isHttpDevAllowed() === true);
+        } catch (_) { return false; }
+      })();
+  </script>
   <script defer src="./library-data.js"></script>
   <script defer src="./mission-data.js"></script>
   <script defer src="./mission-data-extras.js"></script>

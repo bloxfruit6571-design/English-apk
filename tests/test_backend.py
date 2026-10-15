@@ -63,6 +63,44 @@ class BackendAccessTests(unittest.TestCase):
         self.assertEqual(answer["question_id"], qid)
         self.assertIsNone(answer["answer_hash"], "legacy-used questions remain consumed after migration")
 
+    def test_registration_password_policy_email_and_duplicate_handling(self):
+        """The documented registration contract: minimum 6 characters, valid email, one account
+        per email, PBKDF2 hashing at rest, and a usable login afterwards."""
+        ip = "198.51.100.41"
+        with self.assertRaises(api.ApiError) as short:
+            self.store.register("short@example.test", "ab12c", ip)          # five characters
+        self.assertEqual(short.exception.code, "WEAK_PASSWORD")
+        self.assertIn(str(api.PASSWORD_MIN_LENGTH), short.exception.message)
+
+        created = self.store.register("six@example.test", "ab12cd", ip)       # exactly six
+        account = self.store.authenticate(created["session_token"])
+        self.assertEqual(account["email"], "six@example.test")
+        self.assertEqual(account["role"], "user")
+        status = self.store.account_status(account)
+        self.assertFalse(status["premium"], "a new account never starts Premium")
+        self.assertEqual(status["demo_remaining"], api.DEMO_LIMIT)
+        with self.store.connection() as db:
+            row = db.execute(
+                "SELECT password_salt, password_hash FROM users WHERE email=?", ("six@example.test",)
+            ).fetchone()
+        self.assertNotEqual(row["password_hash"], "ab12cd", "the password must not be stored in clear text")
+        # Stored as base64url: a 16-byte salt and a 32-byte PBKDF2-HMAC-SHA256 digest.
+        self.assertRegex(row["password_salt"], r"^[A-Za-z0-9_-]{22}==$")
+        self.assertRegex(row["password_hash"], r"^[A-Za-z0-9_-]{43}=$", "PBKDF2-HMAC-SHA256 digest expected")
+
+        login = self.store.login("six@example.test", "ab12cd", ip)
+        self.assertEqual(self.store.authenticate(login["session_token"])["email"], "six@example.test")
+        with self.assertRaises(api.ApiError) as wrong:
+            self.store.login("six@example.test", "wrong-password", ip)
+        self.assertEqual(wrong.exception.code, "INVALID_CREDENTIALS")
+
+        with self.assertRaises(api.ApiError) as duplicate:
+            self.store.register("six@example.test", "ab12cd", ip)
+        self.assertEqual(duplicate.exception.code, "ACCOUNT_EXISTS")
+        with self.assertRaises(api.ApiError) as invalid_email:
+            self.store.register("not-an-email", "ab12cd", ip)
+        self.assertEqual(invalid_email.exception.code, "INVALID_EMAIL")
+
     def test_new_account_starts_server_authoritative_demo(self):
         user, _, _ = self.user()
         status = self.store.account_status(user)
