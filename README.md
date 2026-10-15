@@ -1,6 +1,12 @@
 # English Quest
 
-English Quest adalah aplikasi belajar bahasa Inggris offline-first dalam bentuk PWA dan APK Android WebView. Pelajaran utama, artikel perpustakaan, ilustrasi, karakter, dan model Vosk tetap dibundel lokal. Saat backend tersedia, sesi akun dan jatah demo 10-soal diverifikasi server; jika backend tidak tersedia, tersedia demo lokal terbatas (bukan anti-tamper server-grade). Token Premium dan peran admin selalu memerlukan verifikasi server. Progres belajar tetap tersimpan lokal dan tidak dihapus saat akun dibuat atau Premium diaktifkan.
+> **Status hosting terbaru:** lihat [Laporan A–L](LAPORAN-HOSTING-PREMIUM.md) dan
+> [pilihan hosting](deploy/PILIHAN-HOSTING.md). Belum ada backend HTTPS publik yang diuji.
+> APK lama di root bukan build perbaikan akun. DANA produksi belum aktif.
+> Berkas deployment perlu diterapkan dari commit persiapan; konfigurasi VPS tidak langsung
+> kompatibel dengan Render/Railway tanpa adapter yang diuji.
+
+English Quest adalah aplikasi belajar bahasa Inggris offline-first dalam bentuk PWA dan APK Android WebView. Pelajaran utama, artikel perpustakaan, ilustrasi, karakter, dan model Vosk tetap dibundel lokal. Saat backend tersedia, sesi akun dan jatah demo 5-soal diverifikasi server; jika backend tidak tersedia, tersedia demo lokal terbatas (bukan anti-tamper server-grade). Token Premium dan peran admin selalu memerlukan verifikasi server. Progres belajar tetap tersimpan lokal dan tidak dihapus saat akun dibuat atau Premium diaktifkan.
 
 ## Menjalankan dan memasang
 

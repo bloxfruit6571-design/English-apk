@@ -562,6 +562,35 @@ async function waitForHealth(base, budgetMs = 15000) {
       }
     }
 
+    /* 13. The register button follows the build configuration, and the password field carries the
+       six-character rule plus the show/hide control. This is the user-visible half of the bug:
+       an unconfigured build must keep the button disabled and say why. */
+    {
+      const unconfigured = makeHarness({ api: { isConfigured: () => false } });
+      unconfigured.qa.state.accessFlow = 'demo';
+      unconfigured.qa.state.authTab = 'register';
+      unconfigured.qa.state.page = 'access-auth';
+      unconfigured.qa.render();
+      const cold = unconfigured.root.innerHTML;
+      assert.match(cold, /data-action="access-auth-submit"[^>]*disabled/,
+        'without a configured server the register button must stay disabled');
+      assert.match(cold, /Server akun belum dikonfigurasi/,
+        'the disabled button must explain that no account server is configured');
+
+      const configured = makeHarness({ api: { isConfigured: () => true } });
+      configured.qa.state.accessFlow = 'demo';
+      configured.qa.state.authTab = 'register';
+      configured.qa.state.page = 'access-auth';
+      configured.qa.render();
+      const ready = configured.root.innerHTML;
+      assert.equal(/data-action="access-auth-submit"[^>]*disabled/.test(ready), false,
+        'with a configured server the register button must be tappable');
+      assert.match(ready, /minlength="6"/, 'the password field advertises the six-character minimum');
+      assert.match(ready, /minimal 6 karakter/, 'the visible label states the six-character rule');
+      assert.match(ready, /data-action="toggle-password-visibility"/, 'the show/hide control is rendered');
+      record('the register button follows the configuration and the password field shows min 6 + toggle');
+    }
+
     console.log(`Client registration: ${results.length} groups passed`);
     for (const name of results) console.log(`  ✓ ${name}`);
   } finally {

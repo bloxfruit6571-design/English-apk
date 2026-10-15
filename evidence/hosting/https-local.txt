@@ -1,0 +1,37 @@
+=== Pemeriksa kesiapan produksi English Quest ===
+Konfigurasi dibaca dari: /tmp/eq-hosting-check-ft2zj_i0/config
+=== Memeriksa konfigurasi ===
+
+=== Uji fungsional sementara: mode proxy ===
+
+=== Uji fungsional sementara: mode tls ===
+
+Catatan: pengujian di atas memakai database SEMENTARA di folder sementara dan tidak menyentuh database produksi.
+Lulus hanya berarti pemeriksaan lokal; HTTPS publik dan HP belum diuji.
+
+=== Hasil pemeriksaan ===
+  [OK ] EQ_TOKEN_PEPPER >= 32 byte — nilai tidak ditampilkan
+  [OK ] Folder database dapat ditulis — /tmp/eq-hosting-check-ft2zj_i0
+  [OK ] EQ_ALLOWED_ORIGINS benar — https://appassets.androidplatform.net
+  [OK ] Mode reverse proxy — backend 127.0.0.1:8088, TLS oleh proxy
+  [OK ] EQ_PORT valid — 8088
+  [OK ] Versi Python — 3.13.16
+  [OK ] Reverse proxy TLS: /api/health — HTTP 200
+  [OK ] Reverse proxy TLS: preflight CORS — HTTP 204, ACAO=https://appassets.androidplatform.net
+  [OK ] Reverse proxy TLS: pendaftaran akun (6 karakter) — HTTP 201
+  [OK ] Reverse proxy TLS: sesi membaca akun — HTTP 200 akun=siap-3191696c@example.test
+  [OK ] Reverse proxy TLS: login ulang — HTTP 200
+  [OK ] Reverse proxy TLS: kata sandi 5 karakter ditolak — HTTP 400 WEAK_PASSWORD
+  [OK ] Reverse proxy TLS: email ganda ditolak — HTTP 409 ACCOUNT_EXISTS
+  [OK ] Backend polos di belakang proxy: menolak koneksi non-HTTPS — HTTP 400 HTTPS_REQUIRED
+  [OK ] Backend polos di belakang proxy: /api/health pun menolak non-HTTPS — HTTP 400
+  [OK ] Klien JS asli melalui HTTPS (daftar/login/gagal koneksi) — exit=0 | OK   register() melaporkan kegagalan jaringan → NETWORK_ERROR | pesan yang dilihat pengguna: "Tidak dapat terhubung ke server. Periksa internet, lalu coba lagi." | REPRODUKSI: semua pemeriksaan sesuai
+  [OK ] TLS langsung: /api/health — HTTP 200
+  [OK ] TLS langsung: preflight CORS — HTTP 204, ACAO=https://appassets.androidplatform.net
+  [OK ] TLS langsung: pendaftaran akun (6 karakter) — HTTP 201
+  [OK ] TLS langsung: sesi membaca akun — HTTP 200 akun=siap-4957d632@example.test
+  [OK ] TLS langsung: login ulang — HTTP 200
+  [OK ] TLS langsung: kata sandi 5 karakter ditolak — HTTP 400 WEAK_PASSWORD
+  [OK ] TLS langsung: email ganda ditolak — HTTP 409 ACCOUNT_EXISTS
+
+Ringkasan: 23 lulus, 0 peringatan, 0 gagal

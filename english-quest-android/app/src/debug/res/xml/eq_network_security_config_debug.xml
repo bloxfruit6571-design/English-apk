@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  DEBUG-ONLY network security config (lihat app/src/debug/AndroidManifest.xml).
+
+  Semua tetap HTTPS; satu-satunya pengecualian adalah loopback, supaya build debug dapat
+  berbicara dengan backend pengembangan yang diteruskan ke HP lewat `adb reverse`.
+  Tidak ada alamat LAN, host publik, atau build rilis yang dicakup pengecualian ini.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">127.0.0.1</domain>
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+</network-security-config>

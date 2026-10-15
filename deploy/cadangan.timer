@@ -1,0 +1,11 @@
+[Unit]
+Description=Jalankan cadangan database English Quest setiap hari pukul 03:15
+
+[Timer]
+OnCalendar=*-*-* 03:15:00
+Persistent=true
+RandomizedDelaySec=10m
+Unit=cadangan.service
+
+[Install]
+WantedBy=timers.target

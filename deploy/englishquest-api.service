@@ -1,0 +1,41 @@
+[Unit]
+Description=English Quest API (didengarkan di loopback, TLS lewat reverse proxy)
+Documentation=file:/opt/english-quest/deploy/README-DEPLOY.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=englishquest
+Group=englishquest
+WorkingDirectory=/opt/english-quest
+EnvironmentFile=/etc/english-quest/api.env
+ExecStartPre=/usr/bin/python3 /opt/english-quest/deploy/cek-kesiapan-produksi.py --tanpa-self-test
+ExecStart=/usr/bin/python3 /opt/english-quest/backend/server.py
+Restart=on-failure
+RestartSec=3
+KillSignal=SIGINT
+TimeoutStopSec=10
+
+# --- Pengerasan dasar (tanpa mengubah cara aplikasi bekerja) ---
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+LockPersonality=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+UMask=0077
+
+# Satu-satunya lokasi yang boleh ditulis: folder database.
+# Sesuaikan bila EQ_DB_PATH Anda berbeda.
+ReadWritePaths=/var/lib/english-quest
+
+[Install]
+WantedBy=multi-user.target

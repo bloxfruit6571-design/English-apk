@@ -1,0 +1,15 @@
+# Contoh jadwal cadangan bila server tidak memakai systemd timer.
+#
+# Pasang dengan:  sudo crontab -u englishquest -e
+# (atau crontab milik pengguna yang menjalankan backend)
+#
+# 1) Cadangkan setiap hari pukul 03:15.
+15 3 * * * EQ_DB_PATH=/var/lib/english-quest/english-quest.sqlite3 /usr/bin/python3 /opt/english-quest/deploy/cadangkan-db.py backup --simpan 14 >> /var/lib/english-quest/cadangan/cadangan.log 2>&1
+#
+# 2) Periksa keutuhan semua cadangan setiap Senin pukul 04:00.
+0 4 * * 1 EQ_DB_PATH=/var/lib/english-quest/english-quest.sqlite3 /usr/bin/python3 /opt/english-quest/deploy/cadangkan-db.py periksa >> /var/lib/english-quest/cadangan/cadangan.log 2>&1
+#
+# 3) Simpan juga salinan keluar server (wajib: cadangan di server yang sama tidak
+#    menolong bila disk/server hilang). Contoh menarik salinan ke komputer lain:
+#    rsync -av --delete user@server:/var/lib/english-quest/cadangan/ ~/eq-cadangan/
+#    (jalankan dari komputer Anda, bukan dari server)

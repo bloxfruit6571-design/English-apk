@@ -1,0 +1,60 @@
+..................DITOLAK: checksum cadangan tidak ada atau tidak cocok.
+.GAGAL: cadangan tidak utuh (berkas rusak atau bukan database SQLite (file is not a database)); pemulihan dibatalkan.
+.GAGAL: database tidak ditemukan di /tmp/eq-backup-test-b4tw6err/missing
+..DITOLAK: tujuan harus berkas BARU tanpa WAL/SHM. Pulihkan ke staging, bukan DB aktif.
+.Ditolak: tambahkan --saya-yakin untuk benar-benar memulihkan ke berkas staging baru.
+..................................................
+----------------------------------------------------------------------
+Ran 73 tests in 19.602s
+
+OK
+Cadangan dibuat : /tmp/eq-backup-test-p2kgau4f/backups/english-quest-20261015-082506-1792052706773878605.sqlite3
+Ukuran          : 8.0 KiB
+SHA-256         : abf0688c7587235e0dfee219e44940e56183a072fe4c08fe12c8d51738de607e
+Keterangan      : integritas ok · 1 tabel
+Disimpan        : 1 berkas terbaru di /tmp/eq-backup-test-p2kgau4f/backups
+  [BAD] english-quest-20261015-082506-1792052706773878605.sqlite3: integritas ok · 1 tabel · SIDIK-JARI TIDAK ADA
+Cadangan dibuat : /tmp/eq-backup-test-wkjn1tq3/backups/english-quest-20261015-082506-1792052706777233820.sqlite3
+Ukuran          : 8.0 KiB
+SHA-256         : abf0688c7587235e0dfee219e44940e56183a072fe4c08fe12c8d51738de607e
+Keterangan      : integritas ok · 1 tabel
+Disimpan        : 1 berkas terbaru di /tmp/eq-backup-test-wkjn1tq3/backups
+  [BAD] english-quest-20261015-082506-1792052706777233820.sqlite3: berkas rusak atau bukan database SQLite (file is not a database) · SIDIK-JARI TIDAK COCOK
+Cadangan dibuat : /tmp/eq-backup-test-ox_ogw6d/backups/english-quest-20261015-082506-1792052706779172322.sqlite3
+Ukuran          : 8.0 KiB
+SHA-256         : abf0688c7587235e0dfee219e44940e56183a072fe4c08fe12c8d51738de607e
+Keterangan      : integritas ok · 1 tabel
+Disimpan        : 1 berkas terbaru di /tmp/eq-backup-test-ox_ogw6d/backups
+  [OK ] english-quest-20261015-082506-1792052706779172322.sqlite3: integritas ok · 1 tabel · sidik-jari cocok
+Salinan staging dipulihkan: /tmp/eq-backup-test-ox_ogw6d/restored.sqlite3. DB aktif tidak disentuh.
+Uji staging; hentikan layanan sebelum pergantian path database yang disetujui operator.
+Cadangan dibuat : /tmp/eq-backup-test-lhx3b4t9/backups/english-quest-20261015-082506-1792052706781017092.sqlite3
+Ukuran          : 8.0 KiB
+SHA-256         : abf0688c7587235e0dfee219e44940e56183a072fe4c08fe12c8d51738de607e
+Keterangan      : integritas ok · 1 tabel
+Disimpan        : 1 berkas terbaru di /tmp/eq-backup-test-lhx3b4t9/backups
+Cadangan dibuat : /tmp/eq-backup-test-0dbufwmu/backups/english-quest-20261015-082506-1792052706782429442.sqlite3
+Ukuran          : 8.0 KiB
+SHA-256         : abf0688c7587235e0dfee219e44940e56183a072fe4c08fe12c8d51738de607e
+Keterangan      : integritas ok · 1 tabel
+Disimpan        : 1 berkas terbaru di /tmp/eq-backup-test-0dbufwmu/backups
+Cadangan dibuat : /tmp/eq-backup-test-mbdebbuz/backups/english-quest-20261015-082506-1792052706783503262.sqlite3
+Ukuran          : 8.0 KiB
+SHA-256         : abf0688c7587235e0dfee219e44940e56183a072fe4c08fe12c8d51738de607e
+Keterangan      : integritas ok · 1 tabel
+Disimpan        : 1 berkas terbaru di /tmp/eq-backup-test-mbdebbuz/backups
+Cadangan dibuat : /tmp/eq-backup-test-mbdebbuz/backups/english-quest-20261015-082506-1792052706784076802.sqlite3
+Ukuran          : 8.0 KiB
+SHA-256         : abf0688c7587235e0dfee219e44940e56183a072fe4c08fe12c8d51738de607e
+Keterangan      : integritas ok · 1 tabel
+Disimpan        : 2 berkas terbaru di /tmp/eq-backup-test-mbdebbuz/backups
+Cadangan dibuat : /tmp/eq-backup-test-mbdebbuz/backups/english-quest-20261015-082506-1792052706784607472.sqlite3
+Ukuran          : 8.0 KiB
+SHA-256         : abf0688c7587235e0dfee219e44940e56183a072fe4c08fe12c8d51738de607e
+Keterangan      : integritas ok · 1 tabel
+Disimpan        : 2 berkas terbaru di /tmp/eq-backup-test-mbdebbuz/backups
+Cadangan dibuat : /tmp/eq-backup-test-mbdebbuz/backups/english-quest-20261015-082506-1792052706785300922.sqlite3
+Ukuran          : 8.0 KiB
+SHA-256         : abf0688c7587235e0dfee219e44940e56183a072fe4c08fe12c8d51738de607e
+Keterangan      : integritas ok · 1 tabel
+Disimpan        : 2 berkas terbaru di /tmp/eq-backup-test-mbdebbuz/backups

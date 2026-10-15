@@ -1,0 +1,19 @@
+APK      : english-quest-android/app/build/outputs/apk/release/app-release-unsigned.apk
+Ukuran   : 84366598 byte
+SHA-256  : e9d64ec75c4f5e81adcb371947c07d7cde7448fbbbf02dbf63749a7d6631c30f
+Paket    : package: name='com.englishquest.app' versionCode='13' versionName='1.7.1' platformBuildVersionName='15' platformBuildVersionCode='35' compileSdkVersion='35' com
+
+=== Hasil ===
+  [OK ] Tidak ada XML izin cleartext khusus debug
+  [OK ] Tidak ada alamat loopback di dalam APK
+  [OK ] Jembatan native getApiBaseUrl ada di dex
+  [OK ] Jembatan native isHttpDevAllowed ada di dex
+  [XX ] Origin belum ditentukan: bukan APK siap online — pemeriksaan struktur boleh dilanjutkan, tetapi jangan distribusikan
+  [OK ] Klien memakai batas kata sandi 6 karakter
+  [OK ] Tidak ada sisa aturan 12 karakter
+  [OK ] usesCleartextTraffic=false — false
+  [OK ] Tidak memakai networkSecurityConfig khusus
+
+1 TEMUAN GAGAL — jangan dibagikan sebelum diperbaiki
+
+Exit=1 (penolakan tanpa origin diharapkan)

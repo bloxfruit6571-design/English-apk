@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  DEBUG-ONLY overlay (app/src/debug). Tidak ikut ke build rilis.
+
+  Mengapa ada: manifest utama menetapkan android:usesCleartextTraffic="false", sehingga Android
+  memblokir semua HTTP polos — termasuk http://127.0.0.1:8088 yang dipakai saat menguji
+  pendaftaran dengan backend lokal lewat `adb reverse tcp:8088 tcp:8088`. Tanpa overlay ini,
+  WebView gagal dengan net::ERR_CLEARTEXT_NOT_PERMITTED dan tampak seolah "server mati".
+
+  Cakupan keringanan: hanya build debug. Rilis tetap usesCleartextTraffic="false". Berkas
+  network security config di bawah hanya mengizinkan cleartext untuk loopback, sejalan dengan
+  aturan klien di access-client.js (HTTP polos hanya untuk localhost/127.0.0.1/::1 dan hanya
+  bila build melaporkan EQ_ALLOW_HTTP_DEV=1 lewat jembatan native).
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:networkSecurityConfig="@xml/eq_network_security_config_debug"
+        android:usesCleartextTraffic="true"
+        tools:replace="android:usesCleartextTraffic" />
+</manifest>

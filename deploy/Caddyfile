@@ -1,0 +1,21 @@
+# TEMPLATE BELUM DI-DEPLOY. Ganti domain setelah persetujuan dan DNS siap.
+# Caddy menjadi edge langsung (tanpa CDN/proxy lain). Jangan aktifkan access log.
+GANTI_DOMAIN_ANDA {
+    @admin path /api/admin* /admin*
+    handle @admin {
+        respond 404
+    }
+    handle /api/* {
+        request_body {
+            max_size 64KB
+        }
+        reverse_proxy 127.0.0.1:8088 {
+            header_up X-Forwarded-Proto https
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Real-IP {remote_host}
+        }
+    }
+    handle {
+        respond 404
+    }
+}
