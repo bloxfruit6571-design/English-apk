@@ -164,7 +164,7 @@ adb reverse tcp:8088 tcp:8088
 
 ## 9. Status repository dan GitHub
 
-- **Branch sudah terkirim ke GitHub (15 Oktober 2026):** `refs/heads/audit-baseline-1.7.1` → commit `1486d0d3fff682b4bfbd262d0d3f52fa17889f08` pada `github.com/bloxfruit6571-design/English-apk`. Branch `main` **tidak disentuh** (tetap `d05e4e6`), sesuai aturan tidak mengubah `main` secara langsung.
+- **Branch sudah terkirim ke GitHub (15 Oktober 2026):** `refs/heads/audit-baseline-1.7.1` pada `github.com/bloxfruit6571-design/English-apk`, berisi commit perbaikan `1486d0d3fff682b4bfbd262d0d3f52fa17889f08` beserta commit dokumentasi laporan ini di atasnya. Branch `main` **tidak disentuh** (tetap `d05e4e6`), sesuai aturan tidak mengubah `main` secara langsung.
 - **Pull request** bisa dibuat di: <https://github.com/bloxfruit6571-design/English-apk/pull/new/audit-baseline-1.7.1> — sengaja tidak dibuatkan otomatis supaya Anda menentukan judul/deskripsi dan meninjau isinya lebih dulu.
 - Riwayat pada branch: `6bd40a4` → `e691326` → `36bff74` → `c2aac64` (pembayaran Premium) → **`1486d0d`** (perbaikan pendaftaran; sekaligus membawa perbaikan CTA hasil misi demo yang sebelumnya belum sempat di-commit).
 - **Token akses yang Anda kirim hanya dipakai untuk operasi push ini.** Token tidak ditulis ke `.git/config`, tidak ke `~/.git-credentials`, dan tidak muncul di keluaran perintah (helper kredensial membaca dari berkas sementara di `/tmp` yang kemudian dihapus). **Cabut/rotasi token itu sekarang** karena sudah dikirim dalam bentuk teks di percakapan.
