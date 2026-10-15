@@ -1,0 +1,62 @@
+=== FAILURE-PATH PROBE (backend unmodified) ===
+
+GET /api/health                                      -> 200 | {"ok":true,"service":"english-quest","status":"ready"}
+GET /api/unknown-endpoint (no auth)                  -> 401 | {"ok":false,"code":"AUTH_REQUIRED","message":"Silakan masuk ke akun English Quest."}
+GET /api/admin/summary (no auth)                     -> 401 | {"ok":false,"code":"AUTH_REQUIRED","message":"Silakan masuk ke akun English Quest."}
+POST /api/register invalid JSON                      -> 400 | {"ok":false,"code":"INVALID_JSON","message":"Format permintaan tidak valid."}
+POST /api/register empty body, no Content-Length     -> 400 | {"ok":false,"code":"INVALID_JSON","message":"Format permintaan tidak valid."}
+POST /api/register body > 32KB                       -> 413 | {"ok":false,"code":"BODY_TOO_LARGE","message":"Permintaan terlalu besar."}
+POST /api/register wrong Content-Type (text/plain, valid JSON) -> 201 | {"ok":true,"session_token":"vnUmYw9ChYbzHcaz9aCxwoN9GwwJtlc_VWR2LQHJei0","session_expires_at":"2026-11-14T05:47:36Z"}
+POST /api/premium/activate invalid token format (no auth) -> 401 | {"ok":false,"code":"AUTH_REQUIRED","message":"Silakan masuk ke akun English Quest."}
+POST /api/premium/activate valid format, no session  -> 401 | {"ok":false,"code":"AUTH_REQUIRED","message":"Silakan masuk ke akun English Quest."}
+GET /api/me with garbage bearer                      -> 401 | {"ok":false,"code":"AUTH_REQUIRED","message":"Silakan masuk ke akun English Quest."}
+GET /api/me with no bearer                           -> 401 | {"ok":false,"code":"AUTH_REQUIRED","message":"Silakan masuk ke akun English Quest."}
+GET /../etc/passwd (path traversal)                  -> 404 | <!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Error response</title>
+    </head>
+    <body>
+        <h1>Er…
+GET /backend/server.py (sensitive source)            -> 404 | <!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Error response</title>
+    </head>
+    <body>
+        <h1>Er…
+GET /backend/data/ (db dir)                          -> 404 | <!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Error response</title>
+    </head>
+    <body>
+        <h1>Er…
+HEAD / (browser/proxy HEAD request)                  -> 404 | 
+GET /admin (dashboard html)                          -> 200 | <!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover…
+GET /tests/test_backend.py                           -> 404 | <!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Error response</title>
+    </head>
+    <body>
+        <h1>Er…
+
+--- login rate limit (limit is 12 / 900s on the same IP) ---
+status codes 1..15: [401, 401, 401, 401, 401, 401, 401, 401, 401, 401, 401, 401, 401, 401, 401]
+429 appears after attempt: NEVER
+
+--- expired-session housekeeping ---
+session rows before=1, marked-expired=1, after API call=2
+
+--- rate_limits table growth (never pruned?) ---
+stale buckets older than epoch retained: still_present=False, total_buckets=3
+
+Probe finished (no project files were modified).
