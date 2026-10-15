@@ -6,7 +6,7 @@ const path = require('node:path');
 const ROOT = path.resolve(__dirname, '..');
 const baseAccount = (extra = {}) => ({
   user_id: 'demo-user', email: 'learner@example.test', role: 'user', anonymous: false,
-  premium: false, demo_limit: 10, demo_used: 0, demo_remaining: 10,
+  premium: false, demo_limit: 5, demo_used: 0, demo_remaining: 5,
   used_question_ids: [], ...extra
 });
 function makeApi(extra = {}) {
@@ -49,7 +49,7 @@ function makeHarness({ profile, api } = {}) {
   for (const filename of ['library-data.js','mission-data.js','mission-data-extras.js']) {
     vm.runInContext(fs.readFileSync(path.join(ROOT,filename),'utf8'), context, { filename });
   }
-  const source = fs.readFileSync(path.join(ROOT,'app.js'),'utf8') + `\nwindow.__eqQA={state,profile,get accessState(){return accessState},setVerifiedAccount,setLocalDemoAccess,startFreeDemo,submitAccessAuth,activatePremiumToken,logoutAccess,syncLocalDemoUsage,hasAppAccess,isLocalDemo,demoCanOpenPage,demoActionAllowed,decorateDemoLocks,render,navigate,startMission,submitMissionAnswer,completeMissionStep,missionAvailability,globalModeAccess,DEMO_MISSION_IDS,DEMO_QUESTION_IDS,missionById,libraryArticleById,AccessApi};`;
+  const source = fs.readFileSync(path.join(ROOT,'app.js'),'utf8') + `\nwindow.__eqQA={state,profile,get accessState(){return accessState},setVerifiedAccount,setLocalDemoAccess,startFreeDemo,submitAccessAuth,activatePremiumToken,logoutAccess,syncLocalDemoUsage,hasAppAccess,isLocalDemo,demoCanOpenPage,demoActionAllowed,decorateDemoLocks,render,navigate,startMission,submitMissionAnswer,completeMissionStep,missionAvailability,globalModeAccess,DEMO_MISSION_IDS,DEMO_QUESTION_IDS,missionById,libraryArticleById,AccessApi,startPremiumPayment,refreshPremiumPaymentState,claimPremiumPaymentToken,refreshPaymentConfig,paymentStatusLabel,formatRupiah};`;
   vm.runInContext(source, context, { filename: 'app.js', timeout: 15000 });
   return { qa: window.__eqQA, root: appRoot, window, localStorage, elements, api: accessApi };
 }
@@ -70,19 +70,24 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
   assert.match(root.innerHTML, /Aktivasi Premium/);
   assert.match(root.innerHTML, /Masuk \/ Buat Akun/);
   assert.match(root.innerHTML, /Server akun belum dikonfigurasi/);
-  const demoQuestions=['easy-greetings','easy-alphabet-spelling'].flatMap(id=>qa.missionById[id].questions.map(question=>question.id));
-  assert.equal(demoQuestions.length,10,'the two complete Easy demo missions contain ten questions');
-  assert.equal(new Set(demoQuestions).size,10,'all demo question IDs are unique across both missions');
-  assert.equal(qa.DEMO_QUESTION_IDS.size,10,'the quota bank contains exactly ten stable IDs');
+  // Business rule: the public demo is five unique Easy questions (one complete Easy mission).
+  const demoQuestions=['easy-greetings'].flatMap(id=>qa.missionById[id].questions.map(question=>question.id));
+  assert.equal(demoQuestions.length,5,'the demo mission contains five questions');
+  assert.equal(new Set(demoQuestions).size,5,'all demo question IDs are unique');
+  assert.equal(qa.DEMO_QUESTION_IDS.size,5,'the quota bank contains exactly five stable IDs');
+  assert.equal(qa.accessState.demoLimit,5,'the client mirrors the five-question server limit');
+  assert.equal(qa.accessState.demoRemaining,5,'a fresh demo starts with five remaining questions');
+  assert.ok(qa.DEMO_MISSION_IDS.has('easy-greetings')&&qa.DEMO_MISSION_IDS.size===1,'only the first Easy mission is demo content');
   qa.setVerifiedAccount(baseAccount());
   assert.equal(qa.globalModeAccess('medium').unlocked, false, 'retained local XP cannot unlock premium demo modes');
   assert.equal(qa.profile.completed.length, 2, 'connecting access must not clear local progress');
   assert.equal(qa.profile.xp, 500, 'local XP is preserved');
   assert.equal(qa.missionAvailability('easy', 0).available, true, 'the first complete Easy demo mission is available');
+  assert.equal(qa.missionAvailability('easy', 1).available, false, 'the second Easy mission is Premium content');
   assert.equal(qa.missionAvailability('easy', 2).available, false, 'non-demo Easy missions are locked');
 
   // 4–5: direct premium routes are blocked; Home/settings/progress/activation stay reachable after quota.
-  qa.setVerifiedAccount(baseAccount({ demo_used:10, demo_remaining:0, used_question_ids:Array.from(qa.DEMO_QUESTION_IDS) }));
+  qa.setVerifiedAccount(baseAccount({ demo_limit:5, demo_used:5, demo_remaining:0, used_question_ids:Array.from(qa.DEMO_QUESTION_IDS) }));
   qa.state.missionPlay = null; qa.profile.activeMission = null; qa.state.page = 'mission-play'; qa.render();
   assert.equal(qa.state.page, 'premium-access', 'direct entry to a new question is guarded');
   assert.equal(qa.demoCanOpenPage('mission-play'), false);
@@ -103,7 +108,7 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
   serverQuestionApi.consume=async qid=>{serverCalls++;return {ok:false,code:'NETWORK_ERROR',message:'offline'};};
   const serverDemo=makeHarness({api:serverQuestionApi});await tick();
   const serverQA=serverDemo.qa;
-  serverQA.setVerifiedAccount(baseAccount({demo_used:1,demo_remaining:9,used_question_ids:['easy-greetings-q1']}));
+  serverQA.setVerifiedAccount(baseAccount({demo_used:1,demo_remaining:4,used_question_ids:['easy-greetings-q1']}));
   serverQA.profile.activeMission=null;
   assert.equal(serverQA.startMission('easy','easy-greetings'),true);
   assert.equal(serverQA.state.missionPlay.index,1,'a question already consumed on server is skipped');
@@ -113,7 +118,7 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
   assert.equal(serverQA.isLocalDemo(),true,'network loss switches to restricted local fallback');
   assert.equal(serverQA.state.missionPlay.answered,true,'offline fallback counts the submitted answer once');
   assert.equal(serverQA.accessState.demoUsed,2);
-  assert.equal(serverQA.accessState.demoRemaining,8);
+  assert.equal(serverQA.accessState.demoRemaining,3);
   const qidAfterFallback=serverQA.profile.localDemoUsedQuestionIds.length;
   await serverQA.submitMissionAnswer();
   assert.equal(serverCalls,1,'duplicate submit never makes another request');
@@ -148,38 +153,34 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
     await qa.completeMissionStep();
   }
   for(let i=0;i<5;i++)await answerCurrent(local.qa);
-  assert.equal(local.qa.accessState.demoUsed,5);
-  assert.equal(local.qa.accessState.demoRemaining,5);
-  assert.equal(local.qa.profile.localDemoUsedQuestionIds.length,5);
-  assert.equal(local.qa.missionAvailability('easy',1).available,true,'the second complete demo mission unlocks after the first five unique questions');
-  assert.equal(local.qa.startMission('easy','easy-alphabet-spelling'),true);
-  for(let i=0;i<5;i++)await answerCurrent(local.qa);
-  assert.equal(local.qa.accessState.demoUsed,10);
+  assert.equal(local.qa.accessState.demoUsed,5,'the whole demo quota is five unique questions');
   assert.equal(local.qa.accessState.demoRemaining,0);
-  assert.equal(local.qa.profile.localDemoUsedQuestionIds.length,10);
+  assert.equal(local.qa.profile.localDemoUsedQuestionIds.length,5);
+  assert.equal(local.qa.missionAvailability('easy',1).available,false,'the second Easy mission belongs to Premium now');
+  assert.equal(local.qa.startMission('easy','easy-alphabet-spelling'),false,'a Premium mission cannot be started in demo mode');
   assert.equal(local.qa.demoCanOpenPage('home'),true);
   assert.equal(local.qa.demoCanOpenPage('stats'),true);
   assert.equal(local.qa.demoCanOpenPage('premium-access'),true);
   assert.equal(local.qa.demoCanOpenPage('mission-play'),false);
-  assert.equal(local.qa.startMission('easy','easy-numbers-time'),false,'another question cannot start after the tenth answer');
+  assert.equal(local.qa.startMission('easy','easy-numbers-time'),false,'another question cannot start after the fifth answer');
   local.qa.navigate('stats');assert.equal(local.qa.state.page,'stats');
   local.qa.navigate('settings');assert.equal(local.qa.state.page,'settings');
   local.qa.navigate('story');assert.equal(local.qa.state.page,'premium-access');
   const savedProfile=JSON.parse(local.localStorage.getItem('englishQuest.profile.v1'));
   const restarted=makeHarness({profile:savedProfile,api:makeApi({isConfigured:()=>false,health:async()=>({ok:false,code:'API_NOT_CONFIGURED'})})});await tick();
   await restarted.qa.startFreeDemo();
-  assert.equal(restarted.qa.accessState.demoUsed,10,'local quota survives app restart through profile/native persistence');
+  assert.equal(restarted.qa.accessState.demoUsed,5,'local quota survives app restart through profile/native persistence');
   assert.equal(restarted.qa.accessState.demoRemaining,0);
   assert.equal(restarted.qa.startMission('easy','easy-greetings'),false,'used local questions are not replayable');
 
   // 9: a successful server submission is counted once and a retry is idempotent on the client.
-  const successApi=makeApi();let accepted=0;successApi.consume=async qid=>{accepted++;return {ok:true,access_level:'demo',question_id:qid,consumed:true,duplicate:false,demo_used:1,demo_remaining:9};};
+  const successApi=makeApi();let accepted=0;successApi.consume=async qid=>{accepted++;return {ok:true,access_level:'demo',question_id:qid,consumed:true,duplicate:false,demo_used:1,demo_remaining:4};};
   const success=makeHarness({api:successApi});await tick();success.qa.setVerifiedAccount(baseAccount());
   assert.equal(success.qa.startMission('easy','easy-greetings'),true);
   success.qa.state.missionPlay.selected='Good morning!';
   await success.qa.submitMissionAnswer();
   assert.equal(accepted,1);assert.equal(success.qa.state.missionPlay.answered,true);
-  assert.equal(success.qa.accessState.demoUsed,1);assert.equal(success.qa.accessState.demoRemaining,9);
+  assert.equal(success.qa.accessState.demoUsed,1);assert.equal(success.qa.accessState.demoRemaining,4);
   await success.qa.submitMissionAnswer();assert.equal(accepted,1,'submitting an already answered question is a no-op');
 
   // 10: guest demo entry and local-ledger sync do not require token/email and stay account-backed when online.
@@ -187,7 +188,7 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
   const guestApi=makeApi({
     isConfigured:()=>true,hasSession:()=>hasSession,
     startDemo:async()=>{hasSession=true;return {ok:true,session_token:'opaque-test-session'};},
-    me:async()=>({ok:true,account:baseAccount({anonymous:true,demo_used:serverIds.length,demo_remaining:10-serverIds.length,used_question_ids:serverIds})}),
+    me:async()=>({ok:true,account:baseAccount({anonymous:true,demo_used:serverIds.length,demo_remaining:5-serverIds.length,used_question_ids:serverIds})}),
     syncDemo:async ids=>{serverIds=[...new Set([...serverIds,...ids])];return {ok:true,imported:ids.length};}
   });
   const guest=makeHarness({api:guestApi});await tick();await guest.qa.startFreeDemo();
@@ -196,12 +197,12 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
   assert.match(guest.root.innerHTML,/tanpa membuat akun|Demo tamu/i);
   const syncApi=makeApi();let syncedIds=[];
   syncApi.hasSession=()=>true;
-  syncApi.me=async()=>({ok:true,account:baseAccount({demo_used:syncedIds.length,demo_remaining:10-syncedIds.length,used_question_ids:syncedIds})});
+  syncApi.me=async()=>({ok:true,account:baseAccount({demo_used:syncedIds.length,demo_remaining:5-syncedIds.length,used_question_ids:syncedIds})});
   syncApi.syncDemo=async ids=>{syncedIds=[...new Set([...syncedIds,...ids])];return {ok:true,imported:ids.length};};
   const syncHarness=makeHarness({profile:{localDemoUsedQuestionIds:['easy-greetings-q1','easy-greetings-q2']},api:syncApi});await tick();
   assert.deepEqual(syncedIds,['easy-greetings-q1','easy-greetings-q2']);
   assert.equal(syncHarness.qa.accessState.demoUsed,2);
-  assert.equal(syncHarness.qa.accessState.demoRemaining,8);
+  assert.equal(syncHarness.qa.accessState.demoRemaining,3);
 
   let authSession=false;let authAccount=baseAccount({email:'new-learner@example.test'});let activatedToken='';
   const authApi=makeApi({
@@ -224,11 +225,11 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
   assert.equal(auth.qa.accessState.mode,'premium','Premium is granted only after the API reports it');
   assert.deepEqual(Array.from(auth.qa.profile.completed),['l1-1'],'Premium activation does not clear learning progress');
 
-  let loginSession=false;const loginApi=makeApi({isConfigured:()=>true,hasSession:()=>loginSession,login:async()=>{loginSession=true;return {ok:true,session_token:'login-session'};},me:async()=>({ok:true,account:baseAccount({email:'returning@example.test',demo_used:2,demo_remaining:8,used_question_ids:['easy-greetings-q1','easy-greetings-q2']})})});
+  let loginSession=false;const loginApi=makeApi({isConfigured:()=>true,hasSession:()=>loginSession,login:async()=>{loginSession=true;return {ok:true,session_token:'login-session'};},me:async()=>({ok:true,account:baseAccount({email:'returning@example.test',demo_used:2,demo_remaining:3,used_question_ids:['easy-greetings-q1','easy-greetings-q2']})})});
   const login=makeHarness({api:loginApi});await tick();login.qa.state.accessFlow='demo';login.qa.state.authTab='login';login.elements.set('#access-email',{value:'returning@example.test'});login.elements.set('#access-password',{value:'saved-password'});
   await login.qa.submitAccessAuth();
   assert.equal(login.qa.state.page,'home','Login returns to the app after verifying the existing account');
-  assert.equal(login.qa.accessState.demoRemaining,8);
+  assert.equal(login.qa.accessState.demoRemaining,3);
 
   // Server role—not a hidden control—drives the admin link, and account progress remains intact.
   const adminApi=makeApi({getApiBaseUrl:()=> 'https://api.example.test'});
@@ -251,5 +252,61 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
     assert.ok(smoke.root.innerHTML.length>100,`Route ${page} renders non-blank content`);
   }
 
-  console.log('Client gates: 10 acceptance groups passed (welcome/local fallback, full Easy demo, quota/restart, unique-submit, online guest/sync, premium fail-closed, progress, and server admin role); all 43 route renderers smoke-tested.');
+
+  // 11: the Premium purchase flow uses only server-provided data and never invents a payment page.
+  {
+    let created = 0, claimed = 0;
+    const order = {
+      ok: true, status: 201, order_id: 'EQO-SERVER-ORDER', provider: 'sandbox',
+      amount: 5000, currency: 'IDR', price_label: 'Rp5.000', status: 'created',
+      paid: false, token_issued: false, token_delivered: false, message: 'Pesanan dibuat.'
+    };
+    const payApi = makeApi({
+      paymentConfig: async () => ({ ok: true, price_idr: 5000, currency: 'IDR', provider: 'sandbox', available: true }),
+      createPaymentOrder: async () => { created++; return { ...order }; },
+      paymentOrder: async () => ({ ...order, paid: true, token_issued: true, token_pending: true, token_delivered: false, status: 'paid' }),
+      claimPaymentToken: async () => { claimed++; return { ok: true, order_id: 'EQO-SERVER-ORDER', token: 'EQP-' + 'A'.repeat(48) }; }
+    });
+    const buyer = makeHarness({ api: payApi }); await tick();
+    buyer.qa.setVerifiedAccount(baseAccount());
+    buyer.qa.state.page = 'premium-access'; buyer.qa.render();
+    await buyer.qa.refreshPaymentConfig();
+    assert.equal(buyer.qa.formatRupiah(5000), 'Rp5.000', 'the price is rendered in Indonesian rupiah');
+    assert.match(buyer.root.innerHTML, /Bayar Rp5.000 \(DANA\)/, 'the purchase button is offered to signed-in demo users');
+    assert.match(buyer.root.innerHTML, /akses permanen/, 'the offer states the access is permanent');
+    assert.match(buyer.root.innerHTML, /tanpa langganan/, 'the offer states there is no subscription');
+    assert.doesNotMatch(buyer.root.innerHTML, /target="_blank"/, 'no payment page is linked before the server provides one');
+    await buyer.qa.startPremiumPayment();
+    assert.equal(created, 1, 'one order is created per tap');
+    assert.equal(buyer.qa.state.paymentOrder.order_id, 'EQO-SERVER-ORDER', 'the order id comes from the server');
+    assert.equal(buyer.qa.state.paymentOrder.checkout, undefined, 'the client does not fabricate checkout data');
+    assert.doesNotMatch(buyer.root.innerHTML, /target="_blank"/, 'still no invented payment page');
+    assert.match(buyer.root.innerHTML, /EQO-SERVER-ORDER/);
+    await buyer.qa.refreshPremiumPaymentState();
+    assert.equal(buyer.qa.state.paymentOrder.paid, true, 'the verified state comes from the server');
+    assert.match(buyer.root.innerHTML, /Terima token Premium/);
+    await buyer.qa.claimPremiumPaymentToken();
+    assert.equal(claimed, 1);
+    assert.ok(buyer.qa.state.accessTokenInput.startsWith('EQP-'), 'the issued token is placed in the activation field');
+    assert.match(buyer.root.innerHTML, /Token Premium diterbitkan/);
+    assert.match(buyer.root.innerHTML, /Aktifkan Token/, 'activation stays the explicit, server-verified step');
+
+    // The client echoes a provider checkout URL only when the server actually sends one.
+    const hosted = makeHarness({ api: makeApi({
+      createPaymentOrder: async () => ({ ...order, checkout: { checkout_url: 'https://provider.example.invalid/checkout/abc' } })
+    }) }); await tick();
+    hosted.qa.setVerifiedAccount(baseAccount());
+    hosted.qa.state.page = 'premium-access'; hosted.qa.render();
+    await hosted.qa.startPremiumPayment();
+    assert.match(hosted.root.innerHTML, /https:\/\/provider\.example\.invalid\/checkout\/abc/, 'the server-provided checkout URL is surfaced');
+    assert.doesNotMatch(hosted.root.innerHTML, /dashboard\.dana\.id|dana\.id\/api/, 'no provider endpoint is hard-coded in the client');
+
+    // A guest demo session has no email account to bind Premium to, so buying is walked to login first.
+    const guestBuyer = makeHarness({ api: payApi }); await tick();
+    guestBuyer.qa.setVerifiedAccount(baseAccount({ anonymous: true }));
+    guestBuyer.qa.state.page = 'premium-access'; guestBuyer.qa.render();
+    assert.match(guestBuyer.root.innerHTML, /Hubungkan akun email/, 'guest sessions are told to create an account first');
+    assert.doesNotMatch(guestBuyer.root.innerHTML, /Bayar Rp5.000 \(DANA\)/, 'no purchase button is offered to a guest session');
+  }
+  console.log('Client gates: 11 acceptance groups passed (welcome/local fallback, full Easy demo, quota/restart, unique-submit, online guest/sync, premium fail-closed, progress, and server admin role); all 43 route renderers smoke-tested.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

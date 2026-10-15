@@ -289,7 +289,7 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
           account: {
             user_id: 'u-1', email: 'premium@example.test', role: 'user', anonymous: false,
             premium: true, premium_expires_at: '2030-01-01T00:00:00Z',
-            demo_limit: 10, demo_used: 3, demo_remaining: 7, used_question_ids: []
+            demo_limit: 5, demo_used: 3, demo_remaining: 2, used_question_ids: []
           }
         })
       }
@@ -298,7 +298,7 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
     await tick();
     assert.equal(harness.qa.hasVerifiedAccess(), true);
     assert.equal(harness.qa.isPremiumAccess(), true, 'server-confirmed Premium must unlock');
-    assert.equal(harness.qa.accessState.demoRemaining, 7);
+    assert.equal(harness.qa.accessState.demoRemaining, 2);
     record('server-confirmed Premium still unlocks (no regression)');
   }
 
@@ -315,11 +315,11 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
     qa.setLocalDemoAccess('offline', 'offline');
     const limit = qa.accessState.demoLimit;
     const remaining = qa.accessState.demoRemaining;
-    assert.equal(limit, 10);
-    assert.ok(remaining <= 10 && remaining >= 0, `remaining quota must stay within the limit, got ${remaining}`);
+    assert.equal(limit, 5);
+    assert.ok(remaining <= 5 && remaining >= 0, `remaining quota must stay within the limit, got ${remaining}`);
     assert.equal(qa.isPremiumAccess(), false);
-    assert.equal(qa.DEMO_QUESTION_IDS.size, 10, 'the demo bank stays at ten fixed question IDs');
-    record('offline fallback keeps a bounded 10-question demo quota');
+    assert.equal(qa.DEMO_QUESTION_IDS.size, 5, 'the demo bank stays at five fixed question IDs');
+    record('offline fallback keeps a bounded 5-question demo quota');
   }
 
   console.log(`Client failure paths: ${results.length} groups passed`);

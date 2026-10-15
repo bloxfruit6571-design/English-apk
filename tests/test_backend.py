@@ -67,16 +67,17 @@ class BackendAccessTests(unittest.TestCase):
         user, _, _ = self.user()
         status = self.store.account_status(user)
         self.assertEqual(status["access_level"], "demo")
-        self.assertEqual(status["demo_limit"], 10)
+        self.assertEqual(status["demo_limit"], api.DEMO_LIMIT)
+        self.assertEqual(status["demo_limit"], 5, "the public demo is five unique Easy questions")
         self.assertEqual(status["demo_used"], 0)
-        self.assertEqual(status["demo_remaining"], 10)
+        self.assertEqual(status["demo_remaining"], 5)
         self.assertEqual(status["used_question_ids"], [])
 
     def test_guest_demo_is_accountless_server_session_with_ip_start_limit(self):
         created = self.store.start_anonymous_demo("198.51.100.44")
         guest = self.store.authenticate(created["session_token"])
         self.assertTrue(self.store.account_status(guest)["anonymous"])
-        self.assertEqual(self.store.account_status(guest)["demo_remaining"], 10)
+        self.assertEqual(self.store.account_status(guest)["demo_remaining"], 5)
         for question_id in sorted(api.DEMO_QUESTION_IDS):
             self.store.consume_demo_question(guest, question_id, "198.51.100.44", "one submitted answer")
         self.assertEqual(self.store.account_status(guest)["demo_remaining"], 0)
@@ -107,17 +108,17 @@ class BackendAccessTests(unittest.TestCase):
             self.store.sync_demo_questions(user, ["not-in-the-demo"], "198.51.100.10")
         self.assertEqual(invalid.exception.code, "QUESTION_NOT_IN_DEMO")
 
-    def test_demo_sync_and_answer_submission_share_atomic_ten_question_quota(self):
+    def test_demo_sync_and_answer_submission_share_atomic_demo_quota(self):
         user, _, _ = self.user()
         ids = sorted(api.DEMO_QUESTION_IDS)
         barrier = threading.Barrier(2)
         outcomes = []
         def sync_many():
             barrier.wait()
-            outcomes.append(self.store.sync_demo_questions(user, ids[:8], "198.51.100.10"))
+            outcomes.append(self.store.sync_demo_questions(user, ids[:3], "198.51.100.10"))
         def consume_many():
             barrier.wait()
-            for qid in ids[8:]:
+            for qid in ids[3:]:
                 try:
                     self.store.consume_demo_question(user, qid, "198.51.100.10", "submitted")
                 except api.ApiError as exc:
@@ -128,10 +129,10 @@ class BackendAccessTests(unittest.TestCase):
         self.assertFalse(first.is_alive() or second.is_alive())
         status = self.store.account_status(user)
         self.assertLessEqual(status["demo_used"], api.DEMO_LIMIT)
-        self.assertEqual(status["demo_used"], 10)
+        self.assertEqual(status["demo_used"], api.DEMO_LIMIT)
         self.assertEqual(status["demo_remaining"], 0)
 
-    def test_ten_unique_answers_cut_off_and_duplicates_do_not_increment(self):
+    def test_five_unique_answers_cut_off_and_duplicates_do_not_increment(self):
         user, _, _ = self.user()
         original = api.DEMO_QUESTION_IDS
         extra = "demo-extra-question"
@@ -142,7 +143,7 @@ class BackendAccessTests(unittest.TestCase):
                 self.assertTrue(result["consumed"])
             duplicate = self.store.consume_demo_question(user, ids[0], "198.51.100.10")
             self.assertTrue(duplicate["duplicate"])
-            self.assertEqual(duplicate["demo_used"], 10)
+            self.assertEqual(duplicate["demo_used"], 5)
             with self.assertRaises(api.ApiError) as changed_answer:
                 self.store.consume_demo_question(user, ids[0], "198.51.100.10", "a different guess")
             self.assertEqual(changed_answer.exception.code, "DEMO_ANSWER_MISMATCH")
@@ -150,7 +151,7 @@ class BackendAccessTests(unittest.TestCase):
                 self.store.consume_demo_question(user, extra, "198.51.100.10")
             self.assertEqual(caught.exception.code, "DEMO_EXHAUSTED")
         status = self.store.account_status(user)
-        self.assertEqual(status["demo_used"], 10)
+        self.assertEqual(status["demo_used"], 5)
         self.assertEqual(status["demo_remaining"], 0)
 
     def test_demo_ledger_survives_store_restart_and_session_changes(self):
@@ -162,7 +163,7 @@ class BackendAccessTests(unittest.TestCase):
         status = reloaded.account_status(reloaded.authenticate(login["session_token"]))
         self.assertEqual(status["demo_used"], 1)
         self.assertIn(qid, status["used_question_ids"])
-        self.assertEqual(status["demo_remaining"], 9)
+        self.assertEqual(status["demo_remaining"], 4)
 
     def test_guest_account_cannot_claim_unrecoverable_premium_token(self):
         guest = self.store.authenticate(self.store.start_anonymous_demo("198.51.100.46")["session_token"])
@@ -182,7 +183,7 @@ class BackendAccessTests(unittest.TestCase):
         status = self.store.account_status(user)
         self.assertTrue(status["premium"])
         self.assertEqual(status["access_level"], "premium")
-        self.assertEqual(status["demo_remaining"], 10)
+        self.assertEqual(status["demo_remaining"], 5)
 
     def test_second_account_cannot_claim_same_token(self):
         first, _, _ = self.user("first@example.test", ip="198.51.100.10")
@@ -303,14 +304,14 @@ class BackendAccessTests(unittest.TestCase):
             guest_me = urllib.request.Request(base + "/api/me", headers={"Authorization":f"Bearer {guest['session_token']}"})
             guest_status = json.loads(urllib.request.urlopen(guest_me, timeout=5).read())
             self.assertTrue(guest_status["account"]["anonymous"])
-            self.assertEqual(guest_status["account"]["demo_remaining"], 10)
+            self.assertEqual(guest_status["account"]["demo_remaining"], 5)
             register = urllib.request.Request(base + "/api/register", data=json.dumps({"email":"api-user@example.test","password":"a-long-api-password-42"}).encode(), headers={"Content-Type":"application/json"}, method="POST")
             response = json.loads(urllib.request.urlopen(register, timeout=10).read())
             self.assertTrue(response["ok"])
             token = response["session_token"]
             me = urllib.request.Request(base + "/api/me", headers={"Authorization":f"Bearer {token}"})
             status = json.loads(urllib.request.urlopen(me, timeout=5).read())
-            self.assertEqual(status["account"]["demo_remaining"], 10)
+            self.assertEqual(status["account"]["demo_remaining"], 5)
             qid = sorted(api.DEMO_QUESTION_IDS)[0]
             payload = json.dumps({"question_id":qid,"answer":"Good morning"}).encode()
             first = urllib.request.Request(base + "/api/demo/consume", data=payload, headers={"Content-Type":"application/json","Authorization":f"Bearer {token}"}, method="POST")
@@ -327,7 +328,7 @@ class BackendAccessTests(unittest.TestCase):
             self.assertEqual(sync_result["demo_used"], 2)
             me_after_sync = urllib.request.Request(base + "/api/me", headers={"Authorization":f"Bearer {token}"})
             status_after_sync = json.loads(urllib.request.urlopen(me_after_sync, timeout=5).read())["account"]
-            self.assertEqual(status_after_sync["demo_remaining"], 8)
+            self.assertEqual(status_after_sync["demo_remaining"], 3)
         finally:
             server.shutdown(); server.server_close(); thread.join(timeout=5)
             if old is None:
