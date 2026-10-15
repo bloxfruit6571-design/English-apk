@@ -1,0 +1,107 @@
+plugins {
+    id 'com.android.application'
+}
+
+// Only a public HTTPS origin is configured at build time; never put credentials or secrets here.
+def eqApiBaseUrl = (project.findProperty('EQ_API_BASE_URL') ?: System.getenv('EQ_API_BASE_URL') ?: '').toString()
+def eqApiBaseUrlEscaped = eqApiBaseUrl.replace('\\', '\\\\').replace('"', '\\"')
+
+android {
+    buildFeatures { buildConfig true }
+    namespace 'com.englishquest.app'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.englishquest.app'
+        minSdk 23
+        targetSdk 35
+        versionCode 13
+        versionName '1.7.1'
+        buildConfigField 'String', 'EQ_API_BASE_URL', "\"${eqApiBaseUrlEscaped}\""
+    }
+
+    androidResources {
+        // The bundled Vosk archive is already compressed; store it as-is in the APK.
+        noCompress += ['zip']
+    }
+
+    sourceSets {
+        main {
+            assets.srcDir(layout.buildDirectory.dir('generated/voskOfflineAssets'))
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
+        }
+        release {
+            minifyEnabled false
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.webkit:webkit:1.12.1'
+    implementation 'androidx.core:core:1.13.1'
+    implementation 'com.alphacephei:vosk-android:0.3.75'
+}
+
+
+// Bundle a pinned, Apache-2.0 Vosk English model into every installable APK.
+// The zip is downloaded at build time into build/ (not kept as a duplicate source blob).
+def voskArchive = layout.buildDirectory.file('generated/voskOfflineAssets/vosk-model-small-en-us-0.15.zip')
+def voskModelUrl = 'https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip'
+def voskModelSha256 = '30f26242c4eb449f948e42cb302dd7a686cb29a3423a8367f99ff41780942498'
+
+def sha256Of = { File file ->
+    def digest = java.security.MessageDigest.getInstance('SHA-256')
+    file.withInputStream { input ->
+        byte[] buffer = new byte[64 * 1024]
+        int read
+        while ((read = input.read(buffer)) != -1) digest.update(buffer, 0, read)
+    }
+    digest.digest().collect { String.format('%02x', it & 0xff) }.join()
+}
+
+tasks.register('prepareVoskOfflineModel') {
+    group = 'build setup'
+    description = 'Fetches and verifies the bundled offline English Vosk model.'
+    doLast {
+        File archive = voskArchive.get().asFile
+        archive.parentFile.mkdirs()
+        if (!archive.isFile() || sha256Of(archive) != voskModelSha256) {
+            File partial = new File(archive.parentFile, archive.name + '.part')
+            partial.delete()
+            try {
+                java.net.URLConnection connection = new java.net.URL(voskModelUrl).openConnection()
+                connection.connectTimeout = 20000
+                connection.readTimeout = 120000
+                connection.getInputStream().withCloseable { input ->
+                    partial.withOutputStream { output ->
+                        byte[] buffer = new byte[64 * 1024]
+                        int read
+                        while ((read = input.read(buffer)) != -1) output.write(buffer, 0, read)
+                    }
+                }
+                if (sha256Of(partial) != voskModelSha256) {
+                    throw new GradleException('Vosk model SHA-256 verification failed; refusing to package it.')
+                }
+                if (archive.exists() && !archive.delete()) {
+                    throw new GradleException('Could not replace an outdated Vosk model archive.')
+                }
+                if (!partial.renameTo(archive)) {
+                    throw new GradleException('Could not finalize the Vosk model archive.')
+                }
+            } finally {
+                partial.delete()
+            }
+        }
+        logger.lifecycle("Verified bundled Vosk model: ${archive.length()} bytes, SHA-256 ${sha256Of(archive)}")
+    }
+}
+
+tasks.named('preBuild').configure {
+    dependsOn('prepareVoskOfflineModel')
+}

@@ -1,0 +1,7 @@
+Offline speech model notice
+
+The bundled offline English speech model is vosk-model-small-en-us-0.15, published by Alpha Cephei. It is licensed under the Apache License, Version 2.0. Model information and source: https://alphacephei.com/vosk/models
+
+The Android speech recognition library is com.alphacephei:vosk-android:0.3.75, licensed under the Apache License, Version 2.0. Source: https://github.com/alphacep/vosk-api
+
+The model archive is fetched at build time from the official Alpha Cephei URL and checked against its pinned SHA-256 before it is packaged. Runtime speech capture and transcription use this model locally on the device; no network request is made by the Vosk recognition path.
