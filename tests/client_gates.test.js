@@ -263,7 +263,7 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
     await buyer.qa.refreshPaymentConfig();await buyer.qa.startPremiumPayment();await buyer.qa.refreshPremiumPaymentState();await buyer.qa.claimPremiumPaymentToken();
     assert.equal(automatic,0,'no legacy checkout/order/token route can run');
     assert.match(buyer.root.innerHTML,/Rp5.000/);assert.match(buyer.root.innerHTML,/permanen/);
-    assert.match(buyer.root.innerHTML,/tanpa langganan/);assert.match(buyer.root.innerHTML,/HUBUNGI ADMIN VIA WHATSAPP/);
+    assert.match(buyer.root.innerHTML,/tanpa langganan/);assert.match(buyer.root.innerHTML,/KONFIRMASI PEMBAYARAN VIA WHATSAPP/);
     assert.doesNotMatch(buyer.root.innerHTML,/data-action="payment-start"|data-action="payment-claim"|checkout_url/);
     assert.ok(!buyer.qa.state.accessTokenInput);assert.equal(buyer.qa.accessState.mode==='premium',false);
     const guest=makeHarness({api:makeApi()});await tick();guest.qa.state.page='premium-access';guest.qa.render();

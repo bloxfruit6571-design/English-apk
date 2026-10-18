@@ -1135,6 +1135,32 @@ public final class MainActivity extends Activity {
     }
 
     private final class ExternalLinkBridge {
+        /** Public owner contact only, read from the fixed bundled asset (no server secrets). */
+        @JavascriptInterface
+        public String getPremiumContactConfig() {
+            try (java.io.InputStream input = getAssets().open("premium-contact.json");
+                 java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream()) {
+                byte[] buffer = new byte[1024]; int count;
+                while ((count = input.read(buffer)) != -1) {
+                    if (bytes.size() + count > 8192) return "{}";
+                    bytes.write(buffer, 0, count);
+                }
+                return bytes.toString("UTF-8");
+            } catch (IOException error) { return "{}"; }
+        }
+
+        /** User-initiated copy, not a payment or entitlement operation. */
+        @JavascriptInterface
+        public boolean copyDanaNumber(String value) {
+            if (value == null || !value.matches("(?:\\+62|62|0)[0-9]{8,13}")) return false;
+            try {
+                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                if (clipboard == null) return false;
+                clipboard.setPrimaryClip(android.content.ClipData.newPlainText("Nomor DANA", value));
+                return true;
+            } catch (RuntimeException error) { return false; }
+        }
+
         /**
          * Hands the build-time API origin to the web layer.
          *

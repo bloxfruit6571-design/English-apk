@@ -19,8 +19,8 @@ class WhatsAppConfigTests(unittest.TestCase):
     def test_invalid_link_injection_and_lengths_rejected(self):
         for value in ('','+000000000','abc','https://wa.me/628000000000','62800000?text=x','++628000000000','123', '1'*16,'62\n8000000000'):
             self.assertEqual(manual.normalize_whatsapp(value),'',repr(value))
-    def test_three_fields_required_and_no_fake_contact(self):
-        with patch.dict(os.environ,{'EQ_DANA_MANUAL_NUMBER':'080000000000','EQ_DANA_MANUAL_NAME':'SYNTHETIC TEST'},clear=True):
+    def test_explicit_missing_contact_disables_payment(self):
+        with patch.dict(os.environ,{'EQ_DANA_MANUAL_NUMBER':'080000000000','EQ_DANA_MANUAL_NAME':'SYNTHETIC TEST','EQ_WHATSAPP_ADMIN_NUMBER':''},clear=True):
             c=manual.configuration();self.assertFalse(c['available'])
             for key in ('recipient_number','recipient_name','whatsapp_number'):self.assertEqual(c[key],'')
     def test_public_config_contains_expected_prefill(self):

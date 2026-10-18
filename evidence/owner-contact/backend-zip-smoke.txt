@@ -1,0 +1,9 @@
+/api/health HTTP 200 PASS
+/api/manual-payments/config HTTP 200 PASS
+/premium-contact.json HTTP 200 PASS
+/admin HTTP 200 PASS
+/access-client.js HTTP 200 PASS
+users 0 no account/payment/token side effect
+premium_tokens 0 no account/payment/token side effect
+payment_orders 0 no account/payment/token side effect
+11-file extracted backend ZIP: PASS. No WhatsApp/DANA request sent; no real account or payment created.

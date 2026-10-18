@@ -12,7 +12,7 @@ import subprocess
 import zipfile
 
 ROOT=Path(__file__).resolve().parents[1]
-ASSETS=['app.js','access-client.js','sw.js','styles.css','index.html','library-data.js',
+ASSETS=['app.js','access-client.js','premium-contact.json','sw.js','styles.css','index.html','library-data.js',
         'mission-data.js','mission-data-extras.js','manifest.webmanifest','icon.svg',
         'icon-192.png','icon-512.png','images/aki.webp','images/bimo.webp','images/naya.webp',
         'images/rina.webp','images/suki.webp']
@@ -43,11 +43,16 @@ def verify(apk, previous=None):
             assert payload==(ROOT/name).read_bytes(),'Aset APK berbeda dari root: '+name
             assert payload==(ROOT/'english-quest-android/app/src/main/assets'/name).read_bytes(),'Aset Android stale: '+name
         app=archive.read('assets/app.js').decode()
-        for marker in ('renderManualPurchaseCard','submitManualPayment','HUBUNGI ADMIN VIA WHATSAPP','Rp5.000'):
+        contact=json.loads(archive.read('assets/premium-contact.json'))
+        assert contact['dana_number']=='0856-5670-6104' and contact['whatsapp_number']=='0856-5670-6104'
+        assert contact['recipient_name']=='' and contact['price_idr']==5000
+        assert contact['whatsapp_message']==json.loads((ROOT/'premium-contact.json').read_text())['whatsapp_message']
+
+        for marker in ('renderManualPurchaseCard','submitManualPayment','KONFIRMASI PEMBAYARAN VIA WHATSAPP','Rp5.000'):
             assert marker in app,'Alur manual tidak dibundel: '+marker
         assert b'/manual-payments/config' in archive.read('assets/access-client.js')
         dex=b''.join(archive.read(n) for n in archive.namelist() if n.endswith('.dex'))
-        for marker in (b'getApiBaseUrl',b'isHttpDevAllowed',b'http://127.0.0.1:8088',b'wa.me'):
+        for marker in (b'getApiBaseUrl',b'isHttpDevAllowed',b'http://127.0.0.1:8088',b'wa.me',b'copyDanaNumber',b'getPremiumContactConfig'):
             assert marker in dex,'Bridge/origin debug hilang dari DEX'
         assert hashlib.sha256(archive.read('assets/vosk-model-small-en-us-0.15.zip')).hexdigest()==MODEL_SHA
         forbidden=[n for n in archive.namelist() if n.endswith(('.sqlite3','.db','.jks','.keystore','.pem','.key')) or '/.env' in n]

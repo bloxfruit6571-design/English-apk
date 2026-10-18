@@ -4,6 +4,8 @@ This module has no payment-provider network calls. Real receipt verification is 
 operator responsibility. Code issuance is a separate admin-only, atomic operation.
 """
 import hashlib
+import json
+from pathlib import Path
 import hmac
 import os
 import re
@@ -17,7 +19,18 @@ def now():
     return datetime.now(timezone.utc).isoformat(timespec='seconds').replace('+00:00', 'Z')
 
 
-WHATSAPP_MESSAGE = 'Halo Admin English Quest, saya ingin membeli Premium seharga Rp5.000. Saya akan mengirimkan bukti pembayaran setelah transfer.'
+PUBLIC_CONTACT_FILE = Path(__file__).resolve().parents[1] / 'premium-contact.json'
+
+
+def public_contact():
+    try:
+        value = json.loads(PUBLIC_CONTACT_FILE.read_text(encoding='utf-8'))
+        return value if isinstance(value, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+WHATSAPP_MESSAGE = str(public_contact().get('whatsapp_message', ''))
 
 
 def normalize_whatsapp(value):
@@ -35,17 +48,24 @@ def normalize_whatsapp(value):
 
 
 def configuration():
-    number = os.getenv('EQ_DANA_MANUAL_NUMBER', '').strip()
-    name = os.getenv('EQ_DANA_MANUAL_NAME', '').strip()
-    whatsapp = normalize_whatsapp(os.getenv('EQ_WHATSAPP_ADMIN_NUMBER', ''))
-    available = bool(re.fullmatch(r'(?:\+62|62|0)[0-9]{8,13}', number)
-                     and 2 <= len(name) <= 100 and not any(ord(c) < 32 for c in name) and whatsapp)
-    return {'mode': 'manual_dana', 'price_idr': 5000, 'currency': 'IDR',
+    public = public_contact()
+    raw_number = os.getenv('EQ_DANA_MANUAL_NUMBER', str(public.get('dana_number', ''))).strip()
+    number = re.sub(r'[ ().-]', '', raw_number)
+    raw_whatsapp = os.getenv('EQ_WHATSAPP_ADMIN_NUMBER', str(public.get('whatsapp_number', ''))).strip()
+    whatsapp = normalize_whatsapp(raw_whatsapp)
+    name = os.getenv('EQ_DANA_MANUAL_NAME', str(public.get('recipient_name', ''))).strip()
+    valid_name = not name or (2 <= len(name) <= 100 and not any(ord(c) < 32 for c in name))
+    available = bool(re.fullmatch(r'(?:\+62|62|0)[0-9]{8,13}', number) and valid_name and whatsapp)
+    return {'mode': 'manual_dana', 'price_idr': 5000, 'currency': 'IDR', 'source': 'server',
             'available': available, 'recipient_number': number if available else '',
-            'recipient_name': name if available else '', 'whatsapp_number': whatsapp if available else '',
-            'whatsapp_message': WHATSAPP_MESSAGE,
-            'message': ('Hubungi admin melalui WhatsApp. Screenshot bukan verifikasi dana masuk.'
-                        if available else 'Informasi pembayaran belum dikonfigurasi lengkap: nomor DANA, nama penerima, dan WhatsApp admin. Pembayaran belum tersedia.')}
+            'recipient_number_display': raw_number if available else '',
+            'recipient_name': name if available else '',
+            'whatsapp_number': whatsapp if available else '',
+            'whatsapp_display': raw_whatsapp if available else '',
+            'whatsapp_message': str(public.get('whatsapp_message', '')),
+            'message': ('Kontak diberikan pemilik. Nama penerima belum dikonfirmasi; periksa penerima langsung di DANA.' if available and not name
+                        else 'Screenshot bukan verifikasi uang masuk.' if available
+                        else 'Informasi pembayaran belum dikonfigurasi dengan benar. Jangan transfer dahulu.')}
 
 
 class ManualPaymentsMixin:

@@ -18,7 +18,7 @@ const ROOT = path.resolve(__dirname, '..');
 const ASSETS = path.join(ROOT, 'english-quest-android/app/src/main/assets');
 
 const PAIRS = [
-  'app.js', 'access-client.js', 'sw.js', 'styles.css', 'index.html',
+  'app.js', 'access-client.js', 'premium-contact.json', 'sw.js', 'styles.css', 'index.html',
   'library-data.js', 'mission-data.js', 'mission-data-extras.js',
   'manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png',
   'images/aki.webp', 'images/bimo.webp', 'images/naya.webp',

@@ -1,0 +1,27 @@
+Asset parity: 18 files identical between root and english-quest-android assets (cache english-quest-shell-v22)
+Client failure paths: 8 groups passed
+  ✓ stalled server times out instead of hanging forever
+  ✓ refused connection reports NETWORK_ERROR (no crash, no success)
+  ✓ healthy server still works and POSTs send application/json
+  ✓ 401 clears the stored session
+  ✓ unreadable/500 responses fail closed (no Premium from a broken server)
+  ✓ timeout falls back to the limited local demo and keeps Premium locked
+  ✓ server-confirmed Premium still unlocks (no regression)
+  ✓ offline fallback keeps a bounded 5-question demo quota
+Client gates: 11 acceptance groups passed (welcome/local fallback, full Easy demo, quota/restart, unique-submit, online guest/sync, premium fail-closed, progress, and server admin role); all 43 route renderers smoke-tested.
+Manual DANA/WhatsApp UI: 11 groups passed (configuration, copy, URL/prefill, native/browser opening, no checkout/token, failure, isolation, public info, Android allowlist, admin).
+Owner public contact: 10 groups passed (exact numbers/price, unknown name, native/browser/fallback clipboard, failure honesty, editable WhatsApp draft, no automatic entitlement, server disable, corrupt config, demo copy).
+Client registration: 13 groups passed
+  ✓ registration succeeds, stores the session and returns a non-premium account
+  ✓ five-character password is rejected with a readable WEAK_PASSWORD message
+  ✓ invalid email is rejected with INVALID_EMAIL
+  ✓ registering an existing email is reported as ACCOUNT_EXISTS
+  ✓ backend unavailable reports NETWORK_ERROR without unlocking anything
+  ✓ an unresponsive server ends in NETWORK_TIMEOUT instead of freezing the form
+  ✓ an unreadable server response reports INVALID_SERVER_RESPONSE
+  ✓ the native bridge supplies the API origin; without it the form stays unconfigured
+  ✓ local validation blocks bad input and the show/hide password control preserves typing
+  ✓ form registration verifies the account and the same credentials can log in later
+  ✓ a failing backend leaves the user on the form with the server message shown
+  ✓ end to end: real backend registers, hashes, stores, then logs the user back in
+  ✓ the register button follows the configuration and the password field shows min 6 + toggle

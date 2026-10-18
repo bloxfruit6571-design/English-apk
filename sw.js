@@ -1,5 +1,5 @@
-const CACHE_NAME = 'english-quest-shell-v21';
-const APP_FILES = ['./', './index.html', './styles.css', './library-data.js', './mission-data.js', './mission-data-extras.js', './access-client.js', './app.js', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './images/aki.webp', './images/rina.webp', './images/suki.webp', './images/naya.webp', './images/bimo.webp'];
+const CACHE_NAME = 'english-quest-shell-v22';
+const APP_FILES = ['./', './index.html', './styles.css', './library-data.js', './mission-data.js', './mission-data-extras.js', './access-client.js', './premium-contact.json', './app.js', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './images/aki.webp', './images/rina.webp', './images/suki.webp', './images/naya.webp', './images/bimo.webp'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_FILES.map(file => new URL(file, self.registration.scope).href))).then(() => self.skipWaiting()));
 });

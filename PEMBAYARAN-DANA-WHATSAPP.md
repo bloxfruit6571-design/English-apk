@@ -1,5 +1,8 @@
 # Premium manual DANA + WhatsApp
 
+> **Arsip sebelum nomor pemilik diisi.** Ketentuan aktif dan APK terbaru: [konfigurasi pemilik](KONFIGURASI-PEMILIK-PREMIUM.md). Nomor kini 0856-5670-6104, nama belum dikonfirmasi; APK debug versi lama telah digantikan.
+
+
 **Spesifikasi aktif.** Menggantikan tampilan checkout dan tombol buyer “Saya Sudah Membayar”.
 Harga tetap **Rp5.000**, satu kali bayar, akses permanen setelah aktivasi token yang sah.
 Demo tetap maksimal lima soal Easy. Tidak ada langganan, integrasi merchant DANA, webhook aktif,

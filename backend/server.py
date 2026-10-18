@@ -487,7 +487,7 @@ class Store(manual_payments.ManualPaymentsMixin):
                     db.commit()
                     return {"access_level": "demo", "premium": False, "consumed": False, "duplicate": True, "question_id": qid, "demo_used": count, "demo_remaining": max(0, DEMO_LIMIT-count)}
                 if count >= DEMO_LIMIT:
-                    raise ApiError(403, "DEMO_EXHAUSTED", "Jatah 10 soal demo sudah habis. Buka Premium untuk melanjutkan.")
+                    raise ApiError(403, "DEMO_EXHAUSTED", f"Jatah {DEMO_LIMIT} soal demo sudah habis. Buka Premium untuk melanjutkan.")
                 db.execute("INSERT INTO demo_answers(user_id,question_id,answered_at,answer_hash) VALUES(?,?,?,?)", (user["user_id"], qid, iso(), answer_digest))
                 count += 1
                 db.commit()
@@ -864,7 +864,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     # slow but progressing transfer is unaffected while a stalled peer is dropped.
     timeout = 60
     PUBLIC_FILES = frozenset({
-        "index.html", "styles.css", "app.js", "access-client.js", "library-data.js",
+        "index.html", "styles.css", "app.js", "access-client.js", "premium-contact.json", "library-data.js",
         "mission-data.js", "mission-data-extras.js", "sw.js", "manifest.webmanifest",
         "icon.svg", "icon-192.png", "icon-512.png",
         "images/aki.webp", "images/rina.webp", "images/suki.webp", "images/naya.webp", "images/bimo.webp",

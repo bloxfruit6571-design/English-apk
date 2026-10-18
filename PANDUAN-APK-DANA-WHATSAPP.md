@@ -1,5 +1,8 @@
 # Menguji APK debug DANA–WhatsApp di HP
 
+> **Arsip sebelum nomor pemilik diisi.** Ketentuan aktif dan APK terbaru: [konfigurasi pemilik](KONFIGURASI-PEMILIK-PREMIUM.md). Nomor kini 0856-5670-6104, nama belum dikonfirmasi; APK debug versi lama telah digantikan.
+
+
 ## Artefak terbaru
 
 `English-Quest-1.7.1-dana-whatsapp-localtest-debug.apk`

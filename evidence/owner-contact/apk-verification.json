@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "apk": "/home/user/artefak-apk/English-Quest-1.7.1-owner-contact-localtest-debug.apk",
+  "bytes": 84929134,
+  "sha256": "372b126c4bd22c6665c7c5bd7aab741ab0194f213ed8a987024ba12d5f193a58",
+  "applicationId": "com.englishquest.app.debug",
+  "versionCode": 13,
+  "versionName": "1.7.1-debug",
+  "assets_identical": 18,
+  "api_origin": "http://127.0.0.1:8088",
+  "loopback_only": true,
+  "vosk_sha256": "30f26242c4eb449f948e42cb302dd7a686cb29a3423a8367f99ff41780942498",
+  "signer_sha256": "7659afc54a848321ff9a88c1604254af2d768c504e4adb6fdd92f490d7c950a3",
+  "secrets_pattern_scan": "no match; not an exhaustive secrets audit",
+  "scope": "local debug only; not device-tested or online-ready",
+  "previous_apk": "/home/user/artefak-apk/English-Quest-1.7.1-dana-whatsapp-localtest-debug.apk",
+  "same_signer_as_previous": true
+}

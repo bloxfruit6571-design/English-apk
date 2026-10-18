@@ -251,8 +251,8 @@ class ManualHTTPTests(ManualFixture):
         self.assertFalse(self.call('/api/me',self.user_session)[1]['account']['premium'])
 
 class ManualConfigTests(unittest.TestCase):
-    def test_unset_partial_invalid_receiver_unavailable(self):
-        for values in ({},{'EQ_DANA_MANUAL_NAME':'TEST ONLY'},
+    def test_explicit_blank_partial_invalid_receiver_unavailable(self):
+        for values in ({'EQ_DANA_MANUAL_NUMBER':'','EQ_WHATSAPP_ADMIN_NUMBER':''},{'EQ_DANA_MANUAL_NUMBER':'','EQ_DANA_MANUAL_NAME':'TEST ONLY'},
                        {'EQ_DANA_MANUAL_NUMBER':'invalid','EQ_DANA_MANUAL_NAME':'TEST ONLY'}):
             with patch.dict(os.environ,values,clear=True):
                 c=manual_payments.configuration()

@@ -1,7 +1,7 @@
 # Persiapan backend HTTPS English Quest
 
-> **Pembaruan pembayaran:** gunakan [DANA–WhatsApp](../PEMBAYARAN-DANA-WHATSAPP.md).
-> Isi `EQ_DANA_MANUAL_NUMBER`/`EQ_DANA_MANUAL_NAME`/`EQ_WHATSAPP_ADMIN_NUMBER` hanya setelah penerima sah dikonfirmasi.
+> **Pembaruan pembayaran:** gunakan [konfigurasi pemilik](../KONFIGURASI-PEMILIK-PREMIUM.md).
+> Nomor DANA/WhatsApp publik pemilik adalah 0856-5670-6104; nama penerima belum dikonfirmasi. Backend membaca `premium-contact.json` atau environment operator.
 > Biarkan `EQ_PAYMENT_PROVIDER` kosong; kredensial merchant/webhook tidak diperlukan.
 > Template proxy publik masih memblokir admin: siapkan jalur operator privat HTTPS yang disetujui,
 > bukan membuka port HTTP backend. Source ini belum dideploy atau diuji melalui internet.

@@ -109,7 +109,43 @@
   async function activate(token) { return request('/premium/activate', { method: 'POST', body: JSON.stringify({ token }) }, true); }
   async function consume(questionId, answer) { return request('/demo/consume', { method: 'POST', body: JSON.stringify({ question_id: questionId, answer }) }, true); }
   // Contact details only. Buyers cannot create a checkout/order or retrieve a token here.
-  async function manualPaymentConfig() { return request('/manual-payments/config', { method: 'GET' }, false); }
+  function normalizeWhatsApp(value) {
+    let v=String(value||'').trim();
+    if(!/^[+0-9 ().-]+$/.test(v))return '';
+    v=v.replace(/[ ().-]/g,'');
+    if(v.startsWith('+'))v=v.slice(1);else if(v.startsWith('00'))v=v.slice(2);else if(v.startsWith('0'))v='62'+v.slice(1);
+    return /^[1-9][0-9]{7,14}$/.test(v)?v:'';
+  }
+  // Public owner contact only: never an entitlement, session, or payment-success cache.
+  let publicContact=null;
+  async function bundledPaymentConfig() {
+    try {
+      if(!publicContact){
+        const bridge=nativeBridge();
+        if(typeof bridge?.getPremiumContactConfig==='function')publicContact=JSON.parse(bridge.getPremiumContactConfig());
+        else {
+          const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),3000);
+          try {
+            const response=await fetch(new URL('./premium-contact.json',window.location.href).href,{cache:'no-store',credentials:'omit',signal:controller.signal});
+            if(!response.ok)throw Error('public config unavailable');
+            publicContact=await response.json();
+          } finally {clearTimeout(timer);}
+        }
+      }
+      const c=publicContact,number=String(c.dana_number||'').replace(/[ ().-]/g,''),whatsapp=normalizeWhatsApp(c.whatsapp_number);
+      if(c.price_idr!==5000||! /^(?:\+62|62|0)[0-9]{8,13}$/.test(number)||!whatsapp)throw Error('invalid public config');
+      return {ok:true,available:true,mode:'manual_dana',price_idr:5000,currency:'IDR',source:'app',
+        recipient_number:number,recipient_number_display:String(c.dana_number),recipient_name:String(c.recipient_name||''),
+        whatsapp_number:whatsapp,whatsapp_display:String(c.whatsapp_number),whatsapp_message:String(c.whatsapp_message||''),
+        message:'Kontak publik tersimpan dalam aplikasi. Aplikasi tidak mendeteksi transfer; aktivasi Premium tetap memerlukan backend.'};
+    }catch(_){publicContact=null;return {ok:false,available:false,message:'Informasi pembayaran belum tersedia.'};}
+  }
+  async function manualPaymentConfig() {
+    const result=await request('/manual-payments/config',{method:'GET'},false);
+    if(result.ok)return result; // A server-side disable must NOT be overwritten by fallback.
+    const local=await bundledPaymentConfig();
+    return local.ok?{...local,server_available:false,message:'Server belum dapat dijangkau. Kontak dari konfigurasi APK; konfirmasi penerima di DANA. Aktivasi tetap memerlukan server.'}:result;
+  }
   async function logout() {
     const result = await request('/logout', { method: 'POST', body: '{}' }, true);
     setSession('');
@@ -120,7 +156,7 @@
     getApiBaseUrl: () => apiBase(),
     hasSession: () => Boolean(getSession()),
     register, login, health, startDemo, syncDemo, me, activate, consume, logout,
-    manualPaymentConfig,
+    manualPaymentConfig, bundledPaymentConfig,
     clearSession: () => setSession('')
   };
 })();

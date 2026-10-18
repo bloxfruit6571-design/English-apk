@@ -1,0 +1,290 @@
+Asset parity: 18 files identical between root and english-quest-android assets (cache english-quest-shell-v22)
+test_admin_token_plaintext_is_not_in_listing_or_database (test_backend.BackendAccessTests.test_admin_token_plaintext_is_not_in_listing_or_database) ... ok
+test_concurrent_claims_are_atomic (test_backend.BackendAccessTests.test_concurrent_claims_are_atomic) ... ok
+test_demo_ledger_survives_store_restart_and_session_changes (test_backend.BackendAccessTests.test_demo_ledger_survives_store_restart_and_session_changes) ... ok
+test_demo_sync_and_answer_submission_share_atomic_demo_quota (test_backend.BackendAccessTests.test_demo_sync_and_answer_submission_share_atomic_demo_quota) ... ok
+test_demo_sync_imports_only_fixed_ids_is_idempotent_and_cannot_replay (test_backend.BackendAccessTests.test_demo_sync_imports_only_fixed_ids_is_idempotent_and_cannot_replay) ... ok
+test_existing_database_migrates_without_losing_users_or_answer_rows (test_backend.BackendAccessTests.test_existing_database_migrates_without_losing_users_or_answer_rows) ... ok
+test_first_claim_binds_token_to_account_and_returns_premium (test_backend.BackendAccessTests.test_first_claim_binds_token_to_account_and_returns_premium) ... ok
+test_five_unique_answers_cut_off_and_duplicates_do_not_increment (test_backend.BackendAccessTests.test_five_unique_answers_cut_off_and_duplicates_do_not_increment) ... ok
+test_guest_account_cannot_claim_unrecoverable_premium_token (test_backend.BackendAccessTests.test_guest_account_cannot_claim_unrecoverable_premium_token) ... ok
+test_guest_demo_is_accountless_server_session_with_ip_start_limit (test_backend.BackendAccessTests.test_guest_demo_is_accountless_server_session_with_ip_start_limit) ... ok
+test_http_admin_endpoint_rejects_regular_account (test_backend.BackendAccessTests.test_http_admin_endpoint_rejects_regular_account) ... ok
+test_http_register_demo_api_and_answer_binding (test_backend.BackendAccessTests.test_http_register_demo_api_and_answer_binding) ... ok
+test_invalid_expired_and_revoked_tokens_are_denied (test_backend.BackendAccessTests.test_invalid_expired_and_revoked_tokens_are_denied) ... ok
+test_new_account_starts_server_authoritative_demo (test_backend.BackendAccessTests.test_new_account_starts_server_authoritative_demo) ... ok
+test_premium_follows_account_after_logout_and_new_login (test_backend.BackendAccessTests.test_premium_follows_account_after_logout_and_new_login) ... ok
+test_registration_password_policy_email_and_duplicate_handling (test_backend.BackendAccessTests.test_registration_password_policy_email_and_duplicate_handling)
+The documented registration contract: minimum 6 characters, valid email, one account ... ok
+test_second_account_cannot_claim_same_token (test_backend.BackendAccessTests.test_second_account_cannot_claim_same_token) ... ok
+test_build_rejects_nonproduction_urls_before_network (test_deployment.DeploymentTests.test_build_rejects_nonproduction_urls_before_network) ... ok
+test_checksum_required (test_deployment.DeploymentTests.test_checksum_required) ... DITOLAK: checksum cadangan tidak ada atau tidak cocok.
+ok
+test_corruption_rejected (test_deployment.DeploymentTests.test_corruption_rejected) ... GAGAL: cadangan tidak utuh (berkas rusak atau bukan database SQLite (file is not a database)); pemulihan dibatalkan.
+ok
+test_does_not_create_missing_source (test_deployment.DeploymentTests.test_does_not_create_missing_source) ... GAGAL: database tidak ditemukan di /tmp/eq-backup-test-283d9tax/missing
+ok
+test_live_wal_snapshot_and_restore_new_path (test_deployment.DeploymentTests.test_live_wal_snapshot_and_restore_new_path) ... ok
+test_never_overwrite_active_db (test_deployment.DeploymentTests.test_never_overwrite_active_db) ... DITOLAK: tujuan harus berkas BARU tanpa WAL/SHM. Pulihkan ke staging, bukan DB aktif.
+ok
+test_restore_needs_confirmation (test_deployment.DeploymentTests.test_restore_needs_confirmation) ... Ditolak: tambahkan --saya-yakin untuk benar-benar memulihkan ke berkas staging baru.
+ok
+test_rotation_and_unique_names (test_deployment.DeploymentTests.test_rotation_and_unique_names) ... ok
+test_service_preflight_rejects_placeholder_configuration (test_deployment.DeploymentTests.test_service_preflight_rejects_placeholder_configuration) ... ok
+test_body_larger_than_the_limit_is_rejected (test_failure_paths.FailurePathTests.test_body_larger_than_the_limit_is_rejected) ... ok
+test_default_handler_timeout_is_configured (test_failure_paths.FailurePathTests.test_default_handler_timeout_is_configured) ... ok
+test_expired_session_is_rejected (test_failure_paths.FailurePathTests.test_expired_session_is_rejected) ... ok
+test_failed_logins_are_limited_at_the_store_level_too (test_failure_paths.FailurePathTests.test_failed_logins_are_limited_at_the_store_level_too) ... ok
+test_failed_logins_consume_the_rate_limit_and_are_cut_off (test_failure_paths.FailurePathTests.test_failed_logins_consume_the_rate_limit_and_are_cut_off)
+Regression: the counter used to live inside the rolled-back transaction. ... ok
+test_failed_token_claims_consume_the_rate_limit (test_failure_paths.FailurePathTests.test_failed_token_claims_consume_the_rate_limit)
+A refused claim must still cost an attempt (8 per 15 minutes). ... ok
+test_head_uses_the_same_allowlist_as_get (test_failure_paths.FailurePathTests.test_head_uses_the_same_allowlist_as_get) ... ok
+test_invalid_json_and_empty_body_are_rejected (test_failure_paths.FailurePathTests.test_invalid_json_and_empty_body_are_rejected) ... ok
+test_non_json_content_type_with_body_is_rejected (test_failure_paths.FailurePathTests.test_non_json_content_type_with_body_is_rejected)
+A cross-site HTML form can post text/plain without a CORS preflight. ... ok
+test_pruning_removes_dead_sessions_only (test_failure_paths.FailurePathTests.test_pruning_removes_dead_sessions_only)
+Housekeeping must never touch a session that can still authenticate. ... ok
+test_rejected_registrations_consume_the_rate_limit (test_failure_paths.FailurePathTests.test_rejected_registrations_consume_the_rate_limit) ... ok
+test_revoked_session_is_rejected (test_failure_paths.FailurePathTests.test_revoked_session_is_rejected) ... ok
+test_stalled_connection_is_dropped_by_the_socket_timeout (test_failure_paths.FailurePathTests.test_stalled_connection_is_dropped_by_the_socket_timeout)
+A peer that connects and never sends a request must not hold a worker forever. ... ok
+test_unknown_api_path_does_not_leak_which_endpoints_exist (test_failure_paths.FailurePathTests.test_unknown_api_path_does_not_leak_which_endpoints_exist)
+By design: anonymous callers get the same 401 for unknown and known paths. ... ok
+test_existing_database_missing_pepper_never_replaced (test_local_manual_launcher.LocalLauncherTests.test_existing_database_missing_pepper_never_replaced) ... ok
+test_invalid_pepper_never_rotated (test_local_manual_launcher.LocalLauncherTests.test_invalid_pepper_never_rotated) ... ok
+test_local_only_no_inherited_receiver_provider_or_production_configuration (test_local_manual_launcher.LocalLauncherTests.test_local_only_no_inherited_receiver_provider_or_production_configuration) ... ok
+test_pepper_persists_across_restart_and_has_private_permissions (test_local_manual_launcher.LocalLauncherTests.test_pepper_persists_across_restart_and_has_private_permissions) ... ok
+test_complete_synthetic_configuration (test_manual_payments.ManualConfigTests.test_complete_synthetic_configuration) ... ok
+test_explicit_blank_partial_invalid_receiver_unavailable (test_manual_payments.ManualConfigTests.test_explicit_blank_partial_invalid_receiver_unavailable) ... ok
+test_http_authorization_and_complete_flow (test_manual_payments.ManualHTTPTests.test_http_authorization_and_complete_flow) ... ok
+test_http_old_automatic_and_generic_issue_closed_in_production (test_manual_payments.ManualHTTPTests.test_http_old_automatic_and_generic_issue_closed_in_production) ... ok
+test_http_storage_failure_is_500_without_entitlement (test_manual_payments.ManualHTTPTests.test_http_storage_failure_is_500_without_entitlement) ... ok
+test_real_tls_account_order_admin_token_activation_relogin (test_manual_payments.ManualTLSTests.test_real_tls_account_order_admin_token_activation_relogin) ... /usr/local/lib/python3.13/socket.py:748: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fafa56a0a90>
+  def readable(self):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_01_request_pending_does_not_grant_anything (test_manual_payments.ManualTests.test_01_request_pending_does_not_grant_anything) ... ok
+test_02_unprivileged_cannot_verify_issue_reject_or_audit (test_manual_payments.ManualTests.test_02_unprivileged_cannot_verify_issue_reject_or_audit) ... ok
+test_03_admin_verifies_no_token_until_explicit_issue (test_manual_payments.ManualTests.test_03_admin_verifies_no_token_until_explicit_issue) ... ok
+test_04_pending_and_rejected_cannot_issue (test_manual_payments.ManualTests.test_04_pending_and_rejected_cannot_issue) ... ok
+test_05_issue_is_idempotent_no_code_rotation (test_manual_payments.ManualTests.test_05_issue_is_idempotent_no_code_rotation) ... ok
+test_06_token_owner_binding_and_single_activation (test_manual_payments.ManualTests.test_06_token_owner_binding_and_single_activation) ... ok
+test_07_premium_survives_logout_login_store_restart (test_manual_payments.ManualTests.test_07_premium_survives_logout_login_store_restart) ... ok
+test_08_other_account_cannot_read_order (test_manual_payments.ManualTests.test_08_other_account_cannot_read_order) ... ok
+test_09_wrong_amount_and_unconfirmed_receipt_denied (test_manual_payments.ManualTests.test_09_wrong_amount_and_unconfirmed_receipt_denied) ... ok
+test_10_audit_complete_and_no_plaintext_secret (test_manual_payments.ManualTests.test_10_audit_complete_and_no_plaintext_secret) ... ok
+test_11_duplicate_receipt_cannot_approve_other_order (test_manual_payments.ManualTests.test_11_duplicate_receipt_cannot_approve_other_order) ... ok
+test_12_concurrent_issue_creates_exactly_one_code (test_manual_payments.ManualTests.test_12_concurrent_issue_creates_exactly_one_code) ... ok
+test_13_failure_rolls_back_order_token_and_audit (test_manual_payments.ManualTests.test_13_failure_rolls_back_order_token_and_audit) ... ok
+test_14_no_self_verification_even_admin (test_manual_payments.ManualTests.test_14_no_self_verification_even_admin) ... ok
+test_15_revoked_admin_role_rechecked_inside_transaction (test_manual_payments.ManualTests.test_15_revoked_admin_role_rechecked_inside_transaction) ... ok
+test_16_no_receiver_no_order_and_no_fake_number (test_manual_payments.ManualTests.test_16_no_receiver_no_order_and_no_fake_number) ... ok
+test_17_receiver_snapshot_and_repeated_verify (test_manual_payments.ManualTests.test_17_receiver_snapshot_and_repeated_verify) ... ok
+test_18_legacy_claim_cannot_rotate_manual_code (test_manual_payments.ManualTests.test_18_legacy_claim_cannot_rotate_manual_code) ... ok
+test_19_additive_migration_preserves_legacy_rows (test_manual_payments.ManualTests.test_19_additive_migration_preserves_legacy_rows) ... ok
+test_20_guest_cannot_request_or_read (test_manual_payments.ManualTests.test_20_guest_cannot_request_or_read) ... ok
+test_21_rejection_is_audited_and_new_request_allowed (test_manual_payments.ManualTests.test_21_rejection_is_audited_and_new_request_allowed) ... ok
+test_22_manual_backup_restore_preserves_audit_and_premium (test_manual_payments.ManualTests.test_22_manual_backup_restore_preserves_audit_and_premium) ... ok
+test_authorized_default_numbers_price_and_unknown_name (test_owner_contact.OwnerContactTests.test_authorized_default_numbers_price_and_unknown_name) ... ok
+test_exact_editable_message_from_shared_public_file (test_owner_contact.OwnerContactTests.test_exact_editable_message_from_shared_public_file) ... ok
+test_explicit_empty_contact_disables_without_fabrication (test_owner_contact.OwnerContactTests.test_explicit_empty_contact_disables_without_fabrication) ... ok
+test_international_link_is_owner_number (test_owner_contact.OwnerContactTests.test_international_link_is_owner_number) ... ok
+test_missing_or_corrupt_config_fails_closed_without_env (test_owner_contact.OwnerContactTests.test_missing_or_corrupt_config_fails_closed_without_env) ... ok
+test_real_http_public_contact_has_no_entitlement_side_effect (test_owner_contact.OwnerContactTests.test_real_http_public_contact_has_no_entitlement_side_effect) ... ok
+test_admin_can_review_orders_but_cannot_see_secrets (test_payments.PaymentHttpTests.test_admin_can_review_orders_but_cannot_see_secrets) ... ok
+test_config_endpoint_publishes_the_price_without_leaking_configuration (test_payments.PaymentHttpTests.test_config_endpoint_publishes_the_price_without_leaking_configuration) ... ok
+test_local_simulator_only_works_for_the_orders_owner_and_only_in_dev (test_payments.PaymentHttpTests.test_local_simulator_only_works_for_the_orders_owner_and_only_in_dev) ... ok
+test_provider_webhook_settles_a_paid_order_and_the_buyer_activates_the_token (test_payments.PaymentHttpTests.test_provider_webhook_settles_a_paid_order_and_the_buyer_activates_the_token) ... ok
+test_unauthenticated_caller_cannot_create_orders (test_payments.PaymentHttpTests.test_unauthenticated_caller_cannot_create_orders) ... ok
+test_unsigned_webhook_is_rejected_over_http (test_payments.PaymentHttpTests.test_unsigned_webhook_is_rejected_over_http) ... ok
+test_webhook_is_unavailable_when_no_provider_is_configured (test_payments.PaymentHttpTests.test_webhook_is_unavailable_when_no_provider_is_configured) ... ok
+test_activation_keeps_the_legacy_token_path_working (test_payments.PaymentTestCase.test_activation_keeps_the_legacy_token_path_working) ... ok
+test_amount_mismatch_goes_to_manual_review_without_a_token (test_payments.PaymentTestCase.test_amount_mismatch_goes_to_manual_review_without_a_token) ... ok
+test_another_account_cannot_inspect_or_claim_someone_elses_order (test_payments.PaymentTestCase.test_another_account_cannot_inspect_or_claim_someone_elses_order) ... ok
+test_buyer_receives_a_token_that_the_backend_validates (test_payments.PaymentTestCase.test_buyer_receives_a_token_that_the_backend_validates) ... ok
+test_concurrent_duplicate_successes_still_issue_only_one_token (test_payments.PaymentTestCase.test_concurrent_duplicate_successes_still_issue_only_one_token) ... ok
+test_customer_with_an_open_order_reuses_it_instead_of_stacking_orders (test_payments.PaymentTestCase.test_customer_with_an_open_order_reuses_it_instead_of_stacking_orders) ... ok
+test_dana_adapter_refuses_to_invent_a_checkout_without_merchant_credentials (test_payments.PaymentTestCase.test_dana_adapter_refuses_to_invent_a_checkout_without_merchant_credentials) ... ok
+test_dana_notifications_are_verified_against_danas_public_key (test_payments.PaymentTestCase.test_dana_notifications_are_verified_against_danas_public_key) ... ok
+test_demo_is_capped_at_five_unique_easy_questions (test_payments.PaymentTestCase.test_demo_is_capped_at_five_unique_easy_questions) ... ok
+test_forged_notification_cannot_be_settled_through_the_store (test_payments.PaymentTestCase.test_forged_notification_cannot_be_settled_through_the_store) ... ok
+test_guest_demo_session_cannot_buy_premium (test_payments.PaymentTestCase.test_guest_demo_session_cannot_buy_premium) ... ok
+test_payment_arriving_after_the_order_window_needs_a_human (test_payments.PaymentTestCase.test_payment_arriving_after_the_order_window_needs_a_human) ... ok
+test_payments_are_refused_when_no_provider_is_configured (test_payments.PaymentTestCase.test_payments_are_refused_when_no_provider_is_configured) ... ok
+test_pending_failed_and_unknown_states_issue_no_token (test_payments.PaymentTestCase.test_pending_failed_and_unknown_states_issue_no_token) ... ok
+test_plaintext_token_is_never_written_to_disk (test_payments.PaymentTestCase.test_plaintext_token_is_never_written_to_disk) ... ok
+test_premium_price_is_a_one_off_five_thousand_rupiah (test_payments.PaymentTestCase.test_premium_price_is_a_one_off_five_thousand_rupiah) ... ok
+test_premium_remains_after_the_session_ends_and_the_store_restarts (test_payments.PaymentTestCase.test_premium_remains_after_the_session_ends_and_the_store_restarts) ... ok
+test_provider_expiry_then_late_success_is_reconciled_by_hand (test_payments.PaymentTestCase.test_provider_expiry_then_late_success_is_reconciled_by_hand) ... ok
+test_redelivered_or_repeated_success_notifications_never_stack_tokens (test_payments.PaymentTestCase.test_redelivered_or_repeated_success_notifications_never_stack_tokens) ... ok
+test_redelivery_rotates_the_code_and_the_old_one_stops_working (test_payments.PaymentTestCase.test_redelivery_rotates_the_code_and_the_old_one_stops_working) ... ok
+test_sandbox_provider_rejects_a_short_secret (test_payments.PaymentTestCase.test_sandbox_provider_rejects_a_short_secret) ... ok
+test_sandbox_provider_requires_an_explicit_development_opt_in (test_payments.PaymentTestCase.test_sandbox_provider_requires_an_explicit_development_opt_in) ... ok
+test_token_cannot_be_redeemed_twice_or_by_another_account (test_payments.PaymentTestCase.test_token_cannot_be_redeemed_twice_or_by_another_account) ... ok
+test_unknown_order_reference_is_recorded_but_grants_nothing (test_payments.PaymentTestCase.test_unknown_order_reference_is_recorded_but_grants_nothing) ... ok
+test_unrecognised_provider_name_disables_payments_entirely (test_payments.PaymentTestCase.test_unrecognised_provider_name_disables_payments_entirely) ... ok
+test_verified_payment_issues_exactly_one_token_automatically (test_payments.PaymentTestCase.test_verified_payment_issues_exactly_one_token_automatically) ... ok
+test_webhook_without_a_valid_signature_never_settles (test_payments.PaymentTestCase.test_webhook_without_a_valid_signature_never_settles) ... ok
+test_explicit_missing_contact_disables_payment (test_whatsapp_manual.WhatsAppConfigTests.test_explicit_missing_contact_disables_payment) ... ok
+test_invalid_link_injection_and_lengths_rejected (test_whatsapp_manual.WhatsAppConfigTests.test_invalid_link_injection_and_lengths_rejected) ... ok
+test_local_plus_country_and_idd_normalization (test_whatsapp_manual.WhatsAppConfigTests.test_local_plus_country_and_idd_normalization) ... ok
+test_public_config_contains_expected_prefill (test_whatsapp_manual.WhatsAppConfigTests.test_public_config_contains_expected_prefill) ... ok
+test_real_admin_local_client_bootstrap_and_login (test_whatsapp_manual.WhatsAppHTTPTests.test_real_admin_local_client_bootstrap_and_login) ... ok
+test_record_endpoint_requires_admin_and_does_not_issue_automatically (test_whatsapp_manual.WhatsAppHTTPTests.test_record_endpoint_requires_admin_and_does_not_issue_automatically) ... ok
+test_concurrent_records_and_issues_are_idempotent (test_whatsapp_manual.WhatsAppRecordTests.test_concurrent_records_and_issues_are_idempotent) ... ok
+test_existing_pending_is_preserved_not_recreated (test_whatsapp_manual.WhatsAppRecordTests.test_existing_pending_is_preserved_not_recreated) ... ok
+test_ordinary_user_and_self_record_forbidden (test_whatsapp_manual.WhatsAppRecordTests.test_ordinary_user_and_self_record_forbidden) ... ok
+test_receipt_reuse_for_second_buyer_rejected (test_whatsapp_manual.WhatsAppRecordTests.test_receipt_reuse_for_second_buyer_rejected) ... ok
+test_record_requires_configuration (test_whatsapp_manual.WhatsAppRecordTests.test_record_requires_configuration) ... ok
+test_record_without_buyer_pending_then_explicit_issue_and_activate (test_whatsapp_manual.WhatsAppRecordTests.test_record_without_buyer_pending_then_explicit_issue_and_activate) ... ok
+test_screenshot_unconfirmed_cannot_record_or_issue (test_whatsapp_manual.WhatsAppRecordTests.test_screenshot_unconfirmed_cannot_record_or_issue) ... ok
+test_wrong_amount_missing_buyer_invalid_receipt_roll_back (test_whatsapp_manual.WhatsAppRecordTests.test_wrong_amount_missing_buyer_invalid_receipt_roll_back) ... ok
+
+----------------------------------------------------------------------
+Ran 126 tests in 31.508s
+
+OK
+Cadangan dibuat : /tmp/eq-backup-test-8crfs_jt/backups/english-quest-20261018-123419-1792326859316602000.sqlite3
+Ukuran          : 8.0 KiB
+SHA-256         : abf0688c7587235e0dfee219e44940e56183a072fe4c08fe12c8d51738de607e
+Keterangan      : integritas ok · 1 tabel
+Disimpan        : 1 berkas terbaru di /tmp/eq-backup-test-8crfs_jt/backups
+  [BAD] english-quest-20261018-123419-1792326859316602000.sqlite3: integritas ok · 1 tabel · SIDIK-JARI TIDAK ADA
+Cadangan dibuat : /tmp/eq-backup-test-60mitzh5/backups/english-quest-20261018-123419-1792326859320263027.sqlite3
+Ukuran          : 8.0 KiB
+SHA-256         : abf0688c7587235e0dfee219e44940e56183a072fe4c08fe12c8d51738de607e
+Keterangan      : integritas ok · 1 tabel
+Disimpan        : 1 berkas terbaru di /tmp/eq-backup-test-60mitzh5/backups
+  [BAD] english-quest-20261018-123419-1792326859320263027.sqlite3: berkas rusak atau bukan database SQLite (file is not a database) · SIDIK-JARI TIDAK COCOK
+Cadangan dibuat : /tmp/eq-backup-test-b22s2o9p/backups/english-quest-20261018-123419-1792326859323022046.sqlite3
+Ukuran          : 8.0 KiB
+SHA-256         : abf0688c7587235e0dfee219e44940e56183a072fe4c08fe12c8d51738de607e
+Keterangan      : integritas ok · 1 tabel
+Disimpan        : 1 berkas terbaru di /tmp/eq-backup-test-b22s2o9p/backups
+  [OK ] english-quest-20261018-123419-1792326859323022046.sqlite3: integritas ok · 1 tabel · sidik-jari cocok
+Salinan staging dipulihkan: /tmp/eq-backup-test-b22s2o9p/restored.sqlite3. DB aktif tidak disentuh.
+Uji staging; hentikan layanan sebelum pergantian path database yang disetujui operator.
+Cadangan dibuat : /tmp/eq-backup-test-nwcadfpf/backups/english-quest-20261018-123419-1792326859325727906.sqlite3
+Ukuran          : 8.0 KiB
+SHA-256         : abf0688c7587235e0dfee219e44940e56183a072fe4c08fe12c8d51738de607e
+Keterangan      : integritas ok · 1 tabel
+Disimpan        : 1 berkas terbaru di /tmp/eq-backup-test-nwcadfpf/backups
+Cadangan dibuat : /tmp/eq-backup-test-axhqr5gg/backups/english-quest-20261018-123419-1792326859327467931.sqlite3
+Ukuran          : 8.0 KiB
+SHA-256         : abf0688c7587235e0dfee219e44940e56183a072fe4c08fe12c8d51738de607e
+Keterangan      : integritas ok · 1 tabel
+Disimpan        : 1 berkas terbaru di /tmp/eq-backup-test-axhqr5gg/backups
+Cadangan dibuat : /tmp/eq-backup-test-ccnywf19/backups/english-quest-20261018-123419-1792326859329236051.sqlite3
+Ukuran          : 8.0 KiB
+SHA-256         : abf0688c7587235e0dfee219e44940e56183a072fe4c08fe12c8d51738de607e
+Keterangan      : integritas ok · 1 tabel
+Disimpan        : 1 berkas terbaru di /tmp/eq-backup-test-ccnywf19/backups
+Cadangan dibuat : /tmp/eq-backup-test-ccnywf19/backups/english-quest-20261018-123419-1792326859330366122.sqlite3
+Ukuran          : 8.0 KiB
+SHA-256         : abf0688c7587235e0dfee219e44940e56183a072fe4c08fe12c8d51738de607e
+Keterangan      : integritas ok · 1 tabel
+Disimpan        : 2 berkas terbaru di /tmp/eq-backup-test-ccnywf19/backups
+Cadangan dibuat : /tmp/eq-backup-test-ccnywf19/backups/english-quest-20261018-123419-1792326859331717938.sqlite3
+Ukuran          : 8.0 KiB
+SHA-256         : abf0688c7587235e0dfee219e44940e56183a072fe4c08fe12c8d51738de607e
+Keterangan      : integritas ok · 1 tabel
+Disimpan        : 2 berkas terbaru di /tmp/eq-backup-test-ccnywf19/backups
+Cadangan dibuat : /tmp/eq-backup-test-ccnywf19/backups/english-quest-20261018-123419-1792326859332915572.sqlite3
+Ukuran          : 8.0 KiB
+SHA-256         : abf0688c7587235e0dfee219e44940e56183a072fe4c08fe12c8d51738de607e
+Keterangan      : integritas ok · 1 tabel
+Disimpan        : 2 berkas terbaru di /tmp/eq-backup-test-ccnywf19/backups
+Asset parity: 18 files identical between root and english-quest-android assets (cache english-quest-shell-v22)
+Client failure paths: 8 groups passed
+  ✓ stalled server times out instead of hanging forever
+  ✓ refused connection reports NETWORK_ERROR (no crash, no success)
+  ✓ healthy server still works and POSTs send application/json
+  ✓ 401 clears the stored session
+  ✓ unreadable/500 responses fail closed (no Premium from a broken server)
+  ✓ timeout falls back to the limited local demo and keeps Premium locked
+  ✓ server-confirmed Premium still unlocks (no regression)
+  ✓ offline fallback keeps a bounded 5-question demo quota
+Client gates: 11 acceptance groups passed (welcome/local fallback, full Easy demo, quota/restart, unique-submit, online guest/sync, premium fail-closed, progress, and server admin role); all 43 route renderers smoke-tested.
+Manual DANA/WhatsApp UI: 11 groups passed (configuration, copy, URL/prefill, native/browser opening, no checkout/token, failure, isolation, public info, Android allowlist, admin).
+Owner public contact: 10 groups passed (exact numbers/price, unknown name, native/browser/fallback clipboard, failure honesty, editable WhatsApp draft, no automatic entitlement, server disable, corrupt config, demo copy).
+Client registration: 13 groups passed
+  ✓ registration succeeds, stores the session and returns a non-premium account
+  ✓ five-character password is rejected with a readable WEAK_PASSWORD message
+  ✓ invalid email is rejected with INVALID_EMAIL
+  ✓ registering an existing email is reported as ACCOUNT_EXISTS
+  ✓ backend unavailable reports NETWORK_ERROR without unlocking anything
+  ✓ an unresponsive server ends in NETWORK_TIMEOUT instead of freezing the form
+  ✓ an unreadable server response reports INVALID_SERVER_RESPONSE
+  ✓ the native bridge supplies the API origin; without it the form stays unconfigured
+  ✓ local validation blocks bad input and the show/hide password control preserves typing
+  ✓ form registration verifies the account and the same credentials can log in later
+  ✓ a failing backend leaves the user on the form with the server message shown
+  ✓ end to end: real backend registers, hashes, stores, then logs the user back in
+  ✓ the register button follows the configuration and the password field shows min 6 + toggle
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Task :app:prepareVoskOfflineModel
+Verified bundled Vosk model: 41205931 bytes, SHA-256 30f26242c4eb449f948e42cb302dd7a686cb29a3423a8367f99ff41780942498
+
+> Task :app:preBuild
+> Task :app:preDebugBuild
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:generateDebugBuildConfig UP-TO-DATE
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:processDebugMainManifest UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :app:processDebugResources UP-TO-DATE
+> Task :app:compileDebugJavaWithJavac UP-TO-DATE
+> Task :app:mergeDebugShaders UP-TO-DATE
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets
+> Task :app:compressDebugAssets
+> Task :app:processDebugJavaRes NO-SOURCE
+> Task :app:mergeDebugJavaResource UP-TO-DATE
+> Task :app:checkDebugDuplicateClasses UP-TO-DATE
+> Task :app:desugarDebugFileDependencies UP-TO-DATE
+> Task :app:mergeExtDexDebug UP-TO-DATE
+> Task :app:mergeLibDexDebug UP-TO-DATE
+> Task :app:dexBuilderDebug UP-TO-DATE
+> Task :app:mergeProjectDexDebug UP-TO-DATE
+> Task :app:mergeDebugJniLibFolders UP-TO-DATE
+> Task :app:mergeDebugNativeLibs UP-TO-DATE
+> Task :app:stripDebugDebugSymbols UP-TO-DATE
+> Task :app:validateSigningDebug UP-TO-DATE
+> Task :app:writeDebugAppMetadata UP-TO-DATE
+> Task :app:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect UP-TO-DATE
+> Task :app:assembleDebug
+
+BUILD SUCCESSFUL in 13s
+35 actionable tasks: 4 executed, 31 up-to-date
+{
+  "status": "PASS",
+  "apk": "/home/user/english-quest/english-quest-android/app/build/outputs/apk/debug/app-debug.apk",
+  "bytes": 84929134,
+  "sha256": "372b126c4bd22c6665c7c5bd7aab741ab0194f213ed8a987024ba12d5f193a58",
+  "applicationId": "com.englishquest.app.debug",
+  "versionCode": 13,
+  "versionName": "1.7.1-debug",
+  "assets_identical": 18,
+  "api_origin": "http://127.0.0.1:8088",
+  "loopback_only": true,
+  "vosk_sha256": "30f26242c4eb449f948e42cb302dd7a686cb29a3423a8367f99ff41780942498",
+  "signer_sha256": "7659afc54a848321ff9a88c1604254af2d768c504e4adb6fdd92f490d7c950a3",
+  "secrets_pattern_scan": "no match; not an exhaustive secrets audit",
+  "scope": "local debug only; not device-tested or online-ready"
+}

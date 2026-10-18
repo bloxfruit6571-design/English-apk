@@ -37,7 +37,7 @@ class LocalLauncherTests(unittest.TestCase):
             env=launcher.local_environment(Path(folder))
             self.assertEqual(env['EQ_HOST'],'127.0.0.1');self.assertEqual(env['EQ_TRUST_PROXY'],'0')
             self.assertEqual(env['EQ_PORT'],'8088')
-            self.assertEqual(env['EQ_DANA_MANUAL_NUMBER'],'');self.assertEqual(env['EQ_DANA_MANUAL_NAME'],'')
+            self.assertNotIn('EQ_DANA_MANUAL_NUMBER',env);self.assertNotIn('EQ_DANA_MANUAL_NAME',env);self.assertNotIn('EQ_WHATSAPP_ADMIN_NUMBER',env)
             self.assertEqual(env['EQ_PAYMENT_PROVIDER'],'');self.assertNotIn('EQ_DANA_CLIENT_SECRET',env)
 
 if __name__=='__main__':unittest.main()

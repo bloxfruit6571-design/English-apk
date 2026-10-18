@@ -28,13 +28,13 @@ function setup(overrides={}){
  {
   const h=setup({manualPaymentConfig:async()=>({ok:true,available:false,recipient_number:'',recipient_name:'',whatsapp_number:'',message:'Informasi pembayaran belum dikonfigurasi.'})});
   await h.qa.refreshManualPaymentState();
-  assert.match(h.root.innerHTML,/Pembayaran belum tersedia/);assert.match(h.root.innerHTML,/disabled>HUBUNGI ADMIN VIA WHATSAPP/);
+  assert.match(h.root.innerHTML,/Pembayaran belum tersedia/);assert.match(h.root.innerHTML,/disabled>KONFIRMASI PEMBAYARAN VIA WHATSAPP/);
   assert.doesNotMatch(h.root.innerHTML,/SYNTHETIC|href="https:\/\/wa.me|payment-start|payment-claim|checkout_url/);groups++;
  }
  {
   const h=setup();let copied='';h.context.navigator.clipboard={writeText:async v=>{copied=v;}};
   await h.qa.refreshManualPaymentState();assert.match(h.root.innerHTML,/ENGLISH QUEST PREMIUM/);
-  for(const value of ['Rp5.000','permanen','tanpa langganan','TEST ONLY','SYNTHETIC-NOT-PAYABLE','SALIN NOMOR DANA','HUBUNGI ADMIN VIA WHATSAPP'])assert.ok(h.root.innerHTML.includes(value),value);
+  for(const value of ['Rp5.000','permanen','tanpa langganan','TEST ONLY','SYNTHETIC-NOT-PAYABLE','SALIN NOMOR DANA','KONFIRMASI PEMBAYARAN VIA WHATSAPP'])assert.ok(h.root.innerHTML.includes(value),value);
   await h.qa.copyManualDanaNumber();assert.equal(copied,config.recipient_number);
   const link=new URL(h.qa.manualWhatsAppUrl());assert.equal(link.origin,'https://wa.me');assert.equal(link.pathname,'/628000000000');assert.equal(link.searchParams.get('text'),config.whatsapp_message);
   assert.match(h.root.innerHTML,/target="_blank" rel="noopener noreferrer"/);groups++;

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Backend khusus APK debug lokal. Tidak mengaktifkan penerima atau transaksi DANA.
+"""Backend khusus APK debug lokal. Menampilkan kontak publik; tidak memproses transaksi DANA.
 
 python3 tools/backend-lokal-manual.py serve
 python3 tools/backend-lokal-manual.py create-admin --email EMAIL_OPERATOR
@@ -43,7 +43,7 @@ def local_environment(state: Path) -> dict[str, str]:
     env.update(EQ_TOKEN_PEPPER=pepper, EQ_DB_PATH=str(db), EQ_HOST='127.0.0.1', EQ_PORT='8088',
                EQ_ALLOW_INSECURE_DEV='1', EQ_TRUST_PROXY='0',
                EQ_ALLOWED_ORIGINS='https://appassets.androidplatform.net',
-               EQ_DANA_MANUAL_NUMBER='', EQ_DANA_MANUAL_NAME='', EQ_WHATSAPP_ADMIN_NUMBER='', EQ_PAYMENT_PROVIDER='')
+               EQ_PAYMENT_PROVIDER='')
     return env
 
 
@@ -62,7 +62,7 @@ def main() -> int:
         return 2
     if args.command == 'create-admin':
         return subprocess.call([sys.executable, str(ROOT/'backend/manage.py'), 'create-admin', '--email', args.email], env=env)
-    print('UJI LOKAL SAJA: http://127.0.0.1:8088 — penerima DANA kosong, tidak untuk transaksi nyata.', flush=True)
+    print('UJI LOKAL SAJA: http://127.0.0.1:8088 — kontak publik pemilik; tidak ada verifikasi uang otomatis.', flush=True)
     print('DB/pepper dipertahankan pada direktori state. Jangan hapus atau bagikan direktori itu.', flush=True)
     os.execve(sys.executable, [sys.executable, str(ROOT/'backend/server.py')], env)
     return 0
