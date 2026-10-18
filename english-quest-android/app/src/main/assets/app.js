@@ -181,7 +181,7 @@ function saveProfile(){
   }catch(error){persistenceFailed=true;console.warn('Progres belum dapat disimpan',error);return false;}
 }
 if(!profile._eqSavedAt||profileMigrationPending)saveProfile();
-const state={page:'welcome',serverStatus:'checking',serverMessage:'',levelId:1,lessonId:'',backPage:'home',toast:'',practiceChoice:null,practiceFeedback:null,quiz:null,exam:null,match:null,sentence:null,picture:null,listen:null,rush:null,hunt:null,grammar:null,story:null,review:null,roleplay:null,npcQuest:null,chatReply:null,rival:null,sukiGateLessonId:'',sukiStoryIndex:0,creatorDraft:null,speakingPractice:null,onlineSpeechConsent:null,libraryCategory:'Semua',libraryQuery:'',libraryArticleId:'',libraryShowBookmarks:false,libraryQuizChoice:null,libraryQuizChecked:false,sourceId:'',sourceStatus:'idle',sourceSummary:'',sourceError:'',vocabQuery:'',vocabVisibleCount:40,numberVisibleCount:30,showTranslation:true,lessonTranslationHidden:null,showAllVocab:false,flameCelebration:false,missionMode:'easy',missionPlay:null,missionResult:null,unlockCelebrationMode:'',unlockCelebrationLabel:'',paymentOrder:null,paymentFeedback:'',paymentBusy:false,paymentPriceLabel:'Rp5.000'};
+const state={page:'welcome',serverStatus:'checking',serverMessage:'',levelId:1,lessonId:'',backPage:'home',toast:'',practiceChoice:null,practiceFeedback:null,quiz:null,exam:null,match:null,sentence:null,picture:null,listen:null,rush:null,hunt:null,grammar:null,story:null,review:null,roleplay:null,npcQuest:null,chatReply:null,rival:null,sukiGateLessonId:'',sukiStoryIndex:0,creatorDraft:null,speakingPractice:null,onlineSpeechConsent:null,libraryCategory:'Semua',libraryQuery:'',libraryArticleId:'',libraryShowBookmarks:false,libraryQuizChoice:null,libraryQuizChecked:false,sourceId:'',sourceStatus:'idle',sourceSummary:'',sourceError:'',vocabQuery:'',vocabVisibleCount:40,numberVisibleCount:30,showTranslation:true,lessonTranslationHidden:null,showAllVocab:false,flameCelebration:false,missionMode:'easy',missionPlay:null,missionResult:null,unlockCelebrationMode:'',unlockCelebrationLabel:'',paymentOrder:null,manualConfig:null,manualOrders:[],manualOwner:'',paymentFeedback:'',paymentBusy:false,paymentPriceLabel:'Rp5.000'};
 let toastTimer=null,rushTimer=null,matchResetTimer=null,flameTimer=null,missionUnlockTimer=null,audioToken=0,activeUtterance=null,speechRequestToken=0,nativeSpeechCapability=null,nativeOnlineSpeechCapability=null,uiAudioContext=null,musicMasterGain=null,musicTimer=null,musicStep=0,musicNextAt=0,dialogueAutoSequence=0;
 const audioState={status:'idle',text:'',error:''};
 const AccessApi=window.EnglishQuestAccess;
@@ -417,6 +417,7 @@ async function activatePremiumToken(){
   state.accessTokenInput='';state.accessError='';state.accessMessage='✨ Premium aktif pada akun ini. Progres belajar yang sudah ada tetap tersimpan.';state.page='home';state.toast=state.accessMessage;render();window.scrollTo?.(0,0);
 }
 async function logoutAccess(){
+  state.manualOwner='';state.manualConfig=null;state.manualOrders=[];state.paymentOrder=null;state.paymentFeedback='';state.paymentBusy=false;
   if(AccessApi)await AccessApi.logout();
   accessState={...accessState,status:'signedout',mode:'none',user:null};state.page='welcome';state.accessError='';state.toast='';render();window.scrollTo?.(0,0);
 }
@@ -458,6 +459,57 @@ function renderAccessStatusCard(){
   const identity=accessState.user.anonymous?'Sesi tamu (akun email opsional)':'Akun '+esc(accessState.user.email);
   return `<section class="access-status-card is-demo"><div class="access-status-copy"><span class="access-kicker">🌱 DEMO GRATIS · SERVER TERVERIFIKASI</span><h2>${remaining>0?`${remaining} soal unik tersisa`:'Jatah 5 soal demo sudah digunakan'}</h2><p>${identity} · ${used}/${accessState.demoLimit} soal terjawab. Benar maupun salah dihitung sekali; jawaban tersimpan di server dan soal tidak dapat diulang.</p><div class="access-meter"><span style="width:${percent}%"></span></div></div><div class="access-status-actions">${remaining>0?`<button class="btn btn-primary btn-small" data-action="nav" data-page="missions">🎯 Lanjut demo</button>`:`<button class="btn btn-primary btn-small" data-action="open-premium-access">💎 Buka Premium</button>`}${accessState.user.anonymous?`<button class="btn btn-ghost btn-small" data-action="access-open-login">👤 Simpan dengan akun</button>`:`<button class="btn btn-ghost btn-small" data-action="access-logout">Keluar</button>`}${adminLink}</div></section>`;
 }
+function manualPaymentStatusLabel(status){
+  return {pending:'Menunggu pemeriksaan dana oleh admin',verified:'Dana masuk diverifikasi; menunggu token dari admin',rejected:'Permintaan ditolak',issued:'Token telah diterbitkan oleh admin'}[status]||'Status belum diketahui';
+}
+function renderManualPurchaseCard(){
+  if(!hasVerifiedAccess()||accessState.user?.anonymous)return '';
+  const owner=String(accessState.user.userId||accessState.user.email||'');
+  const config=state.manualOwner===owner?state.manualConfig:null;
+  const orders=state.manualOwner===owner?state.manualOrders:[];
+  const available=config?.available===true&&Boolean(config.recipient_number&&config.recipient_name);
+  const active=orders.find(o=>o.status!=='rejected');
+  const details=available?`<p>Nomor DANA penerima: <strong>${esc(config.recipient_number)}</strong><br>Nama penerima: <strong>${esc(config.recipient_name)}</strong></p><button class="btn btn-secondary" data-action="manual-copy-number">Salin Nomor DANA</button><ol><li>Periksa nama penerima di DANA sebelum transfer.</li><li>Transfer tepat Rp5.000 ke nomor di atas.</li><li>Tekan Saya Sudah Membayar lalu sampaikan ID pesanan kepada admin.</li><li>Admin memeriksa transaksi yang benar-benar masuk, lalu memberikan token. Masukkan token di bawah.</li></ol>`:`<div class="access-alert" role="status">Pembayaran belum tersedia. ${esc(config?.message||'Konfigurasi penerima belum tersedia atau server tidak dapat dijangkau. Jangan transfer dahulu.')}</div>`;
+  const list=orders.map(o=>`<div class="access-usage"><b>ID pesanan: ${esc(o.order_id)}</b><span>${esc(manualPaymentStatusLabel(o.status))}</span><span>${esc(o.token_status==='claimed'?'Token sudah diaktifkan':o.token_status==='revoked'?'Token dicabut':o.token_issued?'Minta kode kepada admin':'Belum ada token')}</span>${o.rejection_reason?`<span>Alasan: ${esc({not_found:'Transaksi tidak ditemukan',wrong_amount:'Nominal tidak sesuai',wrong_recipient:'Penerima tidak sesuai',duplicate:'Transaksi duplikat',other:'Perlu klarifikasi kepada admin'}[o.rejection_reason]||o.rejection_reason)}</span>`:''}</div>`).join('');
+  return `<div class="access-purchase"><h2>Premium via DANA — pembayaran manual</h2><div class="access-usage"><b>Rp5.000</b><span>Sekali bayar, akses permanen, tanpa langganan</span></div>${details}<p class="access-footnote">Tombol Saya Sudah Membayar hanya mencatat permintaan, bukan bukti pembayaran. Tangkapan layar bukan verifikasi final. Premium tetap terkunci sampai token sah diaktifkan.</p><div class="access-footer"><button class="btn btn-primary" data-action="payment-start" ${!available||state.paymentBusy||active?'disabled':''}>${state.paymentBusy?'Memproses…':'Saya Sudah Membayar'}</button><button class="btn btn-secondary" data-action="payment-refresh" ${state.paymentBusy?'disabled':''}>Periksa status pembayaran</button></div>${list}${state.paymentFeedback?`<p class="access-footnote" role="status">${esc(state.paymentFeedback)}</p>`:''}</div>`;
+}
+async function refreshManualPaymentState(){
+  if(!hasVerifiedAccess()||accessState.user?.anonymous)return;
+  if(state.paymentBusy)return;
+  const owner=String(accessState.user.userId||accessState.user.email||'');
+  if(state.manualOwner!==owner){state.manualConfig=null;state.manualOrders=[];state.paymentFeedback='';}
+  state.manualOwner=owner;state.paymentBusy=true;render();
+  try{
+    const config=await AccessApi.manualPaymentConfig();
+    const orders=await AccessApi.manualPaymentOrders();
+    if(!hasVerifiedAccess()||String(accessState.user?.userId||accessState.user?.email||'')!==owner)return;
+    state.manualConfig=config?.ok?config:null;
+    state.manualOrders=orders?.ok&&Array.isArray(orders.orders)?orders.orders:[];
+    state.paymentFeedback=!config?.ok?String(config?.message||'Server pembayaran tidak tersedia.'):
+      !orders?.ok?String(orders?.message||'Status pesanan belum dapat diperiksa.'):'Status pembayaran diperbarui. Token diberikan oleh admin setelah verifikasi.';
+  }catch(_){if(state.manualOwner===owner){state.manualConfig=null;state.paymentFeedback='Tidak dapat terhubung ke server pembayaran. Coba lagi nanti.';}}
+  finally{if(state.manualOwner===owner){state.paymentBusy=false;render();}}
+}
+async function submitManualPayment(){
+  if(state.paymentBusy)return;
+  if(!hasVerifiedAccess()||accessState.user?.anonymous){beginAccessFlow('premium');return;}
+  const owner=String(accessState.user.userId||accessState.user.email||'');
+  if(state.manualOwner!==owner||state.manualConfig?.available!==true){state.paymentFeedback='Pembayaran belum tersedia. Muat ulang konfigurasi; jangan transfer dahulu.';render();return;}
+  state.paymentBusy=true;state.paymentFeedback='';render();
+  try{
+    const result=await AccessApi.createManualPayment();
+    if(!hasVerifiedAccess()||String(accessState.user?.userId||accessState.user?.email||'')!==owner)return;
+    if(result?.ok&&result.order_id){state.manualOrders=[result,...state.manualOrders.filter(o=>o.order_id!==result.order_id)];state.paymentFeedback='Permintaan tercatat. Sampaikan ID pesanan kepada admin. Premium belum aktif.';}
+    else state.paymentFeedback=String(result?.message||'Permintaan belum dapat dicatat. Tidak ada Premium yang diaktifkan.');
+  }catch(_){if(state.manualOwner===owner)state.paymentFeedback='Koneksi gagal. Periksa status sebelum mencoba lagi; permintaan mungkin sudah tercatat.';}
+  finally{if(state.manualOwner===owner){state.paymentBusy=false;render();}}
+}
+async function copyManualDanaNumber(){
+  if(!hasVerifiedAccess()||state.manualOwner!==String(accessState.user?.userId||accessState.user?.email||'')||!state.manualConfig?.available)return;
+  try{await navigator.clipboard.writeText(String(state.manualConfig.recipient_number));state.paymentFeedback='Nomor DANA disalin. Pastikan nama penerima cocok sebelum transfer.';}
+  catch(_){state.paymentFeedback='Salin otomatis tidak didukung. Pilih dan salin nomor DANA yang ditampilkan secara manual.';}
+  render();
+}
 function paymentStatusLabel(status){
   return {created:'Menunggu pembayaran',pending:'Diproses penyedia',paid:'Pembayaran terverifikasi',failed:'Pembayaran gagal',expired:'Pesanan kedaluwarsa',review:'Ditinjau manual'}[String(status||'')]||'Status belum diketahui';
 }
@@ -466,6 +518,7 @@ function formatRupiah(value){
   return 'Rp'+String(amount).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
 }
 function renderPremiumPurchaseCard(){
+  if(typeof AccessApi?.manualPaymentConfig==='function')return renderManualPurchaseCard();
   if(!hasVerifiedAccess()||accessState.user?.anonymous)return '';
   const order=state.paymentOrder,price=order?.price_label||state.paymentPriceLabel||'Rp5.000';
   const rows=[`<div class="access-usage"><span>Harga Premium</span><b>${esc(price)}</b><span>·</span><span>sekali bayar, akses permanen</span></div>`];
@@ -480,6 +533,7 @@ function renderPremiumPurchaseCard(){
   return `<div class="access-purchase">${rows.join('')}${state.paymentFeedback?`<div class="access-success">${esc(state.paymentFeedback)}</div>`:''}${actions?`<div class="access-footer">${actions}</div>`:''}<p class="access-footnote">Pembayaran diperiksa penyedia resmi lalu diverifikasi server; token Premium diterbitkan otomatis setelah pembayaran sukses tanpa persetujuan admin. Harga Rp5.000 dibayar sekali dan akses Premium berlaku permanen—tanpa langganan atau tagihan berulang. Jangan pernah mengirim uang ke rekening pribadi mana pun.</p></div>`;
 }
 async function startPremiumPayment(){
+  if(typeof AccessApi?.manualPaymentConfig==='function')return submitManualPayment();
   if(!hasVerifiedAccess()||accessState.user?.anonymous){beginAccessFlow('premium');return;}
   if(!AccessApi||typeof AccessApi.createPaymentOrder!=='function'){state.paymentFeedback='Pembayaran otomatis belum tersedia pada klien ini.';render();return;}
   state.paymentBusy=true;state.paymentFeedback='';render();
@@ -491,6 +545,7 @@ async function startPremiumPayment(){
   render();
 }
 async function refreshPremiumPaymentState(){
+  if(typeof AccessApi?.manualPaymentConfig==='function')return refreshManualPaymentState();
   const order=state.paymentOrder;
   if(!order?.order_id||!AccessApi||typeof AccessApi.paymentOrder!=='function'){state.paymentFeedback='Belum ada pesanan yang bisa diperiksa.';render();return;}
   state.paymentBusy=true;render();
@@ -502,6 +557,7 @@ async function refreshPremiumPaymentState(){
   render();
 }
 async function claimPremiumPaymentToken(){
+  if(typeof AccessApi?.manualPaymentConfig==='function'){state.paymentFeedback='Token diberikan oleh admin setelah verifikasi dana masuk.';render();return;}
   const order=state.paymentOrder;
   if(!order?.order_id||!AccessApi||typeof AccessApi.claimPaymentToken!=='function'){state.paymentFeedback='Belum ada pesanan terverifikasi.';render();return;}
   state.paymentBusy=true;render();
@@ -514,6 +570,7 @@ async function claimPremiumPaymentToken(){
   render();
 }
 async function refreshPaymentConfig(){
+  if(typeof AccessApi?.manualPaymentConfig==='function')return refreshManualPaymentState();
   if(!hasVerifiedAccess()||accessState.user?.anonymous)return;
   if(!AccessApi||typeof AccessApi.paymentConfig!=='function')return;
   const result=await AccessApi.paymentConfig();
@@ -523,7 +580,7 @@ async function refreshPaymentConfig(){
 }
 function renderPremiumAccess(){
   const verified=hasVerifiedAccess(),premium=isPremiumAccess(),accountCanClaim=verified&&!accessState.user?.anonymous;
-  if(!accountCanClaim)return `<div class="access-center-page"><section class="access-panel access-center"><div class="access-orbit">🔐</div><span class="access-kicker">PREMIUM ACCESS</span><h1>Hubungkan akun email</h1><p>Informasi Premium dapat dibuka kapan saja, tetapi klaim token memerlukan akun yang bisa dipulihkan. Sesi demo tamu/lokal tidak dapat menerima token. Demo gratis tetap bisa digunakan tanpa token.</p>${state.lockedMessage?`<div class="access-lock-reason">${esc(state.lockedMessage)}</div>`:''}${state.accessError?`<div class="access-alert" role="alert">${esc(state.accessError)}</div>`:''}<div class="access-footer"><button class="btn btn-primary" data-action="begin-access-flow" data-flow="premium">Masuk / buat akun</button><button class="btn btn-ghost" data-action="access-back">Kembali</button></div></section></div>`;
+  if(!accountCanClaim)return `<div class="access-center-page"><section class="access-panel access-center"><div class="access-orbit">🔐</div><span class="access-kicker">PREMIUM ACCESS</span><h1>Hubungkan akun email</h1><p><b>Premium Rp5.000</b> · sekali bayar, akses permanen, tanpa langganan. Pembayaran manual DANA hanya tersedia setelah konfigurasi penerima dapat diverifikasi dari server.</p><p>Informasi Premium dapat dibuka kapan saja, tetapi klaim token memerlukan akun yang bisa dipulihkan. Sesi demo tamu/lokal tidak dapat menerima token. Demo gratis tetap bisa digunakan tanpa token.</p>${state.lockedMessage?`<div class="access-lock-reason">${esc(state.lockedMessage)}</div>`:''}${state.accessError?`<div class="access-alert" role="alert">${esc(state.accessError)}</div>`:''}<div class="access-footer"><button class="btn btn-primary" data-action="begin-access-flow" data-flow="premium">Masuk / buat akun</button><button class="btn btn-ghost" data-action="access-back">Kembali</button></div></section></div>`;
   if(premium)return `<div class="access-center-page"><section class="access-panel access-center is-premium"><div class="access-orbit">💎</div><span class="access-kicker">AKSES TERVERIFIKASI</span><h1>Premium aktif!</h1><p>Akun <b>${esc(accessState.user.email)}</b> memiliki akses Premium. Status selalu diverifikasi oleh server; tidak bergantung pada flag lokal.</p>${state.accessMessage?`<div class="access-success">${esc(state.accessMessage)}</div>`:''}<div class="access-footer"><button class="btn btn-primary" data-action="access-home">🏠 Ke beranda</button><button class="btn btn-ghost" data-action="access-logout">Keluar</button></div></section></div>`;
   return `<div class="access-center-page"><section class="access-panel access-center"><div class="access-orbit">🎟️</div><span class="access-kicker">AKTIVASI TOKEN · SATU AKUN</span><h1>Buka English Quest Premium</h1><p>Token hanya dapat diklaim satu kali dan akan terikat permanen ke akun <b>${esc(accessState.user.email)}</b>. Setelah aktif, akses mengikuti akun saat masuk kembali di perangkat lain.</p>${renderPremiumPurchaseCard()}${state.lockedMessage?`<div class="access-lock-reason">${esc(state.lockedMessage)}</div>`:''}<div class="access-usage"><span>Demo terpakai</span><b>${Math.min(accessState.demoUsed,accessState.demoLimit)}/${accessState.demoLimit}</b><span>·</span><span>${accessState.demoRemaining} soal tersisa</span></div><label class="access-token-label" for="premium-token">Kode token</label><input id="premium-token" class="access-token-input" type="text" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="80" value="${esc(state.accessTokenInput||'')}" placeholder="EQP-XXXXXXXXXXXXXXXX…" aria-describedby="token-note"><p id="token-note" class="access-footnote">Token dikirim melalui koneksi HTTPS untuk validasi server. Jangan bagikan token kepada orang lain sebelum aktivasi.</p>${state.accessError?`<div class="access-alert" role="alert">${esc(state.accessError)}</div>`:''}<div class="access-footer"><button class="btn btn-primary" data-action="activate-premium" ${state.accessBusy?'disabled':''}>${state.accessBusy?'⏳ Memeriksa token…':'✨ Aktifkan Token'}</button><button class="btn btn-ghost" data-action="access-home">🏠 Beranda</button></div><p class="access-footnote">Demo 5 soal dan progres belajar yang sudah selesai tidak akan dihapus saat Premium diaktifkan.</p></section></div>`;
 }
@@ -2204,7 +2261,7 @@ function answerPicture(choice){const game=state.picture;if(!game||game.answer)re
 function answerListening(choice){const game=state.listen;if(!game||game.answer)return;const item=game.items[game.index];game.answer=choice;if(choice===item.id){game.score++;clearMistake(item.en);}else trackMistake(item.en);render();}
 function advancePicture(){const game=state.picture;if(!game)return;if(game.index<game.items.length-1){game.index++;game.answer=null;render();}else{game.finished=true;if(!game.rewarded){game.rewarded=true;game.rewardXp=15;game.rewardCoins=3;addReward(15,3,'game');recordGameResult('pictureQuiz',game.score,game.items.length);}render();}}
 function advanceListening(){const game=state.listen;if(!game)return;if(game.index<game.items.length-1){game.index++;game.answer=null;render();}else{game.finished=true;if(!game.rewarded){game.rewarded=true;addReward(15,3,'game');recordGameResult('listeningDetective',game.score,game.items.length);}render();}}
-const DEMO_ALLOWED_ACTIONS=new Set(['start-demo','begin-access-flow','access-open-login','access-open-premium','access-switch-auth','access-auth-submit','toggle-password-visibility','activate-premium','payment-start','payment-refresh','payment-claim','open-premium-access','access-home','access-back','access-logout','nav','enter-mode','select-mode','back','back-to-welcome','back-to-missions','mission-back-to-list','start-mission','resume-active-mission','mission-option','mission-order-token','mission-submit','mission-next','mission-hint','mission-translation','mission-play-audio','mission-next-mission','library-category','library-toggle-bookmarks','library-open','library-bookmark','library-mark-read','library-next','fetch-source','bookmark-word','toggle-vocab-filter','load-more-vocab','load-more-numbers','select-character','toggle-theme','toggle-sound','toggle-sfx','toggle-music','toggle-dialogue-voice','toggle-slow','toggle-online-speech','font-down','font-up','font-reset','audio-speed-down','audio-speed-up','audio-pause','audio-resume','audio-stop','speak','speak-slow','speak-sequence','open-speech-settings','speech-offline-only','save-progress-now','export-progress']);
+const DEMO_ALLOWED_ACTIONS=new Set(['start-demo','begin-access-flow','access-open-login','access-open-premium','access-switch-auth','access-auth-submit','toggle-password-visibility','activate-premium','payment-start','payment-refresh','payment-claim','manual-copy-number','open-premium-access','access-home','access-back','access-logout','nav','enter-mode','select-mode','back','back-to-welcome','back-to-missions','mission-back-to-list','start-mission','resume-active-mission','mission-option','mission-order-token','mission-submit','mission-next','mission-hint','mission-translation','mission-play-audio','mission-next-mission','library-category','library-toggle-bookmarks','library-open','library-bookmark','library-mark-read','library-next','fetch-source','bookmark-word','toggle-vocab-filter','load-more-vocab','load-more-numbers','select-character','toggle-theme','toggle-sound','toggle-sfx','toggle-music','toggle-dialogue-voice','toggle-slow','toggle-online-speech','font-down','font-up','font-reset','audio-speed-down','audio-speed-up','audio-pause','audio-resume','audio-stop','speak','speak-slow','speak-sequence','open-speech-settings','speech-offline-only','save-progress-now','export-progress']);
 const PREMIUM_ENTRY_ACTIONS=new Set(['start-first','continue','select-level','open-lesson','start-exam','start-lesson-quiz','start-game','start-listening','start-story','start-roleplay','start-chat-reply','start-npc-quest','start-review','start-random-quiz','start-rush','start-grammar-battle','start-suki-checkpoint','start-suki-from-games','start-suki-from-story','start-suki-challenge','start-mission','resume-active-mission','mission-retry','mission-next-mission','enter-mode','select-mode','read-suki-unlock','open-suki-story','start-roleplay','start-mic','skip-suki-gate','continue-after-suki','finish-lesson','repeat-lesson','finish-exam']);
 function featureForAction(action,target){
   const explicit=target?.dataset?.feature;if(explicit)return explicit;
@@ -2270,6 +2327,7 @@ async function handleClick(event){
     case 'toggle-password-visibility':togglePasswordVisibility();break;
     case 'access-switch-auth':state.authTab=state.authTab==='login'?'register':'login';state.authError='';render();break;
     case 'activate-premium':await activatePremiumToken();break;
+    case 'manual-copy-number':await copyManualDanaNumber();break;
     case 'payment-start':await startPremiumPayment();break;
     case 'payment-refresh':await refreshPremiumPaymentState();break;
     case 'payment-claim':await claimPremiumPaymentToken();break;

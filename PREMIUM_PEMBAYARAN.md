@@ -1,5 +1,8 @@
 # Laporan: Sistem Premium & Pembayaran DANA (English Quest)
 
+> **ARSIP ALUR OTOMATIS, BUKAN PETUNJUK AKTIF.** Alur ini telah diganti pembayaran manual.
+> Lihat [PEMBAYARAN-DANA-MANUAL.md](PEMBAYARAN-DANA-MANUAL.md). Endpoint otomatis produksi dinonaktifkan.
+
 Cabang kerja: `audit-baseline-1.7.1` (lokal). `main` tidak disentuh. Tidak ada deployment produksi,
 tidak ada kredensial produksi, dan tidak ada transaksi nyata dalam pekerjaan ini.
 

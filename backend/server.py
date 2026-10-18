@@ -31,9 +31,10 @@ from pathlib import Path
 from typing import Any
 
 try:  # Imported as a package ("from backend import server") …
-    from . import payments
+    from . import payments, manual_payments
 except ImportError:  # … or executed directly from the backend/ directory.
     import payments  # type: ignore[no-redef]
+    import manual_payments
 
 ROOT = Path(__file__).resolve().parent.parent
 DB_DEFAULT = Path(__file__).resolve().parent / "data" / "english-quest.sqlite3"
@@ -115,7 +116,8 @@ class ApiError(Exception):
         self.status, self.code, self.message = status, code, message
 
 
-class Store:
+class Store(manual_payments.ManualPaymentsMixin):
+    manual_error = ApiError
     def __init__(self, db_path: str | Path, token_pepper: str | bytes):
         self.db_path = str(db_path)
         self.pepper = token_pepper.encode("utf-8") if isinstance(token_pepper, str) else token_pepper
@@ -128,6 +130,7 @@ class Store:
         except OSError:
             pass
         self._init_db()
+        self.init_manual_schema()
         try:
             os.chmod(self.db_path, 0o600)
         except OSError:
@@ -518,6 +521,9 @@ class Store:
                         db.commit()
                         return {"activated": True, "already_yours": True, "message": "Token ini sudah terikat pada akun Anda."}
                     raise ApiError(409, "TOKEN_ALREADY_USED", "Token ini sudah digunakan dan tidak dapat diklaim lagi.")
+                manual_order = db.execute("SELECT order_id,user_id,status FROM manual_payment_orders WHERE token_id=?", (row["token_id"],)).fetchone()
+                if manual_order and manual_order["user_id"] != user["user_id"]:
+                    raise ApiError(403, "TOKEN_ACCOUNT_MISMATCH", "Token ini hanya untuk akun pemilik pesanan.")
                 changed = db.execute("""
                   UPDATE premium_tokens
                   SET status='claimed',claimed_by_user_id=?,claimed_at=?
@@ -525,6 +531,8 @@ class Store:
                 """, (user["user_id"], iso(), row["token_id"])).rowcount
                 if changed != 1:
                     raise ApiError(409, "TOKEN_ALREADY_USED", "Token ini sudah digunakan dan tidak dapat diklaim lagi.")
+                if manual_order:
+                    self._manual_audit(db,manual_order["order_id"],user,"activated",manual_order["status"],manual_order["status"])
                 db.commit()
             except Exception:
                 db.rollback()
@@ -839,6 +847,10 @@ class Store:
                 if row["status"] == "revoked":
                     db.commit(); return
                 db.execute("UPDATE premium_tokens SET status='revoked' WHERE token_id=?", (token_id,))
+                manual_order = db.execute("SELECT order_id,status FROM manual_payment_orders WHERE token_id=?",(token_id,)).fetchone()
+                if manual_order:
+                    self._manual_admin(db,admin)
+                    self._manual_audit(db,manual_order["order_id"],admin,"token_revoked",manual_order["status"],manual_order["status"])
                 db.commit()
             except Exception:
                 db.rollback(); raise
@@ -995,6 +1007,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         # SimpleHTTPRequestHandler file serving (which would bypass the allowlist) stays off.
         self._send_public_file(urllib.parse.urlsplit(self.path).path, send_body=False)
 
+    def _legacy_payment_test_only(self) -> None:
+        # Historical automated-payment tests remain usable locally. No production
+        # checkout/webhook/token-rotation path survives the switch to manual DANA.
+        if not (os.getenv("EQ_ALLOW_INSECURE_DEV") == "1" and
+                self.server.server_address[0] in ("127.0.0.1", "::1", "localhost")):
+            raise ApiError(410, "AUTOMATIC_PAYMENTS_DISABLED", "Checkout otomatis nonaktif. Gunakan pembayaran manual yang diverifikasi admin.")
+
     def do_GET(self) -> None:
         path = urllib.parse.urlsplit(self.path).path
         if path.startswith("/api/"):
@@ -1002,6 +1021,10 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 self._ensure_secure()
                 if path == "/api/health":
                     self._ok({"service": "english-quest", "status": "ready"}); return
+                if path == "/api/manual-payments/config":
+                    self._ok(manual_payments.configuration()); return
+                if path.startswith("/api/payments/"):
+                    self._legacy_payment_test_only()
                 if path == "/api/payments/config":
                     # Public on purpose: the app must be able to show the price and whether
                     # automatic payment is live without holding a session. No secret is exposed.
@@ -1013,10 +1036,28 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                         "available": bool(provider and provider.configured()),
                     }); return
                 user = self.store.authenticate(self._bearer())
+                query = urllib.parse.parse_qs(urllib.parse.urlsplit(self.path).query)
+                if path in ("/api/manual-payments/orders", "/api/manual-payments/order"):
+                    reference = query.get("order_id", [""])[0] if path.endswith("/order") else None
+                    if reference == "":
+                        raise ApiError(400,"INVALID_ORDER","ID pesanan wajib diisi.")
+                    self._ok({"orders": self.store.manual_orders(user, reference)}); return
+                if path == "/api/admin/manual-payments":
+                    admin = self._admin_user()
+                    self._ok({"orders": self.store.manual_orders(admin, admin=True, status=query.get("status", ["all"])[0], search=query.get("q", [""])[0])}); return
+                if path == "/api/admin/manual-payments/audit":
+                    admin = self._admin_user()
+                    self._ok({"events": self.store.manual_audit(admin,query.get("order_id",[""])[0])}); return
                 if path == "/api/me":
                     self._ok({"account": self.store.account_status(user)}); return
                 if path == "/api/admin/summary":
-                    admin = self._admin_user(); self._ok({"summary": self.store.admin_summary(admin)}); return
+                    admin = self._admin_user()
+                    summary = self.store.admin_summary(admin)
+                    with self.store.connection() as db:
+                        summary["manual_pending"] = db.execute("SELECT COUNT(*) FROM manual_payment_orders WHERE status='pending'").fetchone()[0]
+                        summary["manual_verified"] = db.execute("SELECT COUNT(*) FROM manual_payment_orders WHERE status IN ('verified','issued')").fetchone()[0]
+                        summary["manual_revenue_idr"] = db.execute("SELECT COALESCE(SUM(received_amount),0) FROM manual_payment_orders WHERE status IN ('verified','issued')").fetchone()[0]
+                    self._ok({"summary":summary}); return
                 if path == "/api/admin/tokens":
                     admin = self._admin_user(); query = urllib.parse.parse_qs(urllib.parse.urlsplit(self.path).query)
                     items = self.store.admin_tokens(admin, query.get("status", ["all"])[0], query.get("q", [""])[0])
@@ -1112,6 +1153,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         path = urllib.parse.urlsplit(self.path).path
         try:
             self._ensure_secure()
+            if path.startswith("/api/payments/"):
+                self._legacy_payment_test_only()
             if path == "/api/payments/webhook":
                 self._post_payment_webhook(); return
             if path == "/api/payments/sandbox/settle":
@@ -1133,6 +1176,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                     self.store.logout(token)
                 self._ok({"logged_out": True}); return
             user = self.store.authenticate(self._bearer())
+            if path == "/api/manual-payments/orders":
+                self._ok(self.store.create_manual_order(user,ip,body.get("amount",5000)),201); return
+            if path.startswith("/api/admin/manual-payments/"):
+                admin = self._admin_user()
+                self.store._rate_limit_standalone("manual-admin",admin["user_id"]+":"+ip,60,900)
+                action = path.rsplit("/",1)[-1]
+                self._ok(self.store.manual_admin_action(admin,body.get("order_id"),action,body)); return
             if path == "/api/demo/sync":
                 result = self.store.sync_demo_questions(user, body.get("question_ids"), ip)
                 self._ok(result); return
@@ -1150,6 +1200,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 self._ok(result); return
             if path == "/api/admin/tokens":
                 admin = self._admin_user()
+                self._legacy_payment_test_only()
                 expires_at = body.get("expires_at") or None
                 result = self.store.create_tokens(admin, body.get("count", 1), str(expires_at) if expires_at else None)
                 self._ok({"tokens": result}, 201); return

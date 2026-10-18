@@ -115,6 +115,10 @@
   async function createPaymentOrder() { return request('/payments/order', { method: 'POST', body: '{}' }, true); }
   async function paymentOrder(orderId) { return request(`/payments/order?order_id=${encodeURIComponent(String(orderId || ''))}`, { method: 'GET' }, true); }
   async function claimPaymentToken(orderId) { return request('/payments/claim', { method: 'POST', body: JSON.stringify({ order_id: orderId }) }, true); }
+  // Manual payment endpoints never return a token to buyers.
+  async function manualPaymentConfig() { return request('/manual-payments/config', { method: 'GET' }, false); }
+  async function createManualPayment() { return request('/manual-payments/orders', { method: 'POST', body: '{}' }, true); }
+  async function manualPaymentOrders() { return request('/manual-payments/orders', { method: 'GET' }, true); }
   async function logout() {
     const result = await request('/logout', { method: 'POST', body: '{}' }, true);
     setSession('');
@@ -126,6 +130,7 @@
     hasSession: () => Boolean(getSession()),
     register, login, health, startDemo, syncDemo, me, activate, consume, logout,
     paymentConfig, createPaymentOrder, paymentOrder, claimPaymentToken,
+    manualPaymentConfig, createManualPayment, manualPaymentOrders,
     clearSession: () => setSession('')
   };
 })();

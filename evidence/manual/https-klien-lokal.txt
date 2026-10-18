@@ -1,0 +1,19 @@
+
+== A. Build yang sudah diperbaiki (bridge ada) → https://127.0.0.1:44683 ==
+  OK   isConfigured() → true
+  OK   Mode HTTP dev nonaktif → false
+  OK   register() sukses → status=201 code=-
+  OK   sesi tersimpan
+  OK   me() mengembalikan akun → email=uji-19c4eeff1e03@example.test premium=false sisa=5
+  OK   login ulang → status=200
+
+== B. APK yang beredar di repo (tanpa bridge getApiBaseUrl) ==
+  OK   isConfigured() = false (tombol Buat Akun nonaktif) → false
+  OK   register() ditolak sebelum menyentuh jaringan → API_NOT_CONFIGURED
+       pesan yang dilihat pengguna: "Server akun belum dikonfigurasi. Akses demo dan Premium perlu diverifikasi secara online."
+
+== C. Backend tidak berjalan (port tertutup) ==
+  OK   register() melaporkan kegagalan jaringan → NETWORK_ERROR
+       pesan yang dilihat pengguna: "Tidak dapat terhubung ke server. Periksa internet, lalu coba lagi."
+
+REPRODUKSI: semua pemeriksaan sesuai harapan

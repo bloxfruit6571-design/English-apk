@@ -1,5 +1,12 @@
 # Persiapan backend HTTPS English Quest
 
+> **Pembaruan pembayaran:** gunakan [DANA manual](../PEMBAYARAN-DANA-MANUAL.md).
+> Isi `EQ_DANA_MANUAL_NUMBER`/`EQ_DANA_MANUAL_NAME` hanya setelah penerima sah dikonfirmasi.
+> Biarkan `EQ_PAYMENT_PROVIDER` kosong; kredensial merchant/webhook tidak diperlukan.
+> Template proxy publik masih memblokir admin: siapkan jalur operator privat HTTPS yang disetujui,
+> bukan membuka port HTTP backend. Source ini belum dideploy atau diuji melalui internet.
+
+
 **Status: template lokal, belum di-deploy. Belum siap untuk pendaftaran online.**
 Basis kode diverifikasi langsung dari branch `audit-baseline-1.7.1`, tip `502ec4c`.
 Berkas deployment ini belum ada di GitHub: terapkan patch yang disertakan ke klon branch tersebut,

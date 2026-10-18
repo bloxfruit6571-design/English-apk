@@ -163,8 +163,8 @@ def periksa_konfigurasi(cfg: dict[str, str], laporan: Laporan) -> tuple[str, str
     else:
         laporan.lulus("EQ_PORT valid", port)
 
-    if cfg.get("EQ_PAYMENT_PROVIDER") == "sandbox":
-        laporan.gagal("Simulator pembayaran dilarang di produksi")
+    if cfg.get("EQ_PAYMENT_PROVIDER"):
+        laporan.gagal("EQ_PAYMENT_PROVIDER harus kosong; checkout otomatis produksi nonaktif")
     if bool(sertifikat) != bool(kunci):
         laporan.gagal("TLS cert/key harus berpasangan")
     if trust_proxy and (sertifikat or kunci):

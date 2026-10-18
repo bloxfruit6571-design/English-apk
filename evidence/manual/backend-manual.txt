@@ -1,0 +1,33 @@
+test_complete_synthetic_configuration (test_manual_payments.ManualConfigTests.test_complete_synthetic_configuration) ... ok
+test_unset_partial_invalid_receiver_unavailable (test_manual_payments.ManualConfigTests.test_unset_partial_invalid_receiver_unavailable) ... ok
+test_http_authorization_and_complete_flow (test_manual_payments.ManualHTTPTests.test_http_authorization_and_complete_flow) ... ok
+test_http_old_automatic_and_generic_issue_closed_in_production (test_manual_payments.ManualHTTPTests.test_http_old_automatic_and_generic_issue_closed_in_production) ... ok
+test_http_storage_failure_is_500_without_entitlement (test_manual_payments.ManualHTTPTests.test_http_storage_failure_is_500_without_entitlement) ... ok
+test_real_tls_account_order_admin_token_activation_relogin (test_manual_payments.ManualTLSTests.test_real_tls_account_order_admin_token_activation_relogin) ... ok
+test_01_request_pending_does_not_grant_anything (test_manual_payments.ManualTests.test_01_request_pending_does_not_grant_anything) ... ok
+test_02_unprivileged_cannot_verify_issue_reject_or_audit (test_manual_payments.ManualTests.test_02_unprivileged_cannot_verify_issue_reject_or_audit) ... ok
+test_03_admin_verifies_no_token_until_explicit_issue (test_manual_payments.ManualTests.test_03_admin_verifies_no_token_until_explicit_issue) ... ok
+test_04_pending_and_rejected_cannot_issue (test_manual_payments.ManualTests.test_04_pending_and_rejected_cannot_issue) ... ok
+test_05_issue_is_idempotent_no_code_rotation (test_manual_payments.ManualTests.test_05_issue_is_idempotent_no_code_rotation) ... ok
+test_06_token_owner_binding_and_single_activation (test_manual_payments.ManualTests.test_06_token_owner_binding_and_single_activation) ... ok
+test_07_premium_survives_logout_login_store_restart (test_manual_payments.ManualTests.test_07_premium_survives_logout_login_store_restart) ... ok
+test_08_other_account_cannot_read_order (test_manual_payments.ManualTests.test_08_other_account_cannot_read_order) ... ok
+test_09_wrong_amount_and_unconfirmed_receipt_denied (test_manual_payments.ManualTests.test_09_wrong_amount_and_unconfirmed_receipt_denied) ... ok
+test_10_audit_complete_and_no_plaintext_secret (test_manual_payments.ManualTests.test_10_audit_complete_and_no_plaintext_secret) ... ok
+test_11_duplicate_receipt_cannot_approve_other_order (test_manual_payments.ManualTests.test_11_duplicate_receipt_cannot_approve_other_order) ... ok
+test_12_concurrent_issue_creates_exactly_one_code (test_manual_payments.ManualTests.test_12_concurrent_issue_creates_exactly_one_code) ... ok
+test_13_failure_rolls_back_order_token_and_audit (test_manual_payments.ManualTests.test_13_failure_rolls_back_order_token_and_audit) ... ok
+test_14_no_self_verification_even_admin (test_manual_payments.ManualTests.test_14_no_self_verification_even_admin) ... ok
+test_15_revoked_admin_role_rechecked_inside_transaction (test_manual_payments.ManualTests.test_15_revoked_admin_role_rechecked_inside_transaction) ... ok
+test_16_no_receiver_no_order_and_no_fake_number (test_manual_payments.ManualTests.test_16_no_receiver_no_order_and_no_fake_number) ... ok
+test_17_receiver_snapshot_and_repeated_verify (test_manual_payments.ManualTests.test_17_receiver_snapshot_and_repeated_verify) ... ok
+test_18_legacy_claim_cannot_rotate_manual_code (test_manual_payments.ManualTests.test_18_legacy_claim_cannot_rotate_manual_code) ... ok
+test_19_additive_migration_preserves_legacy_rows (test_manual_payments.ManualTests.test_19_additive_migration_preserves_legacy_rows) ... ok
+test_20_guest_cannot_request_or_read (test_manual_payments.ManualTests.test_20_guest_cannot_request_or_read) ... ok
+test_21_rejection_is_audited_and_new_request_allowed (test_manual_payments.ManualTests.test_21_rejection_is_audited_and_new_request_allowed) ... ok
+test_22_manual_backup_restore_preserves_audit_and_premium (test_manual_payments.ManualTests.test_22_manual_backup_restore_preserves_audit_and_premium) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 10.175s
+
+OK
