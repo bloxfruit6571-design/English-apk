@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "apk": "/home/user/english-quest/english-quest-android/app/build/outputs/apk/debug/app-debug.apk",
+  "bytes": 84922352,
+  "sha256": "38cd8f9560937fde17404eb8ef9ff382a087a4e652df9dfb2ec80fe7d4d4923e",
+  "applicationId": "com.englishquest.app.debug",
+  "versionCode": 13,
+  "versionName": "1.7.1-debug",
+  "assets_identical": 17,
+  "api_origin": "http://127.0.0.1:8088",
+  "loopback_only": true,
+  "vosk_sha256": "30f26242c4eb449f948e42cb302dd7a686cb29a3423a8367f99ff41780942498",
+  "signer_sha256": "7659afc54a848321ff9a88c1604254af2d768c504e4adb6fdd92f490d7c950a3",
+  "secrets_pattern_scan": "no match; not an exhaustive secrets audit",
+  "scope": "local debug only; not device-tested or online-ready",
+  "previous_apk": "/home/user/artefak-apk/English-Quest-1.7.1-register-test-localtest-debug.apk",
+  "same_signer_as_previous": true
+}

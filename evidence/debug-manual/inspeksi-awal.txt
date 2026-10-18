@@ -1,0 +1,19 @@
+Canonical branch audit-baseline-1.7.1 at 9c105ee21122952708a8f0fcf75cc23e08243d26
+Loose workspace differences:
+DIFFERENT english-quest-android/app/build.gradle
+MISSING english-quest-android/app/src/debug/AndroidManifest.xml
+MISSING english-quest-android/app/src/debug/res/xml/eq_network_security_config_debug.xml
+DIFFERENT english-quest-android/app/src/main/assets/access-client.js
+DIFFERENT english-quest-android/app/src/main/assets/app.js
+DIFFERENT english-quest-android/app/src/main/assets/index.html
+DIFFERENT english-quest-android/app/src/main/assets/styles.css
+DIFFERENT english-quest-android/app/src/main/assets/sw.js
+DIFFERENT english-quest-android/app/src/main/java/com/englishquest/app/MainActivity.java
+MISSING evidence/hosting/https-local.txt
+MISSING evidence/hosting/node-tests.txt
+MISSING evidence/hosting/python-tests.txt
+MISSING evidence/manual/backend-manual.txt
+MISSING evidence/manual/https-klien-lokal.txt
+MISSING evidence/manual/semua-node.txt
+MISSING evidence/manual/semua-python.txt
+MISSING evidence/manual/simulator-legacy-lokal.txt

@@ -1,0 +1,12 @@
+Final automated Python suite: 106 passed, 0 failed, 0 skipped.
+Node: 42 acceptance groups + 43 route renderers + 17 source asset pairs passed.
+APK: signature valid; 17 embedded assets match; Vosk hash verified.
+Additional checks: 8 launcher smoke checks + 4 extracted backend ZIP smoke checks passed.
+Legacy simulator: 18 steps passed using temporary synthetic fixtures, no real provider/payment.
+Initial signature-equality assertion against the historical root APK failed: its signer differs.
+This remains an installation/upgrade limitation, not a claim of compatibility.
+New APK signer matches the previous register-test-localtest-debug APK instead.
+Initial ZIP smoke assertion expected whitespace in JSON and failed; replaced the ad-hoc check with
+JSON parsing and reran all four checks successfully. No application code/test suite weakened.
+Build warnings: deprecated Android API; native libjnidispatch.so/libvosk.so not stripped.
+No physical device/emulator execution, real DANA transaction, public deployment or push performed.

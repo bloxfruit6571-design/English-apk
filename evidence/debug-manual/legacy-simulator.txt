@@ -1,0 +1,22 @@
+HANYA FIXTURE TES KOMPATIBILITAS LOKAL, BUKAN PEMBAYARAN NYATA
+1. server siap di http://127.0.0.1:8099 dengan provider 'sandbox' (simulator lokal)
+2. GET /api/payments/config -> 200 harga=5000 IDR provider='sandbox' tersedia=True
+3. register -> 201 akun=buyer-3dabe6c0@example.test (token sesi tidak dicetak)
+4. GET /api/me -> 200 level=demo batas demo=5 soal
+      soal ke-6 ditolak -> 403 kode=QUESTION_NOT_IN_DEMO
+5. jawaban demo diterima=5 dari bank 5 ID unik; terpakai=5/5 sisa=0
+6. soal misi Easy kedua (sekarang materi Premium) -> 403 kode=QUESTION_NOT_IN_DEMO
+7. POST /api/payments/order -> 201 pesanan=EQO-185811CF069A40EFE0FD harga=Rp5.000 status=created
+8. webhook bertanda tangan (SUCCESS) -> 200 token_diterbitkan=True alasan=paid
+9. webhook yang sama diulang -> 200 duplikat=True token_diterbitkan=False
+10. webhook TANPA tanda tangan -> 401 kode=INVALID_SIGNATURE
+11. webhook status PENDING -> 200 token_diterbitkan=False (pending tidak pernah menerbitkan token)
+12. GET /api/payments/order -> 200 status=paid lunas=True token_siap=True
+13. POST /api/payments/claim -> 200 token=[KODE-TES-DISAMARKAN] (plaintext tidak pernah disimpan server)
+14. POST /api/premium/activate -> 200 aktif=True
+15. GET /api/me -> 200 level=premium premium=True kedaluwarsa=None (akses permanen)
+16. token sama dipakai ULANG oleh pemiliknya -> 200 idempoten=True (tidak menambah hak baru)
+17. akun lain memakai token yang sama -> 409 kode=TOKEN_ALREADY_USED
+18. materi/progres tidak dihapus: level materi lama & XP tetap di klien; kuota demo akun tetap 5 soal
+
+Semua langkah selesai. Ini pengujian lokal tanpa uang sungguhan dan tanpa provider resmi.

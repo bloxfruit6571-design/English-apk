@@ -1,0 +1,8 @@
+PASS health 200
+PASS receiver blank, payments unavailable
+PASS Android asset origin CORS
+PASS unauthenticated /api/manual-payments/orders denied 401
+PASS unauthenticated /api/admin/manual-payments denied 401
+PASS unauthenticated /api/admin/tokens denied 401
+PASS admin login page served (not authorization bypass)
+PASS zero accounts and zero payment records created by smoke test

@@ -1,0 +1,4 @@
+PASS extracted backend ZIP /api/health
+PASS extracted backend ZIP /api/manual-payments/config
+PASS extracted backend ZIP /admin
+PASS extracted backend ZIP /access-client.js
