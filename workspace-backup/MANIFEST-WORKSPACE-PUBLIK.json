@@ -1,0 +1,1368 @@
+{
+  "status": "Prepared locally; NOT uploaded",
+  "source_commit": "97100ce146e18b75853cd137d9de9648def64cd1",
+  "source_apk_historical": "Already on GitHub at 502ec4c; removed locally only after full remote download/hash verification",
+  "files": [
+    {
+      "path": "artefak-apk/English-Quest-1.7.1-owner-contact-localtest-debug.apk.sha256",
+      "bytes": 120,
+      "sha256": "8e54946b1185bb536b9829e3e5d677526889cd609b3d7ee7ea1eec6599304b60"
+    },
+    {
+      "path": "artefak-apk/VERIFIKASI-APK.md",
+      "bytes": 7726,
+      "sha256": "bf818334506bbf8b4b2ad4f6980b76dce4cd79578a25c011987d7ee1c3ec3236"
+    },
+    {
+      "path": "english-quest/.gitignore",
+      "bytes": 604,
+      "sha256": "2f5b660239bf2847d2c872ba69a3344ce2a1a8b1d9b4b6f24208547c3723098c"
+    },
+    {
+      "path": "english-quest/AUDIT_PERBAIKAN.md",
+      "bytes": 22017,
+      "sha256": "1863599600b30f4fc2de84b45cd5d116fed845899ca8d66af0dd6f8f3d74a07d"
+    },
+    {
+      "path": "english-quest/KONFIGURASI-PEMILIK-PREMIUM.md",
+      "bytes": 7977,
+      "sha256": "4bd0f8f897f80e8cc0d5bda306b487dd5270d6bdb5993d385f055778574d060c"
+    },
+    {
+      "path": "english-quest/LAPORAN-AKAR-MASALAH-PENDAFTARAN.md",
+      "bytes": 15066,
+      "sha256": "c32d9f794f785663450c8d67bad0dd7366367ccaf7a2568bbb4b9dbeffdfecc2"
+    },
+    {
+      "path": "english-quest/LAPORAN-HOSTING-PREMIUM.md",
+      "bytes": 12403,
+      "sha256": "08ea114d69336f46e529b8569f202fc68a5aa2ce31443504576b68755aac8d5f"
+    },
+    {
+      "path": "english-quest/LAPORAN-PENDAFTARAN.md",
+      "bytes": 14940,
+      "sha256": "6a42ff3f147d020acd3955fe285d9735fb239df6d57841fd8734ca387f38ad07"
+    },
+    {
+      "path": "english-quest/LAPORAN-PERSIAPAN-HTTPS.md",
+      "bytes": 7435,
+      "sha256": "e74f91af1504021bf8eaff12f8f830539b99814d87ebe8ae7f30a3b7f1e95ac3"
+    },
+    {
+      "path": "english-quest/LAPORAN-UJI-PENDAFTARAN.md",
+      "bytes": 16209,
+      "sha256": "b25c9fd116fb560ec6c0322802fc4187e8a9bab1073b634f24702ca2cb1b7bb4"
+    },
+    {
+      "path": "english-quest/PANDUAN-APK-DANA-WHATSAPP.md",
+      "bytes": 6608,
+      "sha256": "df2e146fca947d1f1a42e4e10239372c1fbc4fa7c0184a55a9a421b35d28e4cb"
+    },
+    {
+      "path": "english-quest/PANDUAN-APK-DEBUG-MANUAL.md",
+      "bytes": 8137,
+      "sha256": "600534ae46a9bfdd4a89049133fe2428f9fd7d00a15f35163164ce0cdb02a8f5"
+    },
+    {
+      "path": "english-quest/PANDUAN-APK-KONTAK-PEMILIK.md",
+      "bytes": 5600,
+      "sha256": "ab396a622d674e5a0fdc0d6ba8f91fdf569e6a1f12682e871a08aac64a5a4dee"
+    },
+    {
+      "path": "english-quest/PATCH-audit-baseline-1.7.1-perubahan-lokal.patch",
+      "bytes": 94215,
+      "sha256": "69645b06b464d7137fa6db1c1920de0663590c2c3e424040665b267db7d46697"
+    },
+    {
+      "path": "english-quest/PEMBAYARAN-DANA-MANUAL.md",
+      "bytes": 9981,
+      "sha256": "b6113d7863f521974c5a1b8c00a758d8440c62358c2ef90ab75da92dafd497cb"
+    },
+    {
+      "path": "english-quest/PEMBAYARAN-DANA-WHATSAPP.md",
+      "bytes": 8881,
+      "sha256": "0e6db1035fa00049eea5464c36832dc24803057458d0ce9bf539387f73683174"
+    },
+    {
+      "path": "english-quest/PREMIUM_PEMBAYARAN.md",
+      "bytes": 14521,
+      "sha256": "a078749d99354d395c1364612742d8fa900f50dca0bb3f8d720ad6bbe7fffddb"
+    },
+    {
+      "path": "english-quest/README.md",
+      "bytes": 26010,
+      "sha256": "15c410851cf0b568a370015109483d0055971f9471b1075841f8dfd32800aab2"
+    },
+    {
+      "path": "english-quest/access-client.js",
+      "bytes": 8999,
+      "sha256": "cc7fde84ae3b9982963717f3f2dca3b6a88556666c498f6ff09a160ef85030aa"
+    },
+    {
+      "path": "english-quest/app.js",
+      "bytes": 502806,
+      "sha256": "1cef039513b62342e0c4da8c12ca7a8829c5d54cefaab4bacc405d671540628e"
+    },
+    {
+      "path": "english-quest/backend/__init__.py",
+      "bytes": 43,
+      "sha256": "6aa834759cfd84d71ba07c136ff0ea1395779309ae2ef7cc2e5fe3ea2fca460a"
+    },
+    {
+      "path": "english-quest/backend/admin.html",
+      "bytes": 23459,
+      "sha256": "2824b6be74b3883a21e8d297a6b6c793471b392d09189c9ff1e08bac310acf32"
+    },
+    {
+      "path": "english-quest/backend/dev_payment_flow.py",
+      "bytes": 11032,
+      "sha256": "9ca5a0444209ff67cb7e27e50f9b1f9a85f637cea3e75127b51eab456bee77f0"
+    },
+    {
+      "path": "english-quest/backend/manage.py",
+      "bytes": 1507,
+      "sha256": "246c01722d182ad72cfc68c70faba1e90e66dc7c3163e4e315963f8e8c930e26"
+    },
+    {
+      "path": "english-quest/backend/manual_payments.py",
+      "bytes": 17964,
+      "sha256": "672c7d598e235b12c839b2b77e9058f8b4c718b9e9ba832afa4f8cdcdf225943"
+    },
+    {
+      "path": "english-quest/backend/payments.py",
+      "bytes": 15784,
+      "sha256": "0ce85fab691e3d8e18f41c866e2a0418044d0139c1e9377530000f6f881b144b"
+    },
+    {
+      "path": "english-quest/backend/server.py",
+      "bytes": 72575,
+      "sha256": "14671e0a8c55cf74906eb5a241d9e0cff158ce0db82a83aec024e65b23a0b790"
+    },
+    {
+      "path": "english-quest/deploy/Caddyfile",
+      "bytes": 578,
+      "sha256": "07af7a279a71397cd094fe97724a1f3de9b8867a11b8630c36c887113b74a985"
+    },
+    {
+      "path": "english-quest/deploy/PILIHAN-HOSTING.md",
+      "bytes": 6736,
+      "sha256": "6667c8167240262e50b67c688f5650d8ba50ebe33178a7d79d7542aa011aa1d5"
+    },
+    {
+      "path": "english-quest/deploy/README-DEPLOY.md",
+      "bytes": 10403,
+      "sha256": "b5034d4f23477b471a3a182e09d055463354fe7af1b3cfe95e2e8e81235fa350"
+    },
+    {
+      "path": "english-quest/deploy/cadangan.service",
+      "bytes": 581,
+      "sha256": "2f1a256297e41fad440a50c4a244a4a1a718dc538a112b9f37469e8808836a03"
+    },
+    {
+      "path": "english-quest/deploy/cadangan.timer",
+      "bytes": 214,
+      "sha256": "d2a9a0eee791917da7276679d1803854b35cd39ab218a97c42e48ca6c3879b67"
+    },
+    {
+      "path": "english-quest/deploy/cadangkan-db.py",
+      "bytes": 8369,
+      "sha256": "ac5e570abe84811d7e5960bb757ecde7bd12cb3eabe4b2b234d9f92e5d4959f9"
+    },
+    {
+      "path": "english-quest/deploy/cek-kesiapan-produksi.py",
+      "bytes": 21556,
+      "sha256": "32c24d948c01fa1472478b644fe82afcfc261217b31948819dd486863cc20666"
+    },
+    {
+      "path": "english-quest/deploy/crontab.example",
+      "bytes": 969,
+      "sha256": "d7a58912ebfb4be504998fd9c29b01eebc2f7eadb8580050c05866c962d15cce"
+    },
+    {
+      "path": "english-quest/deploy/englishquest-api.service",
+      "bytes": 1115,
+      "sha256": "2517729ace4f325ce776ff35adf0c6a23342831d1c3c572bd0802ca04bd658a1"
+    },
+    {
+      "path": "english-quest/deploy/env.produksi.example",
+      "bytes": 3781,
+      "sha256": "3ea227ef3bdd3d571e4f7d17884feb42d5fb782444393ba1fa96de957b1c488a"
+    },
+    {
+      "path": "english-quest/deploy/nginx-englishquest.conf",
+      "bytes": 2243,
+      "sha256": "cf168203513b5a5e1cdb8e44398a389915e20f211077fc46920805839ef955d5"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/build.gradle",
+      "bytes": 4724,
+      "sha256": "a2bc9ea4e4d146fc2445a557aa7628face4159dbdef86df7c13a65159370593f"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/debug/AndroidManifest.xml",
+      "bytes": 1157,
+      "sha256": "88363e714067520b3a99c6aa7c02b558cda7ebe25b993ab53edb6e13826a16be"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/debug/res/xml/eq_network_security_config_debug.xml",
+      "bytes": 689,
+      "sha256": "64d50ffd2997c8a5ca42c2db816c3932f7150d1ac2649c642300380abb562d8c"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/AndroidManifest.xml",
+      "bytes": 1331,
+      "sha256": "594d57d5d4685623d78b27ba999c78431409a42ce6c994343f5d4b1ae9f053ae"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/assets/access-client.js",
+      "bytes": 8999,
+      "sha256": "cc7fde84ae3b9982963717f3f2dca3b6a88556666c498f6ff09a160ef85030aa"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/assets/app.js",
+      "bytes": 502806,
+      "sha256": "1cef039513b62342e0c4da8c12ca7a8829c5d54cefaab4bacc405d671540628e"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/assets/icon-192.png",
+      "bytes": 11752,
+      "sha256": "748c9811109e81f6d84e2a72a5f3281b35d389197383940673ad683d5a942f34"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/assets/icon-512.png",
+      "bytes": 28491,
+      "sha256": "2934a16bbd02255c4f451e9c7e47933f10666dfb3882e5b1ca0d44d5b92bebd4"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/assets/icon.svg",
+      "bytes": 767,
+      "sha256": "25a9b4e6e3ac654f4d706f834bc34910a6731aecd31f54c3cb616e5e878ec0f1"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/assets/images/aki.webp",
+      "bytes": 84690,
+      "sha256": "1111a747a5922d14b6acd18205ee5297f7d7916a8cb9b81fb7d6f572f3a599cb"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/assets/images/bimo.webp",
+      "bytes": 71690,
+      "sha256": "de27ff8c0196a72d1916d9d5cf8c1ef3bfcdd3a4043b31a8867f473edeee8c98"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/assets/images/naya.webp",
+      "bytes": 80962,
+      "sha256": "0263d2b1734bccd64039f85730fc2035da996fe6fc303043d7b97e93ef8365d4"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/assets/images/rina.webp",
+      "bytes": 90536,
+      "sha256": "8b4f4a4d1511067394b3d5e4a2924075cde24545e504d25790bbf7e8d38989ce"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/assets/images/suki.webp",
+      "bytes": 69050,
+      "sha256": "7df2e0f05c5d06fae912b4128c761147450e9a7c1f464ea4e2a98287ef18b143"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/assets/index.html",
+      "bytes": 1559,
+      "sha256": "438049211e04edb32049ea0a71ad6b733151848ec628704e16cf3c73d1b7434f"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/assets/library-data.js",
+      "bytes": 53807,
+      "sha256": "934c9a3a4426bada20da95df986d6dc70ff7572fc017e08dcc1c6735b43d293e"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/assets/manifest.webmanifest",
+      "bytes": 711,
+      "sha256": "126987491fb868271eec2c065e032d031319236f8e99455a358141f73d2cf416"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/assets/mission-data-extras.js",
+      "bytes": 54075,
+      "sha256": "75a595a0a114c38e61fd02cdecbb83b9951aa6bf037c29d311d2273e7cbddf05"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/assets/mission-data.js",
+      "bytes": 87304,
+      "sha256": "da37d70c36344f9c3d0fa4c5d1b5c181308fe3322df11f735186bbe1b309c05e"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/assets/premium-contact.json",
+      "bytes": 459,
+      "sha256": "931a1cbe9c402efe5048c1350d6554375ab540c05c61d87044a0f8ebf0bb108e"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/assets/styles.css",
+      "bytes": 137016,
+      "sha256": "bbda9bd66bc57e90d389079e86a345248359c97a68899c74b3d0445334207de2"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/assets/sw.js",
+      "bytes": 1884,
+      "sha256": "c319c2c42b27fc883dfec429d879c7996c53dd7dfdfd85e3b8faa38d17d5d34a"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/assets/vosk-model-notice.txt",
+      "bytes": 699,
+      "sha256": "77e24617a83809a357b58919860c02df53b6441d14bdb27b2d5aecccc0f25185"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/java/com/englishquest/app/MainActivity.java",
+      "bytes": 63774,
+      "sha256": "3c308d65245b0a8ab55ea927d55b9fbeaf83ced32e1a1bb7d8b9de055380b1cd"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/res/drawable-nodpi/eq_launcher.png",
+      "bytes": 28491,
+      "sha256": "2934a16bbd02255c4f451e9c7e47933f10666dfb3882e5b1ca0d44d5b92bebd4"
+    },
+    {
+      "path": "english-quest/english-quest-android/app/src/main/res/values/styles.xml",
+      "bytes": 595,
+      "sha256": "be3b5e92c83fae96b1300639757fe1db932f0d6249d83103464809a97d2bde1a"
+    },
+    {
+      "path": "english-quest/english-quest-android/build.gradle",
+      "bytes": 73,
+      "sha256": "c3c0cf04da0fc239f391c774554d97d890018ab6e37e87cc62f6070d0c8c9909"
+    },
+    {
+      "path": "english-quest/english-quest-android/gradle/wrapper/gradle-wrapper.jar",
+      "bytes": 43504,
+      "sha256": "498495120a03b9a6ab5d155f5de3c8f0d986a449153702fb80fc80e134484f17"
+    },
+    {
+      "path": "english-quest/english-quest-android/gradle/wrapper/gradle-wrapper.properties",
+      "bytes": 250,
+      "sha256": "3d91f0932da99885c41e9dc4e85c9f9a2d3bfef4f0ad87473014dc0827a94884"
+    },
+    {
+      "path": "english-quest/english-quest-android/gradle.properties",
+      "bytes": 152,
+      "sha256": "8bdba48c3a80b5f0ebed3f4d28d62e528a212c3c25f52dbd2132d4c50b3a9e36"
+    },
+    {
+      "path": "english-quest/english-quest-android/gradlew",
+      "bytes": 8762,
+      "sha256": "a3648413b47ef77af21d5ebc36c687c7d103aaef3e17f33de7d4f080a6f300a3"
+    },
+    {
+      "path": "english-quest/english-quest-android/gradlew.bat",
+      "bytes": 2966,
+      "sha256": "57931b17dd228e5c24dac90e815d0bf82477e831a4618dfab4136f5446b42a9f"
+    },
+    {
+      "path": "english-quest/english-quest-android/settings.gradle",
+      "bytes": 336,
+      "sha256": "7efbe05e7db282318e3e1fed96983db7a3e53000edf44fa40a01a1a1d3fd31ec"
+    },
+    {
+      "path": "english-quest/evidence/apk-release-tanpa-origin.txt",
+      "bytes": 989,
+      "sha256": "0114a61241d94d81eeba44c36af986c493241e574623aa7ebdbf028be74104c0"
+    },
+    {
+      "path": "english-quest/evidence/branch-tip.txt",
+      "bytes": 73,
+      "sha256": "a511b9c48430af28bfc0a61f38a0b793cacb38427bcc9db90a81393d70412cf0"
+    },
+    {
+      "path": "english-quest/evidence/build-release.log",
+      "bytes": 2953,
+      "sha256": "62df339385a7867398540a2f7e49f9b8e8f13fb59b181a59eb5dc3a9f3e155a3"
+    },
+    {
+      "path": "english-quest/evidence/dana-whatsapp/CATATAN-TES.txt",
+      "bytes": 955,
+      "sha256": "5fd2345146f327211938adb02679939a912afec8e7624ea204bce80888d053ca"
+    },
+    {
+      "path": "english-quest/evidence/dana-whatsapp/INSPEKSI-AWAL.txt",
+      "bytes": 1754,
+      "sha256": "5063f76b6d06f01bb475f4a2a0e113251d5bb39f220da90ac66cc1af99aecf08"
+    },
+    {
+      "path": "english-quest/evidence/dana-whatsapp/PEMBERSIHAN.txt",
+      "bytes": 292,
+      "sha256": "ae3ed448b568508c1926ccd0f6aa61382947844a0a08fc3c0a3dbc7861c8c4dd"
+    },
+    {
+      "path": "english-quest/evidence/dana-whatsapp/apk-badging.txt",
+      "bytes": 5485,
+      "sha256": "9116ca4679a671713fc34e442d9a418a07d09b883dc81130994e4bca175d4bd4"
+    },
+    {
+      "path": "english-quest/evidence/dana-whatsapp/apk-signature.txt",
+      "bytes": 4337,
+      "sha256": "e5247ec6f8604054baeee90ac666f30c52db21cc2bc40b2ae8d6f6cacdf80223"
+    },
+    {
+      "path": "english-quest/evidence/dana-whatsapp/apk-verification.json",
+      "bytes": 859,
+      "sha256": "a41cb6e34f7c6a33febf883bef0bd0dcd1f42823b2e7ac674114de6e5d16f3bd"
+    },
+    {
+      "path": "english-quest/evidence/dana-whatsapp/final-pipeline.txt",
+      "bytes": 28725,
+      "sha256": "566c71a722e1ffae394b513150364e2a91f4ba8f4c3542a7644b75220cd1524a"
+    },
+    {
+      "path": "english-quest/evidence/dana-whatsapp/new-tests.txt",
+      "bytes": 2205,
+      "sha256": "e11ac9b79f1c20903c15c457244b9d778f1c0645d6ea7f92633d74aff8ef63c7"
+    },
+    {
+      "path": "english-quest/evidence/dana-whatsapp/node.txt",
+      "bytes": 2129,
+      "sha256": "0651637eaeca31f296d217708b8407ea9a35b9f291b501a3748ecd105bb18169"
+    },
+    {
+      "path": "english-quest/evidence/dana-whatsapp/python.txt",
+      "bytes": 22419,
+      "sha256": "9ea9e674f9c15ff39cad070f48fba7dc6443a8d21ab0329888dab592485fb132"
+    },
+    {
+      "path": "english-quest/evidence/debug-manual/apk-badging.txt",
+      "bytes": 5485,
+      "sha256": "9116ca4679a671713fc34e442d9a418a07d09b883dc81130994e4bca175d4bd4"
+    },
+    {
+      "path": "english-quest/evidence/debug-manual/apk-manifest.txt",
+      "bytes": 7000,
+      "sha256": "81ab623740abf2a0c52d94f6fa4cdfa324b0bce6a1f8ef379b4ba8b20d3cb172"
+    },
+    {
+      "path": "english-quest/evidence/debug-manual/apk-network.txt",
+      "bytes": 361,
+      "sha256": "af3b8be8f98cac5ca3d4fad9ce0636661a4b517fe6b01bc05bf18091498c5ccf"
+    },
+    {
+      "path": "english-quest/evidence/debug-manual/apk-signature.txt",
+      "bytes": 4337,
+      "sha256": "e5247ec6f8604054baeee90ac666f30c52db21cc2bc40b2ae8d6f6cacdf80223"
+    },
+    {
+      "path": "english-quest/evidence/debug-manual/apk-verification.json",
+      "bytes": 861,
+      "sha256": "dc2cc3b7e7ebcd8e547303e5369dc5b9fb39dee85c32a970ac4f549a234f2cbc"
+    },
+    {
+      "path": "english-quest/evidence/debug-manual/backend-zip-smoke.txt",
+      "bytes": 173,
+      "sha256": "bd8ce84bcab05f3bb9fb70ad52daa8c4706885570eb36560e49f4636b144c280"
+    },
+    {
+      "path": "english-quest/evidence/debug-manual/build-debug.log",
+      "bytes": 3201,
+      "sha256": "02c61553e50b7211f10fb19b64d96b6a76bf0fc94bc26fefa2c7a6aafdf53c52"
+    },
+    {
+      "path": "english-quest/evidence/debug-manual/catatan-verifikasi.txt",
+      "bytes": 1034,
+      "sha256": "6ed16b160fa87219421abf333160e01a748f93e47c074cb82dc3fb1b69be980f"
+    },
+    {
+      "path": "english-quest/evidence/debug-manual/final-pipeline.txt",
+      "bytes": 25762,
+      "sha256": "950cf55c0ce6fccc35a7c6719fe453dfa32fde1409944b6ccaa4c79c93144b44"
+    },
+    {
+      "path": "english-quest/evidence/debug-manual/inspeksi-awal.txt",
+      "bytes": 1057,
+      "sha256": "ccb95fdc5ed575580666f8466e6d4f3c64adab3580a937fbcf1fbef1388b4858"
+    },
+    {
+      "path": "english-quest/evidence/debug-manual/legacy-simulator.txt",
+      "bytes": 1645,
+      "sha256": "1dc5092bc2e67b992cbc94b243715ae7a45df03b3f04a045e9bf1722a580c84d"
+    },
+    {
+      "path": "english-quest/evidence/debug-manual/local-launcher-smoke.txt",
+      "bytes": 380,
+      "sha256": "15c98119d818d151abccb2f4c635b4fb1d6d32ccc05874b449b7ce35692937f2"
+    },
+    {
+      "path": "english-quest/evidence/debug-manual/node-tests.txt",
+      "bytes": 2102,
+      "sha256": "42309953d1024cd6330057ed43641c96f976b70a3c81a8913069ed4cacbd0e3c"
+    },
+    {
+      "path": "english-quest/evidence/debug-manual/python-tests.txt",
+      "bytes": 19797,
+      "sha256": "3660581a868961883c465d8b24b3aef82984dbe70ae8d2d5408795976fc83fb6"
+    },
+    {
+      "path": "english-quest/evidence/hosting/https-local.txt",
+      "bytes": 2308,
+      "sha256": "17de1c0a37e97c2fda85251908c1d976c026882ad4cfc8510c1f302e977ac6ce"
+    },
+    {
+      "path": "english-quest/evidence/hosting/node-tests.txt",
+      "bytes": 2104,
+      "sha256": "f86e22b367e7f25117367d4b1691ac1d92de7d7a95a8885aef09fef72826c272"
+    },
+    {
+      "path": "english-quest/evidence/hosting/python-tests.txt",
+      "bytes": 4223,
+      "sha256": "bcb986c4adf3d989334b2a17dc66280f3ed3efb2951ded4f2b33d3e357737e7e"
+    },
+    {
+      "path": "english-quest/evidence/manual/backend-manual.txt",
+      "bytes": 4053,
+      "sha256": "f599f2f6cdf32f4f055acd9e30cbe49ec0ffa38fe7c86fd6777af54f391a96db"
+    },
+    {
+      "path": "english-quest/evidence/manual/https-klien-lokal.txt",
+      "bytes": 947,
+      "sha256": "b72937e37960ed452939efde414e2ff5f3a35f173307d827c43ca8dbd4858694"
+    },
+    {
+      "path": "english-quest/evidence/manual/semua-node.txt",
+      "bytes": 2102,
+      "sha256": "42309953d1024cd6330057ed43641c96f976b70a3c81a8913069ed4cacbd0e3c"
+    },
+    {
+      "path": "english-quest/evidence/manual/semua-python.txt",
+      "bytes": 19797,
+      "sha256": "902b228505ae6329304b0c6adaf54f71105c3ad6e1d30163087f766c1217d4db"
+    },
+    {
+      "path": "english-quest/evidence/manual/simulator-legacy-lokal.txt",
+      "bytes": 1641,
+      "sha256": "a49c8b3a9d3eab466dd4058e1c37c56ec41bd99f8e339c765303c6d1c7fb0bc4"
+    },
+    {
+      "path": "english-quest/evidence/owner-contact/CATATAN-TES.md",
+      "bytes": 3064,
+      "sha256": "444931bbbd401589cf7b444f265ca1be7f4982dfd7e21a8fd28f3d04cba6917d"
+    },
+    {
+      "path": "english-quest/evidence/owner-contact/apk-badging.txt",
+      "bytes": 5485,
+      "sha256": "9116ca4679a671713fc34e442d9a418a07d09b883dc81130994e4bca175d4bd4"
+    },
+    {
+      "path": "english-quest/evidence/owner-contact/apk-signature.txt",
+      "bytes": 4337,
+      "sha256": "e5247ec6f8604054baeee90ac666f30c52db21cc2bc40b2ae8d6f6cacdf80223"
+    },
+    {
+      "path": "english-quest/evidence/owner-contact/apk-verification.json",
+      "bytes": 849,
+      "sha256": "4e7ca25e767469174826516688d744b0521a77a13d925759565b4f99b6bf13ff"
+    },
+    {
+      "path": "english-quest/evidence/owner-contact/backend-zip-smoke.txt",
+      "bytes": 414,
+      "sha256": "6e9e153189acc0da612eaaa14cc036f14459ddd89077bf4b07f15535e370e224"
+    },
+    {
+      "path": "english-quest/evidence/owner-contact/final-pipeline.txt",
+      "bytes": 28967,
+      "sha256": "f717f8a58bf4ff6438bed9bd9f041785f28cb5bd2fa825e89e6d5fd25c0ce9ab"
+    },
+    {
+      "path": "english-quest/evidence/owner-contact/node.txt",
+      "bytes": 2351,
+      "sha256": "34aa1e996377a33c4e8b12e5e7139266717647639f0e5e85a63c7c3ceacd2538"
+    },
+    {
+      "path": "english-quest/evidence/owner-contact/python-baseline.txt",
+      "bytes": 22607,
+      "sha256": "9d126bb2c75042d8117e261735bacd2002878d564ca3d93d58bd40445c67e338"
+    },
+    {
+      "path": "english-quest/evidence/owner-contact/python.txt",
+      "bytes": 23487,
+      "sha256": "0bc76975c072cd39c357c0a2b5c5f9ac842afb7ec7cc499ec9c3a31f90f35464"
+    },
+    {
+      "path": "english-quest/evidence/uji-https-lokal.txt",
+      "bytes": 2300,
+      "sha256": "3dafa5219ea959ecee88992e95c8a7d82d8ca80c719c028da9e05851d70ff1d0"
+    },
+    {
+      "path": "english-quest/evidence/uji-node.txt",
+      "bytes": 2104,
+      "sha256": "f86e22b367e7f25117367d4b1691ac1d92de7d7a95a8885aef09fef72826c272"
+    },
+    {
+      "path": "english-quest/evidence/uji-python.txt",
+      "bytes": 4222,
+      "sha256": "ea886b670ab4682ac52b0729f251f045a0fa868d317daaf5eb9909aed5d6e66b"
+    },
+    {
+      "path": "english-quest/evidence-pembayaran-lokal.txt",
+      "bytes": 1576,
+      "sha256": "065891de9c52ec1f668336b6e4fd658784f099138e9ae5158f485fb1f09a2785"
+    },
+    {
+      "path": "english-quest/evidence-probe-SEBELUM.txt",
+      "bytes": 3268,
+      "sha256": "ac742cc2914286bde432d116cc0f064ae41427d6808e3cb7d1dafe8dd58800b3"
+    },
+    {
+      "path": "english-quest/evidence-probe-SESUDAH.txt",
+      "bytes": 3243,
+      "sha256": "595509ce296be4c648926152ea130906995dd09c4d2fcfc19897e32c8853af65"
+    },
+    {
+      "path": "english-quest/icon-192.png",
+      "bytes": 11752,
+      "sha256": "748c9811109e81f6d84e2a72a5f3281b35d389197383940673ad683d5a942f34"
+    },
+    {
+      "path": "english-quest/icon-512.png",
+      "bytes": 28491,
+      "sha256": "2934a16bbd02255c4f451e9c7e47933f10666dfb3882e5b1ca0d44d5b92bebd4"
+    },
+    {
+      "path": "english-quest/icon.svg",
+      "bytes": 767,
+      "sha256": "25a9b4e6e3ac654f4d706f834bc34910a6731aecd31f54c3cb616e5e878ec0f1"
+    },
+    {
+      "path": "english-quest/image-search/anime-boy-school-uniform-illustration-st-1.jpg",
+      "bytes": 32733,
+      "sha256": "ff7acfc34151a71dc6cec849fadc73df41793491b0ef2a2fd56847be0a8cef2e"
+    },
+    {
+      "path": "english-quest/image-search/anime-boy-school-uniform-illustration-st-2.jpg",
+      "bytes": 119885,
+      "sha256": "8431b9bb36a2113b4d1404861a1ef374d3977636be37f2736dcccd33b278949a"
+    },
+    {
+      "path": "english-quest/image-search/anime-boy-school-uniform-illustration-st-3.jpg",
+      "bytes": 34505,
+      "sha256": "b60996c178dfffdc09f0df4852ef344c032dcbf0c1ccad2d4afd49200cffa195"
+    },
+    {
+      "path": "english-quest/image-search/anime-boy-school-uniform-illustration-st-4.jpg",
+      "bytes": 42082,
+      "sha256": "756ae846f69ebddd48d38d830499263d5a9ddab87882e4243bb69129766195f3"
+    },
+    {
+      "path": "english-quest/image-search/original-anime-female-student-character--1.webp",
+      "bytes": 71260,
+      "sha256": "07e8b2e7037b5e0b3b2c7aee3790ce11ea7c9aa5f2d8909778f0f23904f9d40d"
+    },
+    {
+      "path": "english-quest/image-search/original-anime-female-student-character--2.jpg",
+      "bytes": 16820,
+      "sha256": "966c0b31bda6fcb2fb6f1f8b72b42b3a93daeb0e98f73ddb262020b31141499b"
+    },
+    {
+      "path": "english-quest/image-search/original-anime-female-student-character--3.webp",
+      "bytes": 71574,
+      "sha256": "653802b39c50765dfb9e1f41b6b51cebf4faef28cb56447f7466e9431cfc53f0"
+    },
+    {
+      "path": "english-quest/image-search/original-anime-female-student-character--4.webp",
+      "bytes": 122256,
+      "sha256": "1335fe5046f2ad6e170deb1b812b91f99bc2058c6737611f654de1ab9a672d7e"
+    },
+    {
+      "path": "english-quest/images/aki.webp",
+      "bytes": 84690,
+      "sha256": "1111a747a5922d14b6acd18205ee5297f7d7916a8cb9b81fb7d6f572f3a599cb"
+    },
+    {
+      "path": "english-quest/images/bimo-cutout.png",
+      "bytes": 346350,
+      "sha256": "9a8fc943ef7f36b34e490700a28cea0e28e2f1778c02148dc44073d294a8dab7"
+    },
+    {
+      "path": "english-quest/images/bimo.png",
+      "bytes": 1689498,
+      "sha256": "f9c32ce40d6ab316b84d0022c440fc3e8b88e7b205ac361768edbecf9386a80b"
+    },
+    {
+      "path": "english-quest/images/bimo.webp",
+      "bytes": 71690,
+      "sha256": "de27ff8c0196a72d1916d9d5cf8c1ef3bfcdd3a4043b31a8867f473edeee8c98"
+    },
+    {
+      "path": "english-quest/images/naya-cutout.png",
+      "bytes": 398109,
+      "sha256": "122e030162b3432266fa93deb8fdeb46eb5bd4be6ef95bc699ce93a5dd6c8e66"
+    },
+    {
+      "path": "english-quest/images/naya.png",
+      "bytes": 1607238,
+      "sha256": "95da66a754f960026945a68805a90b3d12e783ee7fc09a8c44f07bd9648dea02"
+    },
+    {
+      "path": "english-quest/images/naya.webp",
+      "bytes": 80962,
+      "sha256": "0263d2b1734bccd64039f85730fc2035da996fe6fc303043d7b97e93ef8365d4"
+    },
+    {
+      "path": "english-quest/images/rina.webp",
+      "bytes": 90536,
+      "sha256": "8b4f4a4d1511067394b3d5e4a2924075cde24545e504d25790bbf7e8d38989ce"
+    },
+    {
+      "path": "english-quest/images/suki.webp",
+      "bytes": 69050,
+      "sha256": "7df2e0f05c5d06fae912b4128c761147450e9a7c1f464ea4e2a98287ef18b143"
+    },
+    {
+      "path": "english-quest/index.html",
+      "bytes": 1559,
+      "sha256": "438049211e04edb32049ea0a71ad6b733151848ec628704e16cf3c73d1b7434f"
+    },
+    {
+      "path": "english-quest/library-data.js",
+      "bytes": 53807,
+      "sha256": "934c9a3a4426bada20da95df986d6dc70ff7572fc017e08dcc1c6735b43d293e"
+    },
+    {
+      "path": "english-quest/manifest.webmanifest",
+      "bytes": 711,
+      "sha256": "126987491fb868271eec2c065e032d031319236f8e99455a358141f73d2cf416"
+    },
+    {
+      "path": "english-quest/mission-data-extras.js",
+      "bytes": 54075,
+      "sha256": "75a595a0a114c38e61fd02cdecbb83b9951aa6bf037c29d311d2273e7cbddf05"
+    },
+    {
+      "path": "english-quest/mission-data.js",
+      "bytes": 87304,
+      "sha256": "da37d70c36344f9c3d0fa4c5d1b5c181308fe3322df11f735186bbe1b309c05e"
+    },
+    {
+      "path": "english-quest/premium-contact.json",
+      "bytes": 459,
+      "sha256": "931a1cbe9c402efe5048c1350d6554375ab540c05c61d87044a0f8ebf0bb108e"
+    },
+    {
+      "path": "english-quest/source-art/characters/aki.png",
+      "bytes": 1542101,
+      "sha256": "896d65f6410dd996222c750b411d3b12d332fca2a8713c114cba4fa5a3c2c93b"
+    },
+    {
+      "path": "english-quest/source-art/characters/rina.png",
+      "bytes": 1457379,
+      "sha256": "e61afcae3881756cef668d88c180b6b80cf62189b0fa7bec5bd88af6803ffa6d"
+    },
+    {
+      "path": "english-quest/source-art/characters/suki.png",
+      "bytes": 1318015,
+      "sha256": "d39d09d6747f510000d427b4ca094e7ff40c4104c304637e2c7f4d493cff7007"
+    },
+    {
+      "path": "english-quest/styles.css",
+      "bytes": 137016,
+      "sha256": "bbda9bd66bc57e90d389079e86a345248359c97a68899c74b3d0445334207de2"
+    },
+    {
+      "path": "english-quest/sw.js",
+      "bytes": 1884,
+      "sha256": "c319c2c42b27fc883dfec429d879c7996c53dd7dfdfd85e3b8faa38d17d5d34a"
+    },
+    {
+      "path": "english-quest/tests/asset_parity.test.js",
+      "bytes": 2818,
+      "sha256": "dce4bb75a9704f6d4752591c938fd36bc8aa093d43313de933516166eae507fe"
+    },
+    {
+      "path": "english-quest/tests/client_failure_paths.test.js",
+      "bytes": 14088,
+      "sha256": "49f559fc36cc2673a0cbf523180cb68350b2fb33b406008141026e915efa3fda"
+    },
+    {
+      "path": "english-quest/tests/client_gates.test.js",
+      "bytes": 21227,
+      "sha256": "a4ad9e82215c9a938992ee5dae1347e3b71bdf33035e32eacda7a041535b05b5"
+    },
+    {
+      "path": "english-quest/tests/client_manual_payments.test.js",
+      "bytes": 9386,
+      "sha256": "7d8c9fd286a6e478d3d48525a20e5c469a125f41ac4f4f84eaf4bda79ca17376"
+    },
+    {
+      "path": "english-quest/tests/client_owner_contacts.test.js",
+      "bytes": 7585,
+      "sha256": "8b007474584cc03b8aa643f3318f923eabaf7413fa885d361ef05769ff726240"
+    },
+    {
+      "path": "english-quest/tests/client_registration.test.js",
+      "bytes": 28851,
+      "sha256": "4d3c294ef9d82ffff231f832716d03b2e90c6a17d990e60e722f6c215393d8ca"
+    },
+    {
+      "path": "english-quest/tests/test_backend.py",
+      "bytes": 24356,
+      "sha256": "6283e3dad402400afc72f76bca0074303ed4fae54e02e6089df14a7816a51195"
+    },
+    {
+      "path": "english-quest/tests/test_deployment.py",
+      "bytes": 4117,
+      "sha256": "0851d2c18326af30952af2e7c9306ba293f7d0763d6d8deb2256c02eba6671db"
+    },
+    {
+      "path": "english-quest/tests/test_failure_paths.py",
+      "bytes": 14065,
+      "sha256": "de7808ab9c79e1d6c1d4e86447719377147953d9084508c71e3f5bc21abd063f"
+    },
+    {
+      "path": "english-quest/tests/test_local_manual_launcher.py",
+      "bytes": 2665,
+      "sha256": "688e047af39e42bb38ca729d8512e16accf187b5010a9000424c2d94e7d292e4"
+    },
+    {
+      "path": "english-quest/tests/test_manual_payments.py",
+      "bytes": 21759,
+      "sha256": "16289a2702aff57a56cbbebb480eb5725cf6fd28b061830de1f18b17a923f002"
+    },
+    {
+      "path": "english-quest/tests/test_owner_contact.py",
+      "bytes": 3772,
+      "sha256": "bd1fe5f239b8be3088fdd54c71f46debf9832bb7ba4c1ce4bd26e26c9487c719"
+    },
+    {
+      "path": "english-quest/tests/test_payments.py",
+      "bytes": 36676,
+      "sha256": "f7856c64edf6fa727a21225386b34337af493a50370263aa3d624fb672f9a70a"
+    },
+    {
+      "path": "english-quest/tests/test_whatsapp_manual.py",
+      "bytes": 6751,
+      "sha256": "b7f6e1af32cd39cf01ef69c3ea6f4b45c9a58e6751e2b730d8307e991044c39b"
+    },
+    {
+      "path": "english-quest/tools/backend-lokal-manual.py",
+      "bytes": 3158,
+      "sha256": "1c99e11cc2121673159e1e7b989f81afcacf6d02faaa1971c394288b63109ca9"
+    },
+    {
+      "path": "english-quest/tools/build-apk-debug-manual.sh",
+      "bytes": 1601,
+      "sha256": "6780f3b55ca9d848249ad882ab8e8dbe25ff657c34a8d7da51ec5b43ebdb93bb"
+    },
+    {
+      "path": "english-quest/tools/build-apk-untuk-domain.sh",
+      "bytes": 2126,
+      "sha256": "a5d5aa95fd8a55bff8de615f2eb8dab723ad61eccfd403ffd792a6973c7f795a"
+    },
+    {
+      "path": "english-quest/tools/uji-admin-lokal.js",
+      "bytes": 1498,
+      "sha256": "2c40c7d20b2ad9956d2ecbbc98ae5f15e0e3284ee2a0d034df87509908e679f5"
+    },
+    {
+      "path": "english-quest/tools/uji-klien-https.js",
+      "bytes": 4614,
+      "sha256": "93dd004db6598336bd54d0ff20b533c7d58240008ad2ed15fae1637e4ecd8db8"
+    },
+    {
+      "path": "english-quest/tools/verifikasi-apk-debug-manual.py",
+      "bytes": 5306,
+      "sha256": "49b135d340d2d57b6ed440d8ec85a352b454d07307878e41438b0a3f69f7d069"
+    },
+    {
+      "path": "english-quest/tools/verifikasi-apk-produksi.py",
+      "bytes": 5616,
+      "sha256": "162afe55d11351431bfaf7efe8aaee80883ad281f2fb29a8af54164da0fa2674"
+    },
+    {
+      "path": "english-quest-audit-baseline-1.7.1.bundle",
+      "bytes": 70317,
+      "sha256": "9a044fe02a5e82b55fe4c2c3597a2b919fe09040a525381c4a4286461f51c50f"
+    },
+    {
+      "path": "english-quest-pendaftaran.bundle",
+      "bytes": 111280,
+      "sha256": "77f3961e6ff51a0df8153fb3a09859bc0639e3ceab1d38c99701bc1cfdb1d8a1"
+    },
+    {
+      "path": "evidence/baseline-backend.txt",
+      "bytes": 2565,
+      "sha256": "e125b5297290526e47fec36a0973b30c0e7b6019d434e4c02dfce626b4f768c2"
+    },
+    {
+      "path": "evidence/baseline-client.txt",
+      "bytes": 224,
+      "sha256": "79e4bc5aa8fb717a6dfaa5295a1b8516b00b8a921a6d7da36d81bec5869529df"
+    },
+    {
+      "path": "evidence/evidence-pembayaran-lokal.txt",
+      "bytes": 1576,
+      "sha256": "065891de9c52ec1f668336b6e4fd658784f099138e9ae5158f485fb1f09a2785"
+    },
+    {
+      "path": "evidence/probe-after-fix.txt",
+      "bytes": 3243,
+      "sha256": "595509ce296be4c648926152ea130906995dd09c4d2fcfc19897e32c8853af65"
+    },
+    {
+      "path": "evidence/probe-output.txt",
+      "bytes": 3268,
+      "sha256": "ac742cc2914286bde432d116cc0f064ae41427d6808e3cb7d1dafe8dd58800b3"
+    },
+    {
+      "path": "evidence/probe_failures.py",
+      "bytes": 5435,
+      "sha256": "0a0246744becca94d6381a4fdac6facaae0983fbf2118515ec9e3ee29ebf7adc"
+    },
+    {
+      "path": "laporan-english-apk.md",
+      "bytes": 11408,
+      "sha256": "e4887c53b17ac672037a7b72f14eeb268006473b173f2d4236f6b46503651266"
+    },
+    {
+      "path": "patch-english-quest/0001-Harden-failure-paths-reliable-rate-limiting-request-.patch",
+      "bytes": 61252,
+      "sha256": "3a809b36fab127cbc8e0e419731bdfda6524abe0572e16357855031940d82352"
+    },
+    {
+      "path": "patch-english-quest/0002-Add-audit-report-and-before-after-probe-evidence.patch",
+      "bytes": 26817,
+      "sha256": "a3e2cd6bd219523af24dfd52d28f7c6e476600cae2606a56494f58433d9df4f8"
+    },
+    {
+      "path": "patch-english-quest/0003-Build-verify-the-Android-project-and-fix-a-compile-e.patch",
+      "bytes": 11339,
+      "sha256": "7fbdff39ed9d5267ff1e6f47b31d62151db99aa50b776e49cd9b2bb4c4bfd789"
+    },
+    {
+      "path": "patch-english-quest/0004-Add-Premium-purchase-flow-5-question-demo-verified-p.patch",
+      "bytes": 282362,
+      "sha256": "272512ce5866cd6c114ca46ac35d0da475cced369a47d987ca50ffffc150bcd1"
+    },
+    {
+      "path": "patch-english-quest/0005-Fix-account-registration-expose-the-API-origin-to-th.patch",
+      "bytes": 115781,
+      "sha256": "4076c9a7383dee6ea8ec765869aec64635542b188bbda38ab14a28937a01f50d"
+    },
+    {
+      "path": "serah-terima/English-Quest-HTTPS-502ec4c.patch",
+      "bytes": 94215,
+      "sha256": "69645b06b464d7137fa6db1c1920de0663590c2c3e424040665b267db7d46697"
+    },
+    {
+      "path": "serah-terima/English-Quest-HTTPS-502ec4c.patch.sha256",
+      "bytes": 100,
+      "sha256": "c49102fdbb1993448bacd5ba4e5f13f6eb6d8af298c99e566a2a00e7da0e8833"
+    },
+    {
+      "path": "serah-terima/English-Quest-source-HTTPS.tar.gz",
+      "bytes": 10422935,
+      "sha256": "3a95c34ab5a15a79e2e4b5091e33a895de952d2f44d0d5b8bf54bf6ded24c3ed"
+    },
+    {
+      "path": "serah-terima/English-Quest-source-HTTPS.tar.gz.sha256",
+      "bytes": 100,
+      "sha256": "4c5a2ae824a19ddc3af906f1b682a26026f94c9dc0067bd922385d92fcfb05a5"
+    },
+    {
+      "path": "serah-terima/LAPORAN-PERSIAPAN-HTTPS.md",
+      "bytes": 7265,
+      "sha256": "438daa8259f4a7e8b6f3bba1492411543d503be02644b38d19b8e4e67f6b47b3"
+    },
+    {
+      "path": "serah-terima/dana-whatsapp/DAFTAR-PERUBAHAN.txt",
+      "bytes": 1175,
+      "sha256": "d62e1bac584690f4039893fed09befd2a995af92048794b78f1dad2151740a30"
+    },
+    {
+      "path": "serah-terima/dana-whatsapp/English-Quest-502ec4c-ke-62e9357.patch",
+      "bytes": 662500,
+      "sha256": "ce82618a940cc6994ea6fb882774cd8035512c11624e901aa3b10d049964fe0d"
+    },
+    {
+      "path": "serah-terima/dana-whatsapp/English-Quest-62e9357.bundle",
+      "bytes": 145716,
+      "sha256": "51b3bd82cff6fcad6bb0bbe9b3509551ce4f4ca8ca0e0194987e99fa11666398"
+    },
+    {
+      "path": "serah-terima/dana-whatsapp/English-Quest-backend-dana-whatsapp.zip",
+      "bytes": 49735,
+      "sha256": "ff00a69e565d816048d4d6fa193fd1d8153d21cce9645dc98c2d988abbe291cd"
+    },
+    {
+      "path": "serah-terima/dana-whatsapp/INSPEKSI-AWAL.txt",
+      "bytes": 1754,
+      "sha256": "5063f76b6d06f01bb475f4a2a0e113251d5bb39f220da90ac66cc1af99aecf08"
+    },
+    {
+      "path": "serah-terima/dana-whatsapp/LAPORAN-AKHIR.md",
+      "bytes": 15228,
+      "sha256": "1a70e944bb3744624d00e4ababcce800636c0fa304eadfe87f83e2536c259e71"
+    },
+    {
+      "path": "serah-terima/dana-whatsapp/PANDUAN-HP.md",
+      "bytes": 6386,
+      "sha256": "9b8642f8b4c2ef2d6ffd9e0233d2be0ef4c18c76e56e0e82ea9effb69d194d1f"
+    },
+    {
+      "path": "serah-terima/dana-whatsapp/PEMBERSIHAN-AKHIR.txt",
+      "bytes": 973,
+      "sha256": "deefb177b934720e978b03776c005105f95b8ec42abeb1b250ecf5fb4147972b"
+    },
+    {
+      "path": "serah-terima/dana-whatsapp/PEMBERSIHAN.txt",
+      "bytes": 292,
+      "sha256": "ae3ed448b568508c1926ccd0f6aa61382947844a0a08fc3c0a3dbc7861c8c4dd"
+    },
+    {
+      "path": "serah-terima/dana-whatsapp/REMOTE-TERAKHIR.txt",
+      "bytes": 130,
+      "sha256": "67f455c7b3a43a4377f3def9bc15477c1a46bd7396aef8a9eb91b0e6700e4131"
+    },
+    {
+      "path": "serah-terima/dana-whatsapp/SHA256SUMS.txt",
+      "bytes": 306,
+      "sha256": "32efe0082ba27771a1b4aead538a72843ab8ef3d9992a9c43cbca093f82ca831"
+    },
+    {
+      "path": "serah-terima/dana-whatsapp/VERIFIKASI-GIT.txt",
+      "bytes": 292,
+      "sha256": "0e11f8ac18fea3ebcd4c5852e030391bb133299c37d91a31de2eeb4eafe1298e"
+    },
+    {
+      "path": "serah-terima/debug-manual/BACKEND-SOURCE-SHA256.txt",
+      "bytes": 797,
+      "sha256": "82731fcae0bd95f841fef1ab5f97c657fedfceeb6d7de9a6859d965b2718d25b"
+    },
+    {
+      "path": "serah-terima/debug-manual/DAFTAR-PERUBAHAN-SESI-INI.txt",
+      "bytes": 774,
+      "sha256": "a5cb42cc948588f8a9099f1a6d3f13065a898cf6935f6c128bfe9c850c322aae"
+    },
+    {
+      "path": "serah-terima/debug-manual/English-Quest-502ec4c-ke-c8301ad.patch",
+      "bytes": 450631,
+      "sha256": "877d08adeb806e6082efe18657bc459536af09156dcaabe1c8305e58f357f4fd"
+    },
+    {
+      "path": "serah-terima/debug-manual/English-Quest-backend-lokal-manual.zip",
+      "bytes": 48016,
+      "sha256": "f1958695af74142ad1651e5821520875415d36cc4e0a9d8dc1dd7d21f2258e4b"
+    },
+    {
+      "path": "serah-terima/debug-manual/English-Quest-c8301ad.bundle",
+      "bytes": 118613,
+      "sha256": "7e39d73c348c727e85706ed0036f896144d9afaf4e905f2587b13cff4242e36c"
+    },
+    {
+      "path": "serah-terima/debug-manual/INSPEKSI-AWAL.txt",
+      "bytes": 1057,
+      "sha256": "ccb95fdc5ed575580666f8466e6d4f3c64adab3580a937fbcf1fbef1388b4858"
+    },
+    {
+      "path": "serah-terima/debug-manual/LAPORAN-AKHIR.md",
+      "bytes": 14109,
+      "sha256": "1e2288a51e07973e51958d436ba6bc7131babfa74724b0ddfce177de17a394ac"
+    },
+    {
+      "path": "serah-terima/debug-manual/PANDUAN-HP.md",
+      "bytes": 7915,
+      "sha256": "18e17f5cea9496d0388699b5932db3f20a2a31d29f2dfda7f1e67943afbbc692"
+    },
+    {
+      "path": "serah-terima/debug-manual/SHA256SUMS.txt",
+      "bytes": 305,
+      "sha256": "a12b0681ef986651c0c700ca6d4382b72dfc9cadeba009e0b17f0025b88da787"
+    },
+    {
+      "path": "serah-terima/debug-manual/VERIFIKASI-GIT.txt",
+      "bytes": 291,
+      "sha256": "d77fd2d67f5c1c077b066526967c7578d4755a9a0b80e152eb337c59861120a3"
+    },
+    {
+      "path": "serah-terima/hosting-6064027/English-Quest-6064027.bundle",
+      "bytes": 61280,
+      "sha256": "d5092c6ad33a16e2fae1313d7cc9573d0655f2954cc6c2cde49cf87c7fcbd160"
+    },
+    {
+      "path": "serah-terima/hosting-6064027/English-Quest-6064027.bundle.sha256",
+      "bytes": 95,
+      "sha256": "21e3bd17919841761147737494e631985c12a026d01cc90e2089912de67bd9c7"
+    },
+    {
+      "path": "serah-terima/hosting-6064027/English-Quest-6064027.patch",
+      "bytes": 162951,
+      "sha256": "eadc9b13abf545100ed3cd5be16fc1d678faa02a65d591a72873e27e6bceab40"
+    },
+    {
+      "path": "serah-terima/hosting-6064027/English-Quest-6064027.patch.sha256",
+      "bytes": 94,
+      "sha256": "e89c841980d6cb69ad8072e0cf53cff82c297b921785540e354e0684d41ca650"
+    },
+    {
+      "path": "serah-terima/hosting-6064027/English-Quest-source-6064027.tar.gz",
+      "bytes": 10430265,
+      "sha256": "4e897fcf88a6372bd8c2b3a073c4a0ff74646db31b14a4285489e35dae9c5b3d"
+    },
+    {
+      "path": "serah-terima/hosting-6064027/English-Quest-source-6064027.tar.gz.sha256",
+      "bytes": 102,
+      "sha256": "c174af66e3d35fbd172f032dff04a334a44b5aadf8412ce5f88749945521d208"
+    },
+    {
+      "path": "serah-terima/hosting-6064027/LAPORAN-HOSTING-PREMIUM.md",
+      "bytes": 12403,
+      "sha256": "08ea114d69336f46e529b8569f202fc68a5aa2ce31443504576b68755aac8d5f"
+    },
+    {
+      "path": "serah-terima/hosting-6064027/PANDUAN-HP-ANGGARAN-NOL.md",
+      "bytes": 4785,
+      "sha256": "203bf91707f891e87760ac23d35f66e2335690632698a2f77ae6187bc8e98cbb"
+    },
+    {
+      "path": "serah-terima/hosting-6064027/PILIHAN-HOSTING.md",
+      "bytes": 6736,
+      "sha256": "6667c8167240262e50b67c688f5650d8ba50ebe33178a7d79d7542aa011aa1d5"
+    },
+    {
+      "path": "serah-terima/hosting-6064027/STATUS-PUSH.md",
+      "bytes": 2841,
+      "sha256": "40321b3b45a6299bcbd964d3a7e2326ff579807088e996e90c699b7006b972ff"
+    },
+    {
+      "path": "serah-terima/manual-9c105ee/DAFTAR-PERUBAHAN.txt",
+      "bytes": 683,
+      "sha256": "ff2eb6d3c7ee0ed2cc9feb018444d0b8a3099d1986df1884415f309e722245c9"
+    },
+    {
+      "path": "serah-terima/manual-9c105ee/English-Quest-502ec4c-ke-9c105ee.patch",
+      "bytes": 349468,
+      "sha256": "774460406987598946ba30b8fcebe9e41ec8ef10066b3c54950930ca0806a6cb"
+    },
+    {
+      "path": "serah-terima/manual-9c105ee/English-Quest-9c105ee.bundle",
+      "bytes": 94722,
+      "sha256": "810388a764e7b8114d407dc2bdce300c74107097af555552ec6fa6ad10ae761d"
+    },
+    {
+      "path": "serah-terima/manual-9c105ee/LAPORAN-HASIL.md",
+      "bytes": 10904,
+      "sha256": "1cb35c2dafaf3fcf63f4d85aa1c9c742d853effd5ba4befa6205bf67d74f953d"
+    },
+    {
+      "path": "serah-terima/manual-9c105ee/PANDUAN-ADMIN-MANUAL.md",
+      "bytes": 9759,
+      "sha256": "a6acee63ad7ba4594b8d0452e3ce281dce30ccbca476dd5d0e6d4051df4c04d3"
+    },
+    {
+      "path": "serah-terima/manual-9c105ee/SHA256SUMS.txt",
+      "bytes": 200,
+      "sha256": "b47f4190171f254fb3711a9c52f32a067e1725f17a9c22311b27a55b883b1786"
+    },
+    {
+      "path": "serah-terima/manual-9c105ee/VERIFIKASI-BUNDLE.txt",
+      "bytes": 293,
+      "sha256": "9ae30cc7ddf2d53cd2ac0c4445d44f8f14a695e7361ef58d71fb93d2adb5d7d9"
+    },
+    {
+      "path": "serah-terima/owner-contact/CLEANUP-AWAL.txt",
+      "bytes": 114,
+      "sha256": "17a6c3f4ad238290222ceb856d04b7f336a988c02897fb014d6abad1117b6ae9"
+    },
+    {
+      "path": "serah-terima/owner-contact/DAFTAR-PERUBAHAN.txt",
+      "bytes": 1325,
+      "sha256": "1c06fa050d687ba792acffd414261b47581e20f7b639237d33b884079790c36a"
+    },
+    {
+      "path": "serah-terima/owner-contact/English-Quest-502ec4c-ke-97100ce.patch",
+      "bytes": 705539,
+      "sha256": "3b03cb7a6196b1a512d3cab00f16a395cd39f179afe6da915491fd505dfdc23c"
+    },
+    {
+      "path": "serah-terima/owner-contact/English-Quest-97100ce.bundle",
+      "bytes": 175924,
+      "sha256": "746da56a47ab81878b98b37c4afd2fdd8f1a3ebf003a222c2f90f10cea57ce11"
+    },
+    {
+      "path": "serah-terima/owner-contact/English-Quest-backend-owner-contact.zip",
+      "bytes": 50433,
+      "sha256": "99d3817ee3f8379031b7f8da3df45d5272064d8271eba9740ddfa706e8b7168e"
+    },
+    {
+      "path": "serah-terima/owner-contact/English-Quest-paket-serah-terima-owner-contact.zip",
+      "bytes": 428310,
+      "sha256": "95bf45ac2d7ce880c1da649c45e1891b8367c836c4032c88b56b10b1784a4587"
+    },
+    {
+      "path": "serah-terima/owner-contact/English-Quest-paket-serah-terima-owner-contact.zip.sha256",
+      "bytes": 117,
+      "sha256": "fb4ea7cd6945b9b902476f0bf1746225fdd960633fa5273664b5e66586039e9a"
+    },
+    {
+      "path": "serah-terima/owner-contact/INSPEKSI.txt",
+      "bytes": 2239,
+      "sha256": "b22f3fd0c998f0b4141af8a0627c8a525d9b03974de0c6dcf41197e1f44b76f9"
+    },
+    {
+      "path": "serah-terima/owner-contact/LAPORAN-AKHIR.md",
+      "bytes": 9939,
+      "sha256": "1cedf2b4913df2d097d479be8d3fd48799dadc47f7d31167e7753909964d6f88"
+    },
+    {
+      "path": "serah-terima/owner-contact/PANDUAN-HP.md",
+      "bytes": 5600,
+      "sha256": "ab396a622d674e5a0fdc0d6ba8f91fdf569e6a1f12682e871a08aac64a5a4dee"
+    },
+    {
+      "path": "serah-terima/owner-contact/PEMBERSIHAN-AKHIR.txt",
+      "bytes": 1548,
+      "sha256": "0df68f692bec4730355eafc432ef2ee4d2bb9a82bafe5fd95808322f8618831a"
+    },
+    {
+      "path": "serah-terima/owner-contact/PUSH-DARI-HP.md",
+      "bytes": 2627,
+      "sha256": "04898408c49304aa57be310d94f9155e9db3e72fd0cef4dcbf4d32a9545cc4d1"
+    },
+    {
+      "path": "serah-terima/owner-contact/SHA256SUMS.txt",
+      "bytes": 1054,
+      "sha256": "845a7296ee303980a04cbddf706b311e004c184acc9e1f7675b62c64aaff1d5d"
+    },
+    {
+      "path": "serah-terima/owner-contact/STATUS-GIT.txt",
+      "bytes": 294,
+      "sha256": "067578c14e6d7fe6314e37a2b3b9ab28d522a74f1693fa960a1f53106cca6b47"
+    },
+    {
+      "path": "serah-terima/owner-contact/VERIFIKASI-GIT.txt",
+      "bytes": 464,
+      "sha256": "aa59e0859472ed848a65c2468c70bc42ae00da871a3e8f03dc20d263f1217e12"
+    },
+    {
+      "path": "serah-terima/workspace-70mb/APK-LAMA-DI-GITHUB.json",
+      "bytes": 808,
+      "sha256": "1c016d929937bb8d87526d3d1eef67d63bc6b817675101ce29c4ba332ecd7a17"
+    },
+    {
+      "path": "serah-terima/workspace-70mb/CLEANUP.txt",
+      "bytes": 431,
+      "sha256": "0e12a7a50c1f43f9ae64a8ffb2adf7dd9e064ed1cfe1910e92eea83c9854eade"
+    },
+    {
+      "path": "serah-terima/workspace-70mb/INSTRUKSI-PUSH-HP.md",
+      "bytes": 3523,
+      "sha256": "69ec730577f4c96bf848f1e476ef794cf41752803a56f9c569f4f7dd5e87c2ae"
+    },
+    {
+      "path": "serah-terima/workspace-70mb/PUSH-RESULT.txt",
+      "bytes": 98,
+      "sha256": "23add9f110709c90ebf61ff96a2f634405fbe59338cf6552f9e89f629c61d4ee"
+    },
+    {
+      "path": "serah-terima/workspace-70mb/RECOVERY-VERIFY.txt",
+      "bytes": 292,
+      "sha256": "68b4dbf3250feb07b9b8dc051c0a815fec89804a421cb9cbf4a5c98bedc47eac"
+    },
+    {
+      "path": "serah-terima/workspace-70mb/SOURCE-INSPECTION.txt",
+      "bytes": 2567,
+      "sha256": "4c078069ef412f44aa335ca8bbafa7a2d0c4420023309bb073c1fe4376c3e7ca"
+    },
+    {
+      "path": "serah-terima/workspace-70mb/SOURCE-RECOVERY.txt",
+      "bytes": 3323,
+      "sha256": "99e5adccd0fdbdf90ebbe5cff893b46671e47ade34f4873525a0607d14e7de85"
+    },
+    {
+      "path": "serah-terima/workspace-70mb/sebelum-pemulihan/english-quest-android/app/build.gradle",
+      "bytes": 3959,
+      "sha256": "32026a6b8fc812928bd762a2062ab20ccc5de9dd0de8e2e397badb59baadacde"
+    },
+    {
+      "path": "serah-terima/workspace-70mb/sebelum-pemulihan/english-quest-android/app/src/main/assets/access-client.js",
+      "bytes": 7237,
+      "sha256": "2100712a5456cc45816973a455692d1bd25483d8257c2ce66c5c741558099c6b"
+    },
+    {
+      "path": "serah-terima/workspace-70mb/sebelum-pemulihan/english-quest-android/app/src/main/assets/app.js",
+      "bytes": 499475,
+      "sha256": "8a6bf7453a6c585608f425d3d680a1559d85616b449d74aaae30810abec2b743"
+    },
+    {
+      "path": "serah-terima/workspace-70mb/sebelum-pemulihan/english-quest-android/app/src/main/assets/index.html",
+      "bytes": 1013,
+      "sha256": "37a595161efbb2c1f6295030b9a9d844422abed37056382b0eebcf9b21757cf8"
+    },
+    {
+      "path": "serah-terima/workspace-70mb/sebelum-pemulihan/english-quest-android/app/src/main/assets/styles.css",
+      "bytes": 136691,
+      "sha256": "01cbcc476c13995a9d805136bd98072ad6afd4ebf6e619a48158bcad5ede9ad5"
+    },
+    {
+      "path": "serah-terima/workspace-70mb/sebelum-pemulihan/english-quest-android/app/src/main/assets/sw.js",
+      "bytes": 1858,
+      "sha256": "93e7abb0147b590124a5326b0cd0f6ad55c3635572db7fda63f5312e12ce5a14"
+    },
+    {
+      "path": "serah-terima/workspace-70mb/sebelum-pemulihan/english-quest-android/app/src/main/java/com/englishquest/app/MainActivity.java",
+      "bytes": 60283,
+      "sha256": "a35d2a06865d9552a6e04cc4c3e04f4629f98dcc36860e21f4d53679044be6d3"
+    },
+    {
+      "path": "setup_android_toolchain.sh",
+      "bytes": 2363,
+      "sha256": "ab0ad66e489e60eea2ed8ceb3e51c53c5f20c4940d4b4e63f91e76e06c650874"
+    },
+    {
+      "path": "tools/ambil-apk-historis-github.py",
+      "bytes": 1924,
+      "sha256": "b478a9cf76087af4b511b03ba542fb06a6fe84a595c56cb688908d1cb08f2046"
+    },
+    {
+      "path": "tools/jalankan-backend-uji.sh",
+      "bytes": 1620,
+      "sha256": "20b771c06c0b3e81c079d9a62001c8c1dc8d3be0e2e1b7515a64879c434dd6b6"
+    },
+    {
+      "path": "tools/push-workspace-dari-hp.sh",
+      "bytes": 4005,
+      "sha256": "637dd8586b74c07b0e9548dc137a5be2e059773c1b2f0760cdf3b6ba7d9f8f6e"
+    },
+    {
+      "path": "tools/repro-client.js",
+      "bytes": 4431,
+      "sha256": "6d3a82503cb1c02588980ca08c7ca1462d7904c128bb0d61591a7ca8300142f1"
+    },
+    {
+      "path": "tools/repro-http.py",
+      "bytes": 7776,
+      "sha256": "3eccbf63498933c462dd6aaf088316254ce7fccc9c95d4fe8580d26b745a475f"
+    }
+  ],
+  "excluded": [
+    {
+      "path": ".android/analytics.settings",
+      "reason": "private/cache/state/signing or excluded metadata"
+    },
+    {
+      "path": ".android/debug.keystore",
+      "reason": "private/cache/state/signing or excluded metadata"
+    },
+    {
+      "path": ".android/debug.keystore.lock",
+      "reason": "private/cache/state/signing or excluded metadata"
+    },
+    {
+      "path": ".sudo_as_admin_successful",
+      "reason": "private/cache/state/signing or excluded metadata"
+    },
+    {
+      "path": "artefak-apk/English-Quest-1.7.1-owner-contact-localtest-debug.apk",
+      "reason": "APK uploaded separately; no duplicate inside archive"
+    },
+    {
+      "path": "serah-terima/owner-contact/PROTECTED-HASHES.json",
+      "reason": "private/cache/state/signing or excluded metadata"
+    },
+    {
+      "path": "uploads/Prompt_Perbaikan_English_Quest_Arena.txt",
+      "reason": "private/cache/state/signing or excluded metadata"
+    }
+  ],
+  "scan": "Paths, credential patterns and nested zip/tar checked; not an exhaustive secret audit"
+}
