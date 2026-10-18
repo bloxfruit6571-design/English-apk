@@ -1,5 +1,8 @@
 # APK debug pembayaran manual — uji lokal dari HP
 
+> **Arsip tahap sebelum WhatsApp.** Spesifikasi aktif: [DANA–WhatsApp](PEMBAYARAN-DANA-WHATSAPP.md). APK/checksum dan alur buyer pending di dokumen ini bersifat historis; gunakan laporan/artefak sesi WhatsApp terbaru.
+
+
 Build ini **bukan produksi**. Endpoint tertanam: `http://127.0.0.1:8088`, flag HTTP dev aktif,
 package debug tetap `com.englishquest.app.debug`, versionName `1.7.1-debug`, versionCode `13`.
 Tidak ada endpoint publik, nomor DANA, akun admin, password, pepper, token Premium atau DB di APK.

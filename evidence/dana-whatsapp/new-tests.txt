@@ -1,0 +1,19 @@
+test_invalid_link_injection_and_lengths_rejected (test_whatsapp_manual.WhatsAppConfigTests.test_invalid_link_injection_and_lengths_rejected) ... ok
+test_local_plus_country_and_idd_normalization (test_whatsapp_manual.WhatsAppConfigTests.test_local_plus_country_and_idd_normalization) ... ok
+test_public_config_contains_expected_prefill (test_whatsapp_manual.WhatsAppConfigTests.test_public_config_contains_expected_prefill) ... ok
+test_three_fields_required_and_no_fake_contact (test_whatsapp_manual.WhatsAppConfigTests.test_three_fields_required_and_no_fake_contact) ... ok
+test_real_admin_local_client_bootstrap_and_login (test_whatsapp_manual.WhatsAppHTTPTests.test_real_admin_local_client_bootstrap_and_login) ... ok
+test_record_endpoint_requires_admin_and_does_not_issue_automatically (test_whatsapp_manual.WhatsAppHTTPTests.test_record_endpoint_requires_admin_and_does_not_issue_automatically) ... ok
+test_concurrent_records_and_issues_are_idempotent (test_whatsapp_manual.WhatsAppRecordTests.test_concurrent_records_and_issues_are_idempotent) ... ok
+test_existing_pending_is_preserved_not_recreated (test_whatsapp_manual.WhatsAppRecordTests.test_existing_pending_is_preserved_not_recreated) ... ok
+test_ordinary_user_and_self_record_forbidden (test_whatsapp_manual.WhatsAppRecordTests.test_ordinary_user_and_self_record_forbidden) ... ok
+test_receipt_reuse_for_second_buyer_rejected (test_whatsapp_manual.WhatsAppRecordTests.test_receipt_reuse_for_second_buyer_rejected) ... ok
+test_record_requires_configuration (test_whatsapp_manual.WhatsAppRecordTests.test_record_requires_configuration) ... ok
+test_record_without_buyer_pending_then_explicit_issue_and_activate (test_whatsapp_manual.WhatsAppRecordTests.test_record_without_buyer_pending_then_explicit_issue_and_activate) ... ok
+test_screenshot_unconfirmed_cannot_record_or_issue (test_whatsapp_manual.WhatsAppRecordTests.test_screenshot_unconfirmed_cannot_record_or_issue) ... ok
+test_wrong_amount_missing_buyer_invalid_receipt_roll_back (test_whatsapp_manual.WhatsAppRecordTests.test_wrong_amount_missing_buyer_invalid_receipt_roll_back) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 3.498s
+
+OK

@@ -17,16 +17,35 @@ def now():
     return datetime.now(timezone.utc).isoformat(timespec='seconds').replace('+00:00', 'Z')
 
 
+WHATSAPP_MESSAGE = 'Halo Admin English Quest, saya ingin membeli Premium seharga Rp5.000. Saya akan mengirimkan bukti pembayaran setelah transfer.'
+
+
+def normalize_whatsapp(value):
+    raw = str(value or '').strip()
+    if not raw or not re.fullmatch(r'[+0-9 ().-]+', raw):
+        return ''
+    number = re.sub(r'[ ().-]', '', raw)
+    if number.startswith('+'):
+        number = number[1:]
+    elif number.startswith('00'):
+        number = number[2:]
+    elif number.startswith('0'):
+        number = '62' + number[1:]
+    return number if re.fullmatch(r'[1-9][0-9]{7,14}', number) else ''
+
+
 def configuration():
     number = os.getenv('EQ_DANA_MANUAL_NUMBER', '').strip()
     name = os.getenv('EQ_DANA_MANUAL_NAME', '').strip()
+    whatsapp = normalize_whatsapp(os.getenv('EQ_WHATSAPP_ADMIN_NUMBER', ''))
     available = bool(re.fullmatch(r'(?:\+62|62|0)[0-9]{8,13}', number)
-                     and 2 <= len(name) <= 100 and not any(ord(c) < 32 for c in name))
+                     and 2 <= len(name) <= 100 and not any(ord(c) < 32 for c in name) and whatsapp)
     return {'mode': 'manual_dana', 'price_idr': 5000, 'currency': 'IDR',
             'available': available, 'recipient_number': number if available else '',
-            'recipient_name': name if available else '',
-            'message': ('Transfer hanya ke penerima ini. Admin memeriksa dana masuk sebelum menerbitkan token.'
-                        if available else 'Pembayaran belum tersedia. Nomor DANA dan nama penerima belum dikonfigurasi lengkap.')}
+            'recipient_name': name if available else '', 'whatsapp_number': whatsapp if available else '',
+            'whatsapp_message': WHATSAPP_MESSAGE,
+            'message': ('Hubungi admin melalui WhatsApp. Screenshot bukan verifikasi dana masuk.'
+                        if available else 'Informasi pembayaran belum dikonfigurasi lengkap: nomor DANA, nama penerima, dan WhatsApp admin. Pembayaran belum tersedia.')}
 
 
 class ManualPaymentsMixin:
@@ -148,6 +167,64 @@ class ManualPaymentsMixin:
             raise self.manual_error(404,'ORDER_NOT_FOUND','Pesanan tidak ditemukan untuk akun ini.')
         return [self._manual_payload(row) for row in rows]
 
+    def _verify_manual_receipt(self, db, row, admin, data):
+        before = row['status']; reference = row['order_id']; result = {}
+        amount = data.get('received_amount')
+        receipt = str(data.get('receipt_reference') or '').strip().upper()
+        if data.get('confirmed_received') is not True:
+            raise self.manual_error(400,'CONFIRM_RECEIPT_REQUIRED','Periksa transaksi masuk di akun DANA, bukan hanya tangkapan layar.')
+        if type(amount) is not int or amount != 5000:
+            raise self.manual_error(400,'INVALID_AMOUNT','Dana yang diverifikasi harus tepat Rp5.000.')
+        if not re.fullmatch(r'[A-Z0-9][A-Z0-9._/-]{3,119}',receipt):
+            raise self.manual_error(400,'RECEIPT_REFERENCE_REQUIRED','Isi referensi transaksi masuk yang valid (4–120 karakter).')
+        digest = hmac.new(self.pepper,('manual-receipt:'+receipt).encode(),hashlib.sha256).hexdigest()
+        if before in ('verified','issued'):
+            if row['receipt_hash'] != digest:
+                raise self.manual_error(409,'ORDER_ALREADY_VERIFIED','Pesanan sudah diverifikasi dengan referensi lain.')
+            result['duplicate'] = True
+        elif before != 'pending':
+            raise self.manual_error(409,'INVALID_ORDER_STATE','Pesanan ditolak tidak dapat disetujui.')
+        else:
+            if db.execute('SELECT 1 FROM manual_payment_orders WHERE receipt_hash=?',(digest,)).fetchone():
+                raise self.manual_error(409,'RECEIPT_ALREADY_USED','Referensi transaksi sudah digunakan untuk pesanan lain.')
+            db.execute("UPDATE manual_payment_orders SET status='verified',received_amount=5000,receipt_hash=?,verified_by=?,verified_at=?,updated_at=? WHERE order_id=?",
+                       (digest,admin['user_id'],now(),now(),reference))
+            self._manual_audit(db,reference,admin,'verified',before,'verified')
+        return result
+
+    def record_manual_payment(self, admin, data):
+        """Admin records a real receipt after offline checking; never issues a token here."""
+        with self.connection() as db:
+            db.execute('BEGIN IMMEDIATE')
+            try:
+                self._manual_admin(db, admin)
+                buyer = db.execute('SELECT * FROM users WHERE email=?',
+                                   (str(data.get('buyer_email') or '').strip().lower(),)).fetchone()
+                if buyer is None:
+                    raise self.manual_error(404,'BUYER_NOT_FOUND','Pembeli harus membuat akun English Quest dahulu. Periksa email akun.')
+                self._require_permanent_account(buyer,'menerima token Premium')
+                if buyer['user_id'] == admin['user_id']:
+                    raise self.manual_error(403,'SELF_REVIEW_FORBIDDEN','Admin tidak boleh memverifikasi pembayaran untuk dirinya sendiri.')
+                config = configuration()
+                if not config['available']:
+                    raise self.manual_error(503,'MANUAL_NOT_CONFIGURED',config['message'])
+                row = db.execute("SELECT * FROM manual_payment_orders WHERE user_id=? AND status!='rejected'",(buyer['user_id'],)).fetchone()
+                if row is None:
+                    reference = 'EQM-'+secrets.token_hex(12).upper(); stamp = now()
+                    db.execute("""INSERT INTO manual_payment_orders
+                        (order_id,user_id,amount,currency,status,recipient_number,recipient_name,created_at,updated_at)
+                        VALUES(?,?,5000,'IDR','pending',?,?,?,?)""",
+                        (reference,buyer['user_id'],config['recipient_number'],config['recipient_name'],stamp,stamp))
+                    self._manual_audit(db,reference,admin,'recorded_by_admin',None,'pending')
+                    row = db.execute('SELECT * FROM manual_payment_orders WHERE order_id=?',(reference,)).fetchone()
+                result = self._verify_manual_receipt(db,row,admin,data)
+                result.update(self._manual_payload(db.execute(self._manual_query()+' WHERE o.order_id=?',(row['order_id'],)).fetchone()))
+                result['message'] = ('Token sudah diterbitkan untuk pembayaran ini. Kode tidak ditampilkan ulang; tidak ada token baru.' if result['status'] == 'issued' else 'Pembayaran dicatat sesuai pemeriksaan admin. Terbitkan token secara terpisah; kode tidak dibuat otomatis.')
+                db.commit()
+                return result
+            except Exception:
+                db.rollback(); raise
+
     def manual_admin_action(self, admin, order_id, action, data):
         reference = str(order_id or '').strip()[:120]
         with self.connection() as db:
@@ -162,27 +239,7 @@ class ManualPaymentsMixin:
                     raise self.manual_error(409,'INVALID_AMOUNT','Nominal pesanan tidak tepat Rp5.000.')
                 before = row['status']; result = {}
                 if action == 'verify':
-                    amount = data.get('received_amount')
-                    receipt = str(data.get('receipt_reference') or '').strip().upper()
-                    if data.get('confirmed_received') is not True:
-                        raise self.manual_error(400,'CONFIRM_RECEIPT_REQUIRED','Periksa transaksi masuk di akun DANA, bukan hanya tangkapan layar.')
-                    if type(amount) is not int or amount != 5000:
-                        raise self.manual_error(400,'INVALID_AMOUNT','Dana yang diverifikasi harus tepat Rp5.000.')
-                    if not re.fullmatch(r'[A-Z0-9][A-Z0-9._/-]{3,119}',receipt):
-                        raise self.manual_error(400,'RECEIPT_REFERENCE_REQUIRED','Isi referensi transaksi masuk yang valid (4–120 karakter).')
-                    digest = hmac.new(self.pepper,('manual-receipt:'+receipt).encode(),hashlib.sha256).hexdigest()
-                    if before in ('verified','issued'):
-                        if row['receipt_hash'] != digest:
-                            raise self.manual_error(409,'ORDER_ALREADY_VERIFIED','Pesanan sudah diverifikasi dengan referensi lain.')
-                        result['duplicate'] = True
-                    elif before != 'pending':
-                        raise self.manual_error(409,'INVALID_ORDER_STATE','Pesanan ditolak tidak dapat disetujui.')
-                    else:
-                        if db.execute('SELECT 1 FROM manual_payment_orders WHERE receipt_hash=?',(digest,)).fetchone():
-                            raise self.manual_error(409,'RECEIPT_ALREADY_USED','Referensi transaksi sudah digunakan untuk pesanan lain.')
-                        db.execute("UPDATE manual_payment_orders SET status='verified',received_amount=5000,receipt_hash=?,verified_by=?,verified_at=?,updated_at=? WHERE order_id=?",
-                                   (digest,admin['user_id'],now(),now(),reference))
-                        self._manual_audit(db,reference,admin,'verified',before,'verified')
+                    result.update(self._verify_manual_receipt(db,row,admin,data))
                 elif action == 'reject':
                     reason = data.get('reason')
                     if reason not in ('not_found','wrong_amount','wrong_recipient','duplicate','other'):

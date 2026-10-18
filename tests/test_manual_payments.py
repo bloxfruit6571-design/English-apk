@@ -259,7 +259,7 @@ class ManualConfigTests(unittest.TestCase):
                 self.assertFalse(c['available']);self.assertEqual(c['recipient_number'],'');self.assertEqual(c['recipient_name'],'')
     def test_complete_synthetic_configuration(self):
         number='08'+''.join(str(secrets.randbelow(10)) for _ in range(10))
-        with patch.dict(os.environ,{'EQ_DANA_MANUAL_NUMBER':number,'EQ_DANA_MANUAL_NAME':'SYNTHETIC TEST ONLY'},clear=True):
+        with patch.dict(os.environ,{'EQ_DANA_MANUAL_NUMBER':number,'EQ_DANA_MANUAL_NAME':'SYNTHETIC TEST ONLY','EQ_WHATSAPP_ADMIN_NUMBER':number},clear=True):
             c=manual_payments.configuration()
             self.assertTrue(c['available']);self.assertEqual(c['recipient_number'],number);self.assertEqual(c['price_idr'],5000)
 

@@ -1,0 +1,33 @@
+Restored baseline c8301ad; source differences backed up:
+DIFFERENT english-quest-android/app/build.gradle
+MISSING english-quest-android/app/src/debug/AndroidManifest.xml
+MISSING english-quest-android/app/src/debug/res/xml/eq_network_security_config_debug.xml
+DIFFERENT english-quest-android/app/src/main/assets/access-client.js
+DIFFERENT english-quest-android/app/src/main/assets/app.js
+DIFFERENT english-quest-android/app/src/main/assets/index.html
+DIFFERENT english-quest-android/app/src/main/assets/styles.css
+DIFFERENT english-quest-android/app/src/main/assets/sw.js
+DIFFERENT english-quest-android/app/src/main/java/com/englishquest/app/MainActivity.java
+MISSING evidence/debug-manual/apk-badging.txt
+MISSING evidence/debug-manual/apk-manifest.txt
+MISSING evidence/debug-manual/apk-network.txt
+MISSING evidence/debug-manual/apk-signature.txt
+MISSING evidence/debug-manual/apk-verification.json
+MISSING evidence/debug-manual/backend-zip-smoke.txt
+MISSING evidence/debug-manual/build-debug.log
+MISSING evidence/debug-manual/catatan-verifikasi.txt
+MISSING evidence/debug-manual/final-pipeline.txt
+MISSING evidence/debug-manual/inspeksi-awal.txt
+MISSING evidence/debug-manual/legacy-simulator.txt
+MISSING evidence/debug-manual/local-launcher-smoke.txt
+MISSING evidence/debug-manual/node-tests.txt
+MISSING evidence/debug-manual/python-tests.txt
+MISSING evidence/hosting/https-local.txt
+MISSING evidence/hosting/node-tests.txt
+MISSING evidence/hosting/python-tests.txt
+MISSING evidence/manual/backend-manual.txt
+MISSING evidence/manual/https-klien-lokal.txt
+MISSING evidence/manual/semua-node.txt
+MISSING evidence/manual/semua-python.txt
+MISSING evidence/manual/simulator-legacy-lokal.txt
+Push attempted audit only: exit 128, missing safe authentication.

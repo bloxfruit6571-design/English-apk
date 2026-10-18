@@ -108,17 +108,8 @@
   async function me() { return request('/me', { method: 'GET' }, true); }
   async function activate(token) { return request('/premium/activate', { method: 'POST', body: JSON.stringify({ token }) }, true); }
   async function consume(questionId, answer) { return request('/demo/consume', { method: 'POST', body: JSON.stringify({ question_id: questionId, answer }) }, true); }
-  // Premium purchase. The price, the provider and whether automatic payment is live all come
-  // from the server (GET /payments/config); nothing about the provider is hard-coded here, and
-  // no URL is invented on the client.
-  async function paymentConfig() { return request('/payments/config', { method: 'GET', body: undefined }, false); }
-  async function createPaymentOrder() { return request('/payments/order', { method: 'POST', body: '{}' }, true); }
-  async function paymentOrder(orderId) { return request(`/payments/order?order_id=${encodeURIComponent(String(orderId || ''))}`, { method: 'GET' }, true); }
-  async function claimPaymentToken(orderId) { return request('/payments/claim', { method: 'POST', body: JSON.stringify({ order_id: orderId }) }, true); }
-  // Manual payment endpoints never return a token to buyers.
+  // Contact details only. Buyers cannot create a checkout/order or retrieve a token here.
   async function manualPaymentConfig() { return request('/manual-payments/config', { method: 'GET' }, false); }
-  async function createManualPayment() { return request('/manual-payments/orders', { method: 'POST', body: '{}' }, true); }
-  async function manualPaymentOrders() { return request('/manual-payments/orders', { method: 'GET' }, true); }
   async function logout() {
     const result = await request('/logout', { method: 'POST', body: '{}' }, true);
     setSession('');
@@ -129,8 +120,7 @@
     getApiBaseUrl: () => apiBase(),
     hasSession: () => Boolean(getSession()),
     register, login, health, startDemo, syncDemo, me, activate, consume, logout,
-    paymentConfig, createPaymentOrder, paymentOrder, claimPaymentToken,
-    manualPaymentConfig, createManualPayment, manualPaymentOrders,
+    manualPaymentConfig,
     clearSession: () => setSession('')
   };
 })();

@@ -1,5 +1,8 @@
 # Pembayaran Premium manual via DANA
 
+> **Arsip tahap sebelum WhatsApp.** Spesifikasi aktif: [DANA–WhatsApp](PEMBAYARAN-DANA-WHATSAPP.md). APK/checksum dan alur buyer pending di dokumen ini bersifat historis; gunakan laporan/artefak sesi WhatsApp terbaru.
+
+
 **Status: diimplementasikan dan diuji lokal. Belum tersedia online.**
 Harga **Rp5.000**, sekali bayar, akses permanen tanpa langganan. Demo tetap maksimal 5 soal Easy.
 Tidak ada checkout DANA otomatis, merchant credential, webhook produksi atau transaksi nyata yang diaktifkan.

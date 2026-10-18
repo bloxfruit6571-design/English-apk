@@ -49,7 +49,7 @@ function makeHarness({ profile, api } = {}) {
   for (const filename of ['library-data.js','mission-data.js','mission-data-extras.js']) {
     vm.runInContext(fs.readFileSync(path.join(ROOT,filename),'utf8'), context, { filename });
   }
-  const source = fs.readFileSync(path.join(ROOT,'app.js'),'utf8') + `\nwindow.__eqQA={state,profile,get accessState(){return accessState},setVerifiedAccount,setLocalDemoAccess,startFreeDemo,submitAccessAuth,activatePremiumToken,logoutAccess,syncLocalDemoUsage,hasAppAccess,isLocalDemo,demoCanOpenPage,demoActionAllowed,decorateDemoLocks,render,navigate,startMission,submitMissionAnswer,completeMissionStep,missionAvailability,globalModeAccess,DEMO_MISSION_IDS,DEMO_QUESTION_IDS,missionById,libraryArticleById,AccessApi,startPremiumPayment,refreshPremiumPaymentState,claimPremiumPaymentToken,refreshPaymentConfig,paymentStatusLabel,formatRupiah};`;
+  const source = fs.readFileSync(path.join(ROOT,'app.js'),'utf8') + `\nwindow.__eqQA={state,profile,get accessState(){return accessState},setVerifiedAccount,setLocalDemoAccess,startFreeDemo,submitAccessAuth,activatePremiumToken,logoutAccess,syncLocalDemoUsage,hasAppAccess,isLocalDemo,demoCanOpenPage,demoActionAllowed,decorateDemoLocks,render,navigate,startMission,submitMissionAnswer,completeMissionStep,missionAvailability,globalModeAccess,DEMO_MISSION_IDS,DEMO_QUESTION_IDS,missionById,libraryArticleById,AccessApi,startPremiumPayment,refreshPremiumPaymentState,claimPremiumPaymentToken,refreshPaymentConfig,formatRupiah};`;
   vm.runInContext(source, context, { filename: 'app.js', timeout: 15000 });
   return { qa: window.__eqQA, root: appRoot, window, localStorage, elements, api: accessApi };
 }
@@ -253,83 +253,21 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
   }
 
 
-  // 11: the Premium purchase flow uses only server-provided data and never invents a payment page.
+  // 11: NEW product requirement replaces the old checkout/token-delivery UI.
+  // Legacy API objects must not resurrect automatic checkout or claim a code.
   {
-    let created = 0, claimed = 0;
-    const order = {
-      ok: true, status: 201, order_id: 'EQO-SERVER-ORDER', provider: 'sandbox',
-      amount: 5000, currency: 'IDR', price_label: 'Rp5.000', status: 'created',
-      paid: false, token_issued: false, token_delivered: false, message: 'Pesanan dibuat.'
-    };
-    const payApi = makeApi({
-      paymentConfig: async () => ({ ok: true, price_idr: 5000, currency: 'IDR', provider: 'sandbox', available: true }),
-      createPaymentOrder: async () => { created++; return { ...order }; },
-      paymentOrder: async () => ({ ...order, paid: true, token_issued: true, token_pending: true, token_delivered: false, status: 'paid' }),
-      claimPaymentToken: async () => { claimed++; return { ok: true, order_id: 'EQO-SERVER-ORDER', token: 'EQP-' + 'A'.repeat(48) }; }
-    });
-    const buyer = makeHarness({ api: payApi }); await tick();
-    buyer.qa.setVerifiedAccount(baseAccount());
-    buyer.qa.state.page = 'premium-access'; buyer.qa.render();
-    await buyer.qa.refreshPaymentConfig();
-    assert.equal(buyer.qa.formatRupiah(5000), 'Rp5.000', 'the price is rendered in Indonesian rupiah');
-    assert.match(buyer.root.innerHTML, /Bayar Rp5.000 \(DANA\)/, 'the purchase button is offered to signed-in demo users');
-    assert.match(buyer.root.innerHTML, /akses permanen/, 'the offer states the access is permanent');
-    assert.match(buyer.root.innerHTML, /tanpa langganan/, 'the offer states there is no subscription');
-    assert.doesNotMatch(buyer.root.innerHTML, /target="_blank"/, 'no payment page is linked before the server provides one');
-    await buyer.qa.startPremiumPayment();
-    assert.equal(created, 1, 'one order is created per tap');
-    assert.equal(buyer.qa.state.paymentOrder.order_id, 'EQO-SERVER-ORDER', 'the order id comes from the server');
-    assert.equal(buyer.qa.state.paymentOrder.checkout, undefined, 'the client does not fabricate checkout data');
-    assert.doesNotMatch(buyer.root.innerHTML, /target="_blank"/, 'still no invented payment page');
-    assert.match(buyer.root.innerHTML, /EQO-SERVER-ORDER/);
-    await buyer.qa.refreshPremiumPaymentState();
-    assert.equal(buyer.qa.state.paymentOrder.paid, true, 'the verified state comes from the server');
-    assert.match(buyer.root.innerHTML, /Terima token Premium/);
-    await buyer.qa.claimPremiumPaymentToken();
-    assert.equal(claimed, 1);
-    assert.ok(buyer.qa.state.accessTokenInput.startsWith('EQP-'), 'the issued token is placed in the activation field');
-    assert.match(buyer.root.innerHTML, /Token Premium diterbitkan/);
-    assert.match(buyer.root.innerHTML, /Aktifkan Token/, 'activation stays the explicit, server-verified step');
-
-    // The client echoes a provider checkout URL only when the server actually sends one.
-    const hosted = makeHarness({ api: makeApi({
-      createPaymentOrder: async () => ({ ...order, checkout: { checkout_url: 'https://provider.example.invalid/checkout/abc' } })
-    }) }); await tick();
-    hosted.qa.setVerifiedAccount(baseAccount());
-    hosted.qa.state.page = 'premium-access'; hosted.qa.render();
-    await hosted.qa.startPremiumPayment();
-    assert.match(hosted.root.innerHTML, /https:\/\/provider\.example\.invalid\/checkout\/abc/, 'the server-provided checkout URL is surfaced');
-    assert.doesNotMatch(hosted.root.innerHTML, /dashboard\.dana\.id|dana\.id\/api/, 'no provider endpoint is hard-coded in the client');
-
-    // A server that has no payment provider configured refuses, and the client only reports it:
-    // no order is invented, no token appears, no money can move.
-    const refused = makeHarness({ api: makeApi({
-      createPaymentOrder: async () => ({ ok: false, status: 503, code: 'PAYMENTS_NOT_CONFIGURED',
-        message: 'Pembayaran otomatis belum diaktifkan pada server ini.' })
-    }) }); await tick();
-    refused.qa.setVerifiedAccount(baseAccount());
-    refused.qa.state.page = 'premium-access'; refused.qa.render();
-    await refused.qa.startPremiumPayment();
-    assert.equal(refused.qa.state.paymentOrder, null, 'a refused purchase leaves no local order behind');
-    assert.match(refused.root.innerHTML, /Pembayaran otomatis belum diaktifkan/, 'the server refusal is shown verbatim');
-    assert.ok(!refused.qa.state.accessTokenInput, 'no token is produced from a refused purchase');
-
-    // The shipped APK has no API origin configured (EQ_API_BASE_URL empty), so this is the
-    // default device state: nothing on the Premium page can start a payment.
-    const unconfigured = makeHarness({ api: makeApi({
-      isConfigured: () => false, health: async () => ({ ok: false, code: 'API_NOT_CONFIGURED' })
-    }) }); await tick();
-    unconfigured.qa.state.page = 'premium-access'; unconfigured.qa.render();
-    assert.match(unconfigured.root.innerHTML, /Hubungkan akun email/, 'without a server the page asks for an account first');
-    assert.doesNotMatch(unconfigured.root.innerHTML, /Bayar Rp5.000 \(DANA\)/, 'no purchase button exists without a configured server');
-    assert.doesNotMatch(unconfigured.root.innerHTML, /payment-start/, 'no purchase action is reachable at all');
-
-    // A guest demo session has no email account to bind Premium to, so buying is walked to login first.
-    const guestBuyer = makeHarness({ api: payApi }); await tick();
-    guestBuyer.qa.setVerifiedAccount(baseAccount({ anonymous: true }));
-    guestBuyer.qa.state.page = 'premium-access'; guestBuyer.qa.render();
-    assert.match(guestBuyer.root.innerHTML, /Hubungkan akun email/, 'guest sessions are told to create an account first');
-    assert.doesNotMatch(guestBuyer.root.innerHTML, /Bayar Rp5.000 \(DANA\)/, 'no purchase button is offered to a guest session');
+    let automatic=0;
+    const forbidden=async()=>{automatic++;throw Error('automatic path called');};
+    const buyer=makeHarness({api:makeApi({paymentConfig:forbidden,createPaymentOrder:forbidden,paymentOrder:forbidden,claimPaymentToken:forbidden})});
+    await tick();buyer.qa.setVerifiedAccount(baseAccount());buyer.qa.state.page='premium-access';buyer.qa.render();
+    await buyer.qa.refreshPaymentConfig();await buyer.qa.startPremiumPayment();await buyer.qa.refreshPremiumPaymentState();await buyer.qa.claimPremiumPaymentToken();
+    assert.equal(automatic,0,'no legacy checkout/order/token route can run');
+    assert.match(buyer.root.innerHTML,/Rp5.000/);assert.match(buyer.root.innerHTML,/permanen/);
+    assert.match(buyer.root.innerHTML,/tanpa langganan/);assert.match(buyer.root.innerHTML,/HUBUNGI ADMIN VIA WHATSAPP/);
+    assert.doesNotMatch(buyer.root.innerHTML,/data-action="payment-start"|data-action="payment-claim"|checkout_url/);
+    assert.ok(!buyer.qa.state.accessTokenInput);assert.equal(buyer.qa.accessState.mode==='premium',false);
+    const guest=makeHarness({api:makeApi()});await tick();guest.qa.state.page='premium-access';guest.qa.render();
+    assert.match(guest.root.innerHTML,/Hubungkan akun email/);assert.match(guest.root.innerHTML,/ENGLISH QUEST PREMIUM/);
   }
   console.log('Client gates: 11 acceptance groups passed (welcome/local fallback, full Easy demo, quota/restart, unique-submit, online guest/sync, premium fail-closed, progress, and server admin role); all 43 route renderers smoke-tested.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

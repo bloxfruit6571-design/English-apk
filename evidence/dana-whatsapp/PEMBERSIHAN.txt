@@ -1,0 +1,5 @@
+/home/user/.android/cache: 6159124 bytes
+/home/user/tools/implement_manual_admin.py: 9407 bytes
+/home/user/tools/implement_manual_backend.py: 5948 bytes
+/home/user/tools/implement_manual_ui.py: 8950 bytes
+Only disposable caches and already-applied edit scripts; no source/DB/APK/key deleted.

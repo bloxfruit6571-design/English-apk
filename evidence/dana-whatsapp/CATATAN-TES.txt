@@ -1,0 +1,8 @@
+Final pipeline: 120 Python tests, no failure/skipped; 43 Node acceptance groups; 43 renderers; 17 identical root/Android/APK assets.
+Changed product tests explicitly replace automatic checkout and buyer pending UI expectations with contact-only/no checkout assertions.
+First new normalization fixture miscounted one digit in expected output; corrected to the actual formatted input.
+Initial UI harness referenced removed paymentStatusLabel and used an unavailable helper window reference; exports/references updated, product behavior not weakened.
+All final tests and APK verification rerun successfully. Android Java compilation succeeded.
+No real WhatsApp message sent; native/browser opening is tested with stubs and compiled allowlist inspection, not a physical phone.
+Build warnings: deprecated Android API and native libraries not stripped, packaged intact.
+Push audit attempted before edits: failed 128 (no safe authentication); main not modified.

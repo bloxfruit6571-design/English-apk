@@ -43,7 +43,7 @@ def local_environment(state: Path) -> dict[str, str]:
     env.update(EQ_TOKEN_PEPPER=pepper, EQ_DB_PATH=str(db), EQ_HOST='127.0.0.1', EQ_PORT='8088',
                EQ_ALLOW_INSECURE_DEV='1', EQ_TRUST_PROXY='0',
                EQ_ALLOWED_ORIGINS='https://appassets.androidplatform.net',
-               EQ_DANA_MANUAL_NUMBER='', EQ_DANA_MANUAL_NAME='', EQ_PAYMENT_PROVIDER='')
+               EQ_DANA_MANUAL_NUMBER='', EQ_DANA_MANUAL_NAME='', EQ_WHATSAPP_ADMIN_NUMBER='', EQ_PAYMENT_PROVIDER='')
     return env
 
 

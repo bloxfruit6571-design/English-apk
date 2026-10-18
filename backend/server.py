@@ -1182,6 +1182,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 admin = self._admin_user()
                 self.store._rate_limit_standalone("manual-admin",admin["user_id"]+":"+ip,60,900)
                 action = path.rsplit("/",1)[-1]
+                if action == "record":
+                    self._ok(self.store.record_manual_payment(admin,body)); return
                 self._ok(self.store.manual_admin_action(admin,body.get("order_id"),action,body)); return
             if path == "/api/demo/sync":
                 result = self.store.sync_demo_questions(user, body.get("question_ids"), ip)

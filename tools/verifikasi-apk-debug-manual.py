@@ -43,11 +43,11 @@ def verify(apk, previous=None):
             assert payload==(ROOT/name).read_bytes(),'Aset APK berbeda dari root: '+name
             assert payload==(ROOT/'english-quest-android/app/src/main/assets'/name).read_bytes(),'Aset Android stale: '+name
         app=archive.read('assets/app.js').decode()
-        for marker in ('renderManualPurchaseCard','submitManualPayment','Saya Sudah Membayar','Rp5.000'):
+        for marker in ('renderManualPurchaseCard','submitManualPayment','HUBUNGI ADMIN VIA WHATSAPP','Rp5.000'):
             assert marker in app,'Alur manual tidak dibundel: '+marker
-        assert b'/manual-payments/orders' in archive.read('assets/access-client.js')
+        assert b'/manual-payments/config' in archive.read('assets/access-client.js')
         dex=b''.join(archive.read(n) for n in archive.namelist() if n.endswith('.dex'))
-        for marker in (b'getApiBaseUrl',b'isHttpDevAllowed',b'http://127.0.0.1:8088'):
+        for marker in (b'getApiBaseUrl',b'isHttpDevAllowed',b'http://127.0.0.1:8088',b'wa.me'):
             assert marker in dex,'Bridge/origin debug hilang dari DEX'
         assert hashlib.sha256(archive.read('assets/vosk-model-small-en-us-0.15.zip')).hexdigest()==MODEL_SHA
         forbidden=[n for n in archive.namelist() if n.endswith(('.sqlite3','.db','.jks','.keystore','.pem','.key')) or '/.env' in n]

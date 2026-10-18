@@ -1099,7 +1099,10 @@ public final class MainActivity extends Activity {
                     || host.endsWith(".wikipedia.org")
                     || host.equals("creativecommons.org")
                     || host.endsWith(".creativecommons.org");
-            if (!allowedHost) return;
+            boolean whatsappLink = "wa.me".equalsIgnoreCase(host)
+                    && uri.getUserInfo() == null && (uri.getPort() == -1 || uri.getPort() == 443)
+                    && uri.getPath() != null && uri.getPath().matches("/[1-9][0-9]{7,14}");
+            if (!allowedHost && !whatsappLink) return;
             runOnUiThread(() -> {
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW, uri));

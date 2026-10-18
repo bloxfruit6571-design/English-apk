@@ -462,127 +462,56 @@ function renderAccessStatusCard(){
 function manualPaymentStatusLabel(status){
   return {pending:'Menunggu pemeriksaan dana oleh admin',verified:'Dana masuk diverifikasi; menunggu token dari admin',rejected:'Permintaan ditolak',issued:'Token telah diterbitkan oleh admin'}[status]||'Status belum diketahui';
 }
+function manualPaymentOwner(){return hasVerifiedAccess()?String(accessState.user?.userId||accessState.user?.email||'public'):'public';}
+function manualWhatsAppUrl(){
+  const c=state.manualOwner===manualPaymentOwner()?state.manualConfig:null;
+  if(!c?.available||!c.recipient_number||!c.recipient_name||! /^[1-9][0-9]{7,14}$/.test(String(c.whatsapp_number||'')))return '';
+  return 'https://wa.me/'+c.whatsapp_number+'?text='+encodeURIComponent(String(c.whatsapp_message||'Halo Admin English Quest, saya ingin membeli Premium seharga Rp5.000. Saya akan mengirimkan bukti pembayaran setelah transfer.'));
+}
 function renderManualPurchaseCard(){
-  if(!hasVerifiedAccess()||accessState.user?.anonymous)return '';
-  const owner=String(accessState.user.userId||accessState.user.email||'');
-  const config=state.manualOwner===owner?state.manualConfig:null;
-  const orders=state.manualOwner===owner?state.manualOrders:[];
-  const available=config?.available===true&&Boolean(config.recipient_number&&config.recipient_name);
-  const active=orders.find(o=>o.status!=='rejected');
-  const details=available?`<p>Nomor DANA penerima: <strong>${esc(config.recipient_number)}</strong><br>Nama penerima: <strong>${esc(config.recipient_name)}</strong></p><button class="btn btn-secondary" data-action="manual-copy-number">Salin Nomor DANA</button><ol><li>Periksa nama penerima di DANA sebelum transfer.</li><li>Transfer tepat Rp5.000 ke nomor di atas.</li><li>Tekan Saya Sudah Membayar lalu sampaikan ID pesanan kepada admin.</li><li>Admin memeriksa transaksi yang benar-benar masuk, lalu memberikan token. Masukkan token di bawah.</li></ol>`:`<div class="access-alert" role="status">Pembayaran belum tersedia. ${esc(config?.message||'Konfigurasi penerima belum tersedia atau server tidak dapat dijangkau. Jangan transfer dahulu.')}</div>`;
-  const list=orders.map(o=>`<div class="access-usage"><b>ID pesanan: ${esc(o.order_id)}</b><span>${esc(manualPaymentStatusLabel(o.status))}</span><span>${esc(o.token_status==='claimed'?'Token sudah diaktifkan':o.token_status==='revoked'?'Token dicabut':o.token_issued?'Minta kode kepada admin':'Belum ada token')}</span>${o.rejection_reason?`<span>Alasan: ${esc({not_found:'Transaksi tidak ditemukan',wrong_amount:'Nominal tidak sesuai',wrong_recipient:'Penerima tidak sesuai',duplicate:'Transaksi duplikat',other:'Perlu klarifikasi kepada admin'}[o.rejection_reason]||o.rejection_reason)}</span>`:''}</div>`).join('');
-  return `<div class="access-purchase"><h2>Premium via DANA — pembayaran manual</h2><div class="access-usage"><b>Rp5.000</b><span>Sekali bayar, akses permanen, tanpa langganan</span></div>${details}<p class="access-footnote">Tombol Saya Sudah Membayar hanya mencatat permintaan, bukan bukti pembayaran. Tangkapan layar bukan verifikasi final. Premium tetap terkunci sampai token sah diaktifkan.</p><div class="access-footer"><button class="btn btn-primary" data-action="payment-start" ${!available||state.paymentBusy||active?'disabled':''}>${state.paymentBusy?'Memproses…':'Saya Sudah Membayar'}</button><button class="btn btn-secondary" data-action="payment-refresh" ${state.paymentBusy?'disabled':''}>Periksa status pembayaran</button></div>${list}${state.paymentFeedback?`<p class="access-footnote" role="status">${esc(state.paymentFeedback)}</p>`:''}</div>`;
+  const config=state.manualOwner===manualPaymentOwner()?state.manualConfig:null,url=manualWhatsAppUrl();
+  const details=url?`<p>Nomor DANA: <strong>${esc(config.recipient_number)}</strong><br>Nama penerima DANA: <strong>${esc(config.recipient_name)}</strong></p><button class="btn btn-secondary" data-action="manual-copy-number">SALIN NOMOR DANA</button><p>Nomor WhatsApp: <strong>+${esc(config.whatsapp_number)}</strong></p><a class="btn btn-primary" href="${esc(url)}" target="_blank" rel="noopener noreferrer">HUBUNGI ADMIN VIA WHATSAPP</a>`:`<div class="access-alert" role="status">Pembayaran belum tersedia. ${esc(config?.message||'Informasi pembayaran belum dikonfigurasi atau server belum dapat dijangkau. Jangan transfer dahulu.')}</div><button class="btn btn-secondary" disabled>SALIN NOMOR DANA</button><button class="btn btn-primary" disabled>HUBUNGI ADMIN VIA WHATSAPP</button>`;
+  return `<div class="access-purchase"><h2>Pembayaran manual DANA &amp; WhatsApp</h2><div class="access-usage"><b>Rp5.000</b><span>Pembayaran satu kali. Premium aktif secara permanen setelah token berhasil diaktifkan. Tidak ada biaya berlangganan — tanpa langganan.</span></div>${details}<ol><li>Transfer Rp5.000 ke nomor DANA yang ditampilkan.</li><li>Pastikan nama penerima benar sebelum mengirim uang.</li><li>Setelah transfer, buka WhatsApp admin.</li><li>Kirim screenshot bukti pembayaran.</li><li>Tunggu verifikasi manual dari admin.</li><li>Setelah pembayaran diperiksa dan dinyatakan masuk, admin memberikan token Premium.</li><li>Masukkan token di halaman aktivasi Premium.</li></ol><p class="access-footnote">Screenshot dan tombol WhatsApp bukan bukti dana masuk atau tanda pembayaran berhasil. Tidak ada token atau Premium otomatis. Buat akun lalu sampaikan email akun English Quest Anda kepada admin agar token dikaitkan dengan akun yang benar. Tinjau pesan WhatsApp sebelum mengirim.</p><button class="btn btn-secondary" data-action="payment-refresh" ${state.paymentBusy?'disabled':''}>Perbarui informasi pembayaran</button>${state.paymentFeedback?`<p class="access-footnote" role="status">${esc(state.paymentFeedback)}</p>`:''}</div>`;
 }
 async function refreshManualPaymentState(){
-  if(!hasVerifiedAccess()||accessState.user?.anonymous)return;
   if(state.paymentBusy)return;
-  const owner=String(accessState.user.userId||accessState.user.email||'');
-  if(state.manualOwner!==owner){state.manualConfig=null;state.manualOrders=[];state.paymentFeedback='';}
-  state.manualOwner=owner;state.paymentBusy=true;render();
+  const owner=manualPaymentOwner();
+  state.manualOwner=owner;state.paymentBusy=true;state.paymentFeedback='';render();
   try{
-    const config=await AccessApi.manualPaymentConfig();
-    const orders=await AccessApi.manualPaymentOrders();
-    if(!hasVerifiedAccess()||String(accessState.user?.userId||accessState.user?.email||'')!==owner)return;
+    const config=typeof AccessApi?.manualPaymentConfig==='function'?await AccessApi.manualPaymentConfig():null;
+    if(state.manualOwner!==owner||manualPaymentOwner()!==owner)return;
     state.manualConfig=config?.ok?config:null;
-    state.manualOrders=orders?.ok&&Array.isArray(orders.orders)?orders.orders:[];
-    state.paymentFeedback=!config?.ok?String(config?.message||'Server pembayaran tidak tersedia.'):
-      !orders?.ok?String(orders?.message||'Status pesanan belum dapat diperiksa.'):'Status pembayaran diperbarui. Token diberikan oleh admin setelah verifikasi.';
+    state.paymentFeedback=config?.ok?'Informasi diperbarui. Hubungi admin; pembayaran tetap diperiksa secara manual.':String(config?.message||'Informasi pembayaran tidak tersedia dari server.');
   }catch(_){if(state.manualOwner===owner){state.manualConfig=null;state.paymentFeedback='Tidak dapat terhubung ke server pembayaran. Coba lagi nanti.';}}
   finally{if(state.manualOwner===owner){state.paymentBusy=false;render();}}
 }
-async function submitManualPayment(){
-  if(state.paymentBusy)return;
-  if(!hasVerifiedAccess()||accessState.user?.anonymous){beginAccessFlow('premium');return;}
-  const owner=String(accessState.user.userId||accessState.user.email||'');
-  if(state.manualOwner!==owner||state.manualConfig?.available!==true){state.paymentFeedback='Pembayaran belum tersedia. Muat ulang konfigurasi; jangan transfer dahulu.';render();return;}
-  state.paymentBusy=true;state.paymentFeedback='';render();
+function openManualWhatsApp(){
+  const url=manualWhatsAppUrl();
+  if(!url){state.paymentFeedback='Informasi pembayaran belum dikonfigurasi lengkap. Jangan transfer dahulu.';render();return;}
   try{
-    const result=await AccessApi.createManualPayment();
-    if(!hasVerifiedAccess()||String(accessState.user?.userId||accessState.user?.email||'')!==owner)return;
-    if(result?.ok&&result.order_id){state.manualOrders=[result,...state.manualOrders.filter(o=>o.order_id!==result.order_id)];state.paymentFeedback='Permintaan tercatat. Sampaikan ID pesanan kepada admin. Premium belum aktif.';}
-    else state.paymentFeedback=String(result?.message||'Permintaan belum dapat dicatat. Tidak ada Premium yang diaktifkan.');
-  }catch(_){if(state.manualOwner===owner)state.paymentFeedback='Koneksi gagal. Periksa status sebelum mencoba lagi; permintaan mungkin sudah tercatat.';}
-  finally{if(state.manualOwner===owner){state.paymentBusy=false;render();}}
+    if(typeof window.EnglishQuestAndroid?.openExternal==='function')window.EnglishQuestAndroid.openExternal(url);
+    else window.open(url,'_blank','noopener,noreferrer');
+  }catch(_){state.paymentFeedback='WhatsApp belum dapat dibuka. Gunakan nomor admin yang ditampilkan.';render();}
 }
+// Old action names are safe aliases only; no automatic checkout/order/token calls remain.
+async function submitManualPayment(){openManualWhatsApp();}
+async function startPremiumPayment(){openManualWhatsApp();}
+async function refreshPremiumPaymentState(){return refreshManualPaymentState();}
+async function refreshPaymentConfig(){return refreshManualPaymentState();}
+async function claimPremiumPaymentToken(){state.paymentFeedback='Token dikirim admin melalui WhatsApp setelah dana masuk diperiksa.';render();}
+function renderPremiumPurchaseCard(){return renderManualPurchaseCard();}
+function formatRupiah(value){return 'Rp'+String(Math.max(0,Math.round(Number(value)||0))).replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
 async function copyManualDanaNumber(){
-  if(!hasVerifiedAccess()||state.manualOwner!==String(accessState.user?.userId||accessState.user?.email||'')||!state.manualConfig?.available)return;
-  try{await navigator.clipboard.writeText(String(state.manualConfig.recipient_number));state.paymentFeedback='Nomor DANA disalin. Pastikan nama penerima cocok sebelum transfer.';}
-  catch(_){state.paymentFeedback='Salin otomatis tidak didukung. Pilih dan salin nomor DANA yang ditampilkan secara manual.';}
-  render();
-}
-function paymentStatusLabel(status){
-  return {created:'Menunggu pembayaran',pending:'Diproses penyedia',paid:'Pembayaran terverifikasi',failed:'Pembayaran gagal',expired:'Pesanan kedaluwarsa',review:'Ditinjau manual'}[String(status||'')]||'Status belum diketahui';
-}
-function formatRupiah(value){
-  const amount=Math.max(0,Math.round(Number(value)||0));
-  return 'Rp'+String(amount).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
-}
-function renderPremiumPurchaseCard(){
-  if(typeof AccessApi?.manualPaymentConfig==='function')return renderManualPurchaseCard();
-  if(!hasVerifiedAccess()||accessState.user?.anonymous)return '';
-  const order=state.paymentOrder,price=order?.price_label||state.paymentPriceLabel||'Rp5.000';
-  const rows=[`<div class="access-usage"><span>Harga Premium</span><b>${esc(price)}</b><span>·</span><span>sekali bayar, akses permanen</span></div>`];
-  if(order)rows.push(`<div class="access-usage"><span>Pesanan</span><b>${esc(order.order_id)}</b><span>·</span><span>${esc(paymentStatusLabel(order.status))}</span></div>`);
-  if(order?.checkout?.checkout_url)rows.push(`<p class="access-footnote"><a href="${esc(order.checkout.checkout_url)}" target="_blank" rel="noopener noreferrer">Lanjutkan ke halaman pembayaran penyedia</a></p>`);
-  else if(order?.checkout?.simulate)rows.push(`<p class="access-footnote">Lingkungan uji lokal: penyelesaian pembayaran simulasi memakai endpoint <code>${esc(order.checkout.simulate.path)}</code> pada server pengembangan ini juga — tidak ada uang sungguhan yang berpindah.</p>`);
-  let actions='';
-  if(!order||!order.paid)actions+=`<button class="btn btn-primary" data-action="payment-start" ${state.paymentBusy?'disabled':''}>${state.paymentBusy?'⏳ Menyiapkan pesanan…':`💳 Bayar ${esc(price)} (DANA)`}</button>`;
-  if(order&&!order.paid)actions+=`<button class="btn btn-secondary" data-action="payment-refresh" ${state.paymentBusy?'disabled':''}>🔄 Periksa status pembayaran</button>`;
-  if(order?.paid&&order.token_pending)actions+=`<button class="btn btn-primary" data-action="payment-claim" ${state.paymentBusy?'disabled':''}>🎟️ Terima token Premium</button>`;
-  if(order?.paid&&order.token_delivered&&!order.token_pending)actions+=`<div class="access-success">Token untuk pesanan ini sudah ditampilkan. Masukkan kode pada kolom di bawah, lalu tekan “Aktifkan Token”.</div>`;
-  return `<div class="access-purchase">${rows.join('')}${state.paymentFeedback?`<div class="access-success">${esc(state.paymentFeedback)}</div>`:''}${actions?`<div class="access-footer">${actions}</div>`:''}<p class="access-footnote">Pembayaran diperiksa penyedia resmi lalu diverifikasi server; token Premium diterbitkan otomatis setelah pembayaran sukses tanpa persetujuan admin. Harga Rp5.000 dibayar sekali dan akses Premium berlaku permanen—tanpa langganan atau tagihan berulang. Jangan pernah mengirim uang ke rekening pribadi mana pun.</p></div>`;
-}
-async function startPremiumPayment(){
-  if(typeof AccessApi?.manualPaymentConfig==='function')return submitManualPayment();
-  if(!hasVerifiedAccess()||accessState.user?.anonymous){beginAccessFlow('premium');return;}
-  if(!AccessApi||typeof AccessApi.createPaymentOrder!=='function'){state.paymentFeedback='Pembayaran otomatis belum tersedia pada klien ini.';render();return;}
-  state.paymentBusy=true;state.paymentFeedback='';render();
-  const result=await AccessApi.createPaymentOrder();
-  state.paymentBusy=false;
-  if(!result.ok){state.paymentFeedback=String(result.message||'Pesanan belum dapat dibuat. Coba lagi nanti.');render();return;}
-  state.paymentOrder=result;
-  state.paymentFeedback=String(result.message||'Pesanan dibuat. Selesaikan pembayaran untuk menerima token Premium otomatis.');
-  render();
-}
-async function refreshPremiumPaymentState(){
-  if(typeof AccessApi?.manualPaymentConfig==='function')return refreshManualPaymentState();
-  const order=state.paymentOrder;
-  if(!order?.order_id||!AccessApi||typeof AccessApi.paymentOrder!=='function'){state.paymentFeedback='Belum ada pesanan yang bisa diperiksa.';render();return;}
-  state.paymentBusy=true;render();
-  const result=await AccessApi.paymentOrder(order.order_id);
-  state.paymentBusy=false;
-  if(!result.ok){state.paymentFeedback=String(result.message||'Status pesanan belum dapat diperiksa.');render();return;}
-  state.paymentOrder=result;
-  state.paymentFeedback=result.paid?'Pembayaran terverifikasi server; token Premium siap diterima.':`Status pesanan: ${paymentStatusLabel(result.status)}.`;
-  render();
-}
-async function claimPremiumPaymentToken(){
-  if(typeof AccessApi?.manualPaymentConfig==='function'){state.paymentFeedback='Token diberikan oleh admin setelah verifikasi dana masuk.';render();return;}
-  const order=state.paymentOrder;
-  if(!order?.order_id||!AccessApi||typeof AccessApi.claimPaymentToken!=='function'){state.paymentFeedback='Belum ada pesanan terverifikasi.';render();return;}
-  state.paymentBusy=true;render();
-  const result=await AccessApi.claimPaymentToken(order.order_id);
-  state.paymentBusy=false;
-  if(!result.ok){state.paymentFeedback=String(result.message||'Token belum dapat diterbitkan.');render();return;}
-  state.accessTokenInput=String(result.token||'');
-  state.paymentOrder={...order,paid:true,token_pending:false,token_delivered:true,token_issued:true};
-  state.paymentFeedback='Token Premium diterbitkan untuk pesanan ini. Tekan “Aktifkan Token” untuk membukanya.';
-  render();
-}
-async function refreshPaymentConfig(){
-  if(typeof AccessApi?.manualPaymentConfig==='function')return refreshManualPaymentState();
-  if(!hasVerifiedAccess()||accessState.user?.anonymous)return;
-  if(!AccessApi||typeof AccessApi.paymentConfig!=='function')return;
-  const result=await AccessApi.paymentConfig();
-  if(!result?.ok)return;
-  if(Number.isFinite(Number(result.price_idr)))state.paymentPriceLabel=formatRupiah(Number(result.price_idr));
+  if(!manualWhatsAppUrl())return;
+  try{await navigator.clipboard.writeText(String(state.manualConfig.recipient_number));state.paymentFeedback='Nomor DANA disalin. Cocokkan nama penerima sebelum transfer.';}
+  catch(_){state.paymentFeedback='Salin otomatis tidak didukung. Pilih dan salin nomor DANA secara manual.';}
   render();
 }
 function renderPremiumAccess(){
   const verified=hasVerifiedAccess(),premium=isPremiumAccess(),accountCanClaim=verified&&!accessState.user?.anonymous;
-  if(!accountCanClaim)return `<div class="access-center-page"><section class="access-panel access-center"><div class="access-orbit">🔐</div><span class="access-kicker">PREMIUM ACCESS</span><h1>Hubungkan akun email</h1><p><b>Premium Rp5.000</b> · sekali bayar, akses permanen, tanpa langganan. Pembayaran manual DANA hanya tersedia setelah konfigurasi penerima dapat diverifikasi dari server.</p><p>Informasi Premium dapat dibuka kapan saja, tetapi klaim token memerlukan akun yang bisa dipulihkan. Sesi demo tamu/lokal tidak dapat menerima token. Demo gratis tetap bisa digunakan tanpa token.</p>${state.lockedMessage?`<div class="access-lock-reason">${esc(state.lockedMessage)}</div>`:''}${state.accessError?`<div class="access-alert" role="alert">${esc(state.accessError)}</div>`:''}<div class="access-footer"><button class="btn btn-primary" data-action="begin-access-flow" data-flow="premium">Masuk / buat akun</button><button class="btn btn-ghost" data-action="access-back">Kembali</button></div></section></div>`;
+  if(!accountCanClaim)return `<div class="access-center-page"><section class="access-panel access-center"><div class="access-orbit">🔐</div><span class="access-kicker">PREMIUM ACCESS</span><h1>ENGLISH QUEST PREMIUM</h1><h2>Hubungkan akun email</h2>${renderManualPurchaseCard()}<p><b>Premium Rp5.000</b> · sekali bayar, akses permanen, tanpa langganan. Pembayaran manual DANA hanya tersedia setelah konfigurasi penerima dapat diverifikasi dari server.</p><p>Informasi Premium dapat dibuka kapan saja, tetapi klaim token memerlukan akun yang bisa dipulihkan. Sesi demo tamu/lokal tidak dapat menerima token. Demo gratis tetap bisa digunakan tanpa token.</p>${state.lockedMessage?`<div class="access-lock-reason">${esc(state.lockedMessage)}</div>`:''}${state.accessError?`<div class="access-alert" role="alert">${esc(state.accessError)}</div>`:''}<div class="access-footer"><button class="btn btn-primary" data-action="begin-access-flow" data-flow="premium">Masuk / buat akun</button><button class="btn btn-ghost" data-action="access-back">Kembali</button></div></section></div>`;
   if(premium)return `<div class="access-center-page"><section class="access-panel access-center is-premium"><div class="access-orbit">💎</div><span class="access-kicker">AKSES TERVERIFIKASI</span><h1>Premium aktif!</h1><p>Akun <b>${esc(accessState.user.email)}</b> memiliki akses Premium. Status selalu diverifikasi oleh server; tidak bergantung pada flag lokal.</p>${state.accessMessage?`<div class="access-success">${esc(state.accessMessage)}</div>`:''}<div class="access-footer"><button class="btn btn-primary" data-action="access-home">🏠 Ke beranda</button><button class="btn btn-ghost" data-action="access-logout">Keluar</button></div></section></div>`;
-  return `<div class="access-center-page"><section class="access-panel access-center"><div class="access-orbit">🎟️</div><span class="access-kicker">AKTIVASI TOKEN · SATU AKUN</span><h1>Buka English Quest Premium</h1><p>Token hanya dapat diklaim satu kali dan akan terikat permanen ke akun <b>${esc(accessState.user.email)}</b>. Setelah aktif, akses mengikuti akun saat masuk kembali di perangkat lain.</p>${renderPremiumPurchaseCard()}${state.lockedMessage?`<div class="access-lock-reason">${esc(state.lockedMessage)}</div>`:''}<div class="access-usage"><span>Demo terpakai</span><b>${Math.min(accessState.demoUsed,accessState.demoLimit)}/${accessState.demoLimit}</b><span>·</span><span>${accessState.demoRemaining} soal tersisa</span></div><label class="access-token-label" for="premium-token">Kode token</label><input id="premium-token" class="access-token-input" type="text" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="80" value="${esc(state.accessTokenInput||'')}" placeholder="EQP-XXXXXXXXXXXXXXXX…" aria-describedby="token-note"><p id="token-note" class="access-footnote">Token dikirim melalui koneksi HTTPS untuk validasi server. Jangan bagikan token kepada orang lain sebelum aktivasi.</p>${state.accessError?`<div class="access-alert" role="alert">${esc(state.accessError)}</div>`:''}<div class="access-footer"><button class="btn btn-primary" data-action="activate-premium" ${state.accessBusy?'disabled':''}>${state.accessBusy?'⏳ Memeriksa token…':'✨ Aktifkan Token'}</button><button class="btn btn-ghost" data-action="access-home">🏠 Beranda</button></div><p class="access-footnote">Demo 5 soal dan progres belajar yang sudah selesai tidak akan dihapus saat Premium diaktifkan.</p></section></div>`;
+  return `<div class="access-center-page"><section class="access-panel access-center"><div class="access-orbit">🎟️</div><span class="access-kicker">AKTIVASI TOKEN · SATU AKUN</span><h1>ENGLISH QUEST PREMIUM</h1><p>Token hanya dapat diklaim satu kali dan akan terikat permanen ke akun <b>${esc(accessState.user.email)}</b>. Setelah aktif, akses mengikuti akun saat masuk kembali di perangkat lain.</p>${renderPremiumPurchaseCard()}${state.lockedMessage?`<div class="access-lock-reason">${esc(state.lockedMessage)}</div>`:''}<div class="access-usage"><span>Demo terpakai</span><b>${Math.min(accessState.demoUsed,accessState.demoLimit)}/${accessState.demoLimit}</b><span>·</span><span>${accessState.demoRemaining} soal tersisa</span></div><label class="access-token-label" for="premium-token">Kode token</label><input id="premium-token" class="access-token-input" type="text" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="80" value="${esc(state.accessTokenInput||'')}" placeholder="EQP-XXXXXXXXXXXXXXXX…" aria-describedby="token-note"><p id="token-note" class="access-footnote">Token dikirim melalui koneksi HTTPS untuk validasi server. Jangan bagikan token kepada orang lain sebelum aktivasi.</p>${state.accessError?`<div class="access-alert" role="alert">${esc(state.accessError)}</div>`:''}<div class="access-footer"><button class="btn btn-primary" data-action="activate-premium" ${state.accessBusy?'disabled':''}>${state.accessBusy?'⏳ Memeriksa token…':'✨ Aktifkan Token'}</button><button class="btn btn-ghost" data-action="access-home">🏠 Beranda</button></div><p class="access-footnote">Demo 5 soal dan progres belajar yang sudah selesai tidak akan dihapus saat Premium diaktifkan.</p></section></div>`;
 }
 function renderDemoIntro(){return `<div class="demo-intro-page"><div class="page-heading"><div><span class="level-tag">🌱 DEMO ENGLISH QUEST</span><h1>Mulai dari sapaan sederhana</h1><p>Kenali alur belajar sebelum menjawab soal demo. Membaca halaman ini tidak memakai kuota soal.</p></div></div><section class="demo-intro-grid"><article class="demo-intro-card"><span>👋</span><h2>Salam & perkenalan</h2><p><b>Hello!</b> berarti “Halo!”. Gunakan <b>Good morning</b> pada pagi hari, lalu sebutkan nama dengan pola <b>My name is …</b>.</p><small>Contoh: “Hello, my name is Aki. Nice to meet you!”</small></article><article class="demo-intro-card"><span>🔤</span><h2>Alfabet & mengeja</h2><p>Alfabet Inggris memiliki 26 huruf. Saat mengeja nama, sebutkan nama huruf satu per satu—misalnya A-L-E-X.</p><small>“How do you spell your name?” = “Bagaimana mengeja namamu?”</small></article><article class="demo-intro-card"><span>🧭</span><h2>Urutan belajar</h2><p>Demo berisi dua misi Easy dengan lima pertanyaan unik per misi. Jawaban benar maupun salah dihitung satu kali.</p><small>${isLocalDemo()?'Kuota lokal disimpan pada perangkat; penghapusan data dapat meresetnya. Sinkronkan dengan akun saat server tersedia.':'Kuota tersimpan pada akun di server dan tidak dapat direset dengan menghapus instalasi.'}</small></article></section><div class="access-footer"><button class="btn btn-primary" data-action="nav" data-page="missions">🎯 Buka Misi Demo</button><button class="btn btn-secondary" data-action="open-premium-access">💎 Token Premium</button><button class="btn btn-ghost" data-action="nav" data-page="home">Beranda</button></div></div>`;}
 let renderedPage='';let sourceRequestId=0,sourceController=null;
